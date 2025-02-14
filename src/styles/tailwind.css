@@ -1,1 +1,122 @@
 @import "tailwindcss";
+@theme {
+  --color-gray-100: #0a0a0a;
+  --color-gray-90: #232323;
+  --color-gray-80: #3b3b3b;
+  --color-gray-70: #545454;
+  --color-gray-60: #6c6c6c;
+  --color-gray-50: #858585;
+  --color-gray-40: #9d9d9d;
+  --color-gray-30: #b6b6b6;
+  --color-gray-20: #cecece;
+  --color-gray-15: #dadada;
+  --color-gray-10: #e7e7e7;
+  --color-gray-5: #f2f2f2;
+
+  --color-primary-normal: #dca4f4;
+  --color-primary-hover: #edd4fa;
+  --color-primary-active: #d083ef;
+
+  --color-secondary-1: #faf5ff;
+  --color-secondary-2: #f4eaff;
+  --color-secondary-2: #e9d5ff;
+
+  --color-functional-success: #17d073;
+  --color-functional-danger: #fa3b1e;
+  --color-functional-information: #3265ff;
+
+  --background-image: linear-gradient(to bottom, #faf5ff, #f3e8ff);
+
+  --input-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  --card-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.08);
+}
+@layer utilities {
+  .bg-background {
+    background-image: var(--background-image);
+  }
+  .input-shadow {
+    box-shadow: var(--input-shadow);
+  }
+  .card-shadow {
+    box-shadow: var(--card-shadow);
+  }
+}
+@layer base {
+  .h1-b {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 48px;
+  }
+
+  .h2-b {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
+  }
+
+  .h3-b {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 30px;
+  }
+
+  .h4-b {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+
+  .body-large-b {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+  }
+
+  .body-large-m {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+  }
+
+  .body-large-r {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .body-b {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+  }
+
+  .body-m {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21px;
+  }
+
+  .body-r {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+  }
+
+  .caption-b {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+  }
+
+  .caption-m {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+  }
+
+  .caption-r {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
+}

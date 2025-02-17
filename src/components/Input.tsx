@@ -11,7 +11,7 @@ export default function Input({
   label,
   id,
   className,
-  isValid,
+  isValid = true,
   errorMessage,
   ...props
 }: InputProps) {

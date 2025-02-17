@@ -12,7 +12,7 @@ export default function Input({
   id,
   className,
   isValid = true,
-  errorMessage,
+  errorMessage = "",
   ...props
 }: InputProps) {
   return (

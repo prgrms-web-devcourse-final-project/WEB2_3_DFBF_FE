@@ -1,15 +1,16 @@
 import { twMerge } from "tailwind-merge";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  id: string;
+  label: string;
   className?: string;
   isValid?: boolean;
   errorMessage?: string;
 }
 
 export default function Input({
-  label,
   id,
+  label,
   className,
   isValid = true,
   errorMessage = "",

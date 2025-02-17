@@ -1,5 +1,5 @@
 import { twMerge } from "tailwind-merge";
-
+//id, label 필수
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;

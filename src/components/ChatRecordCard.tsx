@@ -9,7 +9,7 @@ export default function ChatRecordCard({}: ChatRecordCardProps) {
   };
 
   return (
-    <div className="p-3 mx-3 card-shadow">
+    <div className="p-3 mx-3 card-shadow bg-white/80 rounded-lg">
       <div className="flex justify-between">
         <div className="flex caption-m text-gray-60">
           <p className="mr-2">하입뽀이</p>

@@ -25,7 +25,7 @@ const navItems = [
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 flex max-w-[600px] min-w-[320px] w-full bg-secondary-1 py-1">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 flex max-w-[600px] min-w-[320px] w-full bg-secondary-1 py-1">
       {navItems.map(({ path, label, icons }) => (
         <NavLink
           key={path}

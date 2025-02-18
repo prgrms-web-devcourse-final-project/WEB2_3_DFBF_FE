@@ -17,13 +17,13 @@ export default function Button({ children, type = 'primary', className, onClick 
   return (
     <>
       <button
-        onClick={type !== 'disabled' ? onClick : undefined}
         className={twMerge(
-          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition',
+          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m',
           buttonStyle[type],
           className,
         )}
         disabled={type === 'disabled'}
+        onClick={type === 'disabled' ? undefined : onClick}
       >
         {children}
       </button>

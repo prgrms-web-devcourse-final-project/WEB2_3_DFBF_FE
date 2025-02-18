@@ -8,8 +8,6 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingLayout />}>
           <Route index element={<Landing />} />
-          <Route path="mypage" element={<h1>마이페이지</h1>} />
-          <Route path="chat" element={<h1>채팅페이지</h1>} />
         </Route>
       </Routes>
     </>

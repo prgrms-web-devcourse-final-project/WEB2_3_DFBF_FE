@@ -1,6 +1,7 @@
 import MoreSelectBox from '@/components/MoreSelectBox';
 import ellipsisIcon from '@assets/icons/ellipsis-icon.svg';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 interface MoreOptionsSelectProps {
   items: { label: string; onClick: () => void }[];
@@ -8,31 +9,33 @@ interface MoreOptionsSelectProps {
 
 function MoreOptionsSelect({ items }: MoreOptionsSelectProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(false); //셀렉트 박스(드롭다운)의 열림/닫힘 여부를 관리
-  const selectRef = useRef<HTMLDivElement>(null); // 셀렉트 박스 영역 참조
-
-  // 바깥 클릭 감지하여 셀렉트 박스 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
-        setIsSelectOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const isHeader = items.some((item) => item.label === '로그아웃');
 
   return (
-    <div className="relative flex" ref={selectRef}>
+    <div className="relative flex">
+      {isSelectOpen &&
+        createPortal(
+          <>
+            {/* 오버레이 - 전체 화면 덮기 */}
+            <div
+              className="fixed inset-0 z-51"
+              onClick={() => setIsSelectOpen(false)}
+            />
+          </>,
+          document.body, //Portal을 이용해 body에 추가
+        )}
       <button
         className="px-2 py-3 flex justify-center items-center cursor-pointer"
         onClick={() => setIsSelectOpen((prev) => !prev)}
       >
         <img src={ellipsisIcon} alt="더보기" />
       </button>
-      {isSelectOpen && <MoreSelectBox items={items} />}
+      {isSelectOpen &&
+        (isHeader ? (
+          createPortal(<MoreSelectBox items={items} />, document.body)
+        ) : (
+          <MoreSelectBox items={items} />
+        ))}
     </div>
   );
 }

@@ -5,8 +5,15 @@ interface MoreSelectBoxProps {
 }
 
 export default function MoreSelectBox({ items }: MoreSelectBoxProps) {
+  const isHeader = items.some((item) => item.label === '로그아웃');
+
   return (
-    <div className="bg-white select-shadow rounded-lg divide-y-[0.5px] divide-gray-10 absolute top-8 right-1 overflow-hidden">
+    <div
+      className={twMerge(
+        'bg-white select-shadow rounded-lg divide-y-[0.5px] divide-gray-10 absolute top-8 overflow-hidden z-52',
+        isHeader ? 'right-4' : 'right-1',
+      )}
+    >
       {items.map(({ label, onClick }) => (
         <button
           key={label}

@@ -1,9 +1,10 @@
 import { twMerge } from "tailwind-merge";
 
-interface MoreSelectBoxProps {}
+interface MoreSelectBoxProps {
+  items: string[];
+}
 
-export default function MoreSelectBox({}: MoreSelectBoxProps) {
-  const items = ["프로필 수정", "로그아웃"];
+export default function MoreSelectBox({ items }: MoreSelectBoxProps) {
   return (
     <div className="bg-white select-shadow rounded-lg divide-y-[0.5px] divide-gray-10 absolute top-8 right-1">
       {items.map((item, index) => (

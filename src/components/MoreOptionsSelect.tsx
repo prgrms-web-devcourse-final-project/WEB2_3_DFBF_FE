@@ -18,7 +18,7 @@ function MoreOptionsSelect({ items }: MoreOptionsSelectProps) {
           <>
             {/* 오버레이 - 전체 화면 덮기 */}
             <div
-              className="fixed inset-0 bg-black/10 z-51"
+              className="fixed inset-0 z-51"
               onClick={() => setIsSelectOpen(false)}
             />
           </>,

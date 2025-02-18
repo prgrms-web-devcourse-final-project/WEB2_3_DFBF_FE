@@ -4,9 +4,9 @@ import { Outlet } from 'react-router';
 
 function Layout() {
   return (
-    <div className="max-w-[600px] w-full h-screen mx-auto flex flex-col">
+    <div className="relative max-w-[600px] min-w-[320px] w-full h-full min-h-screen mx-auto bg-background">
       <Header showMoreOptions />
-      <div className="flex-1 ">
+      <div className="h-full px-3 flex justify-center">
         <Outlet />
       </div>
       <BottomNav />

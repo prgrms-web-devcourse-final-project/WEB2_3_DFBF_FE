@@ -2,26 +2,24 @@ import { NavLink } from 'react-router';
 import {
   chatDefault,
   chatActive,
-  chatHover,
   homeDefault,
   homeActive,
-  homeHover,
   mypageDefault,
   mypageActive,
-  mypageHover,
 } from '@/assets/icons/nav';
+import { twMerge } from 'tailwind-merge';
 
 const navItems = [
-  { path: '/', label: '홈', icons: { default: homeDefault, hover: homeHover, active: homeActive } },
+  { path: '/', label: '홈', icons: { default: homeDefault, active: homeActive } },
   {
     path: '/chat',
     label: '채팅',
-    icons: { default: chatDefault, hover: chatHover, active: chatActive },
+    icons: { default: chatDefault, active: chatActive },
   },
   {
     path: '/mypage',
     label: '마이페이지',
-    icons: { default: mypageDefault, hover: mypageHover, active: mypageActive },
+    icons: { default: mypageDefault, active: mypageActive },
   },
 ];
 
@@ -32,13 +30,16 @@ export default function BottomNav() {
         <NavLink
           key={path}
           to={path}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-0.5"
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 py-0.5 hover:brightness-120 transition"
         >
           {({ isActive }) => (
             <>
               <img src={isActive ? icons.active : icons.default} alt={`${label} Icon`} />
               <span
-                className={`text-[10px] leading-[18px] line-hi text-gray-50 ${isActive && 'text-primary-active'}`}
+                className={twMerge(
+                  'text-[10px] leading-[18px] text-gray-50',
+                  isActive && 'text-primary-active',
+                )}
               >
                 {label}
               </span>

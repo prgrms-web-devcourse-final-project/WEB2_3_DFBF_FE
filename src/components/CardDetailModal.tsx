@@ -1,7 +1,7 @@
 import EmotionBadge from '@/components/EmotionBadge';
 import headsetIcon from '@/assets/icons/headset-icon.svg';
 import ChatActionButtons from '@/components/ChatActionButtons';
-import Modal from '@/components/Modal';
+import Overlay from '@/components/Overlay';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -25,7 +25,7 @@ function CardDetailModal({
   isOwnPost,
 }: CardDetailModalProps) {
   return (
-    <Modal>
+    <Overlay>
       {/* 모달 */}
       <div className="bg-white p-4 rounded-lg min-w-[280px] w-[80%] flex flex-col gap-3 h-[50vh] min-h-[300px]">
         <div className=" flex flex-col gap-3">
@@ -54,11 +54,13 @@ function CardDetailModal({
         {/* 내용 */}
         <div className="body-r h-full">오늘은 날씨가 정말 좋다...</div>
       </div>
-    </Modal>
+    </Overlay>
   );
 }
 
 export default CardDetailModal;
+
+// 사용예시
 
 //  <CardDetailModal
 //    emotion="HAPPY"
@@ -68,4 +70,5 @@ export default CardDetailModal;
 //    date="2025.02.15"
 //    authorName="하입보이"
 //    isChatting={false}
+//    isOwnPost={true}
 //  />;

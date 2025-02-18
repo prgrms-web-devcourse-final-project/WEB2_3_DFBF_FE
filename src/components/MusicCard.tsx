@@ -15,8 +15,8 @@ interface MusicCardProps {
 
 export default function MusicCard({
   image = defaultImage,
-  title = '음악을 등록해 주세ssssssssssssssss요',
-  description = ' 지금 생각나는 음악이 있나요?sssssssssss',
+  title = '음악을 등록해 주세요',
+  description = ' 지금 생각나는 음악이 있나요?',
   buttonContent = '등록',
   buttonType = 'primary',
   rightElement = 'button',

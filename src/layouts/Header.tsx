@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import MoreSelectBox from "@/components/MoreSelectBox";
 import { useState } from "react";
 
+
 interface HeaderProps {
   showNotification?: boolean; // 알림 아이콘을 표시할지 여부
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부

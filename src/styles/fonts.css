@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'GangwonEduSaeeum_OTFMediumA';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+@theme {
+  --font-pretendard: 'Pretendard', 'sans-serif';
+  --font-saeeum: 'GangwonEduSaeeum_OTFMediumA', 'sans-serif';
+}
+
+/* 사용 */
+/* <div className="font-saeeum">사용예시</div> */

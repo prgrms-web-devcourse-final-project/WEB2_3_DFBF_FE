@@ -1,42 +1,71 @@
 import EmotionBadge from '@/components/EmotionBadge';
+import headsetIcon from '@/assets/icons/headset-icon.svg';
+import ChatActionButtons from '@/components/ChatActionButtons';
+import Modal from '@/components/Modal';
 
-function CardDetailModal() {
+interface CardDetailModalProps {
+  emotion: string; // 감정
+  albumImage: string; // 앨범이미지
+  songTitle: string; // 노래 제목
+  artistName: string; // 가수
+  date: string; // 날짜
+  authorName: string; // 글작성자
+  isChatting: boolean; // 현재 채팅중인지 (임시)
+  isOwnPost: boolean; // 본인 글 여부(임시)
+}
+
+function CardDetailModal({
+  emotion,
+  albumImage,
+  songTitle,
+  artistName,
+  date,
+  authorName,
+  isChatting,
+  isOwnPost,
+}: CardDetailModalProps) {
   return (
-    //   전체화면
-    <div className="fixed inset-0 flex items-center justify-center z-10 ">
-      {/* 흑백화면 */}
-      <div className="max-w-[600px] w-full bg-black/50 h-screen flex justify-center items-center px-5">
-        {/* 모달 */}
-        <div className="bg-white p-4 rounded-lg w-full border-2 border-blue-500 flex flex-col gap-3 h-[50vh] min-h-[264px] justify-center">
+    <Modal>
+      {/* 모달 */}
+      <div className="bg-white p-4 rounded-lg min-w-[280px] w-[80%] flex flex-col gap-3 h-[50vh] min-h-[300px]">
+        <div className=" flex flex-col gap-3">
           {/* 상세정보 */}
-          <div className="border border-red-500 flex gap-2 items-center ">
-            <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
-              alt="앨범 이미지"
-              className="w-16 h-16 rounded-[8px]"
-            />
+          <div className=" flex gap-2 items-center ">
+            <img src={albumImage} alt="앨범 이미지" className="w-16 h-16 rounded-[8px]" />
             <div className="min-w-0">
               <div className="flex items-center gap-1">
-                <EmotionBadge size="small" emotion="HAPPY" />
-                <span className=" font-light text-gray-60 text-[10px]">2025.02.15</span>
+                <EmotionBadge size="small" emotion={emotion} />
+                <span className=" font-light text-gray-60 text-[10px]">{date}</span>
               </div>
               <div className="body-b overflow-hidden text-ellipsis whitespace-nowrap">
-                Hype Boy - 뉴진스
+                {songTitle} - {artistName}
               </div>
-              <div className="caption-r text-gray-60">하입보이</div>
+              <div className="caption-r text-gray-60 flex gap-1 items-center">
+                <span>{authorName}</span>
+                {isChatting && <img src={headsetIcon} alt="헤드셋 아이콘" />}
+              </div>
             </div>
           </div>
-          {/* 내용 */}
-          <div className="body-r">
-            오늘은 날씨가 정말 좋다... 졸리다... 드디어 금요일이다. 내일은 주말이다. 주말엔 알바
-            간다. 귀찮다.오늘은 날씨가 정말 좋다... 졸리다ㅏㅏ
-          </div>
           {/* 버튼 */}
-          <div className="border-2 border-red-500"></div>
+          <div className="flex gap-[6px]">
+            {!isOwnPost && <ChatActionButtons isChatting={isChatting} />}
+          </div>
         </div>
+        {/* 내용 */}
+        <div className="body-r h-full">오늘은 날씨가 정말 좋다...</div>
       </div>
-    </div>
+    </Modal>
   );
 }
 
 export default CardDetailModal;
+
+//  <CardDetailModal
+//    emotion="HAPPY"
+//    albumImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
+//    songTitle="hypeboy"
+//    artistName="뉴진스"
+//    date="2025.02.15"
+//    authorName="하입보이"
+//    isChatting={false}
+//  />;

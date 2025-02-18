@@ -1,7 +1,7 @@
-import logo from "@assets/icons/logo.png";
-import notificationIcon from "@assets/icons/notification.svg";
-import ellipsisButton from "@/assets/icons/ellipsisButton.svg";
-import { Link } from "react-router";
+import logo from '@assets/icons/logo.png';
+import notificationIcon from '@assets/icons/notification.svg';
+import ellipsisButton from '@/assets/icons/ellipsisButton.svg';
+import { Link } from 'react-router';
 
 interface HeaderProps {
   showNotification?: boolean; // 알림 아이콘을 표시할지 여부

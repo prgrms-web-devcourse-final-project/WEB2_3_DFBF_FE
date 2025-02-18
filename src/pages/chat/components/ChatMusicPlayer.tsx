@@ -51,7 +51,7 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
           <div ref={containerRef} className="w-full">
             <p
               ref={titleRef}
-              className="inline-block whitespace-nowrap"
+              className="inline-block whitespace-nowrap body-m text-gray-80"
               style={
                 {
                   animation:
@@ -65,7 +65,7 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
               {title}
             </p>
           </div>
-          <p>BIGBANG</p>
+          <p className="caption-r text-gray-60">BIGBANG</p>
         </div>
       </div>
       <button onClick={togglePlay}>

@@ -1,4 +1,4 @@
-import LandingLayout from '@/layouts/LandingLayout';
+import LandingLayout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
 import { Route, Routes } from 'react-router';
 

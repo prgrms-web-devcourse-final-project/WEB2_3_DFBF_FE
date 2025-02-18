@@ -1,5 +1,6 @@
-import Header from "@/layouts/Header";
-import { Outlet } from "react-router";
+import Header from '@/layouts/Header';
+import BottomNav from '@/layouts/BottomNav';
+import { Outlet } from 'react-router';
 
 function LandingLayout() {
   return (
@@ -8,6 +9,7 @@ function LandingLayout() {
       <div className="flex-1 border border-blue-500">
         <Outlet />
       </div>
+      <BottomNav />
     </div>
   );
 }

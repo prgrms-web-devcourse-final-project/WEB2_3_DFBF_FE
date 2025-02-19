@@ -1,6 +1,8 @@
-import Header from '@/layouts/Header';
+import Header from '@/layouts/header/Header';
 import BottomNav from '@/layouts/BottomNav';
 import { Outlet } from 'react-router';
+import HeaderWithBack from '@/layouts/header/HeaderWithBack';
+import HeaderChat from '@/layouts/header/HeaderChat';
 
 function Layout() {
   return (

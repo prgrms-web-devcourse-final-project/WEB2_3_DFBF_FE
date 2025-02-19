@@ -1,14 +1,13 @@
 import logo from '@assets/icons/logo.png';
-
 import { Link } from 'react-router';
-
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
+import HedaerLayout from '@/layouts/header/HedaerLayout';
 
 interface HeaderProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
 }
 
-function Header({ showMoreOptions }: HeaderProps) {
+function Header({ showMoreOptions = false }: HeaderProps) {
   // 임시코드
   const handleEditProfile = () => {
     console.log('프로필 수정 클릭!');
@@ -19,13 +18,12 @@ function Header({ showMoreOptions }: HeaderProps) {
   };
 
   return (
-    <header className="h-[44px] bg-[#FBF5FF]/90 backdrop-blur-sm px-3 flex items-center justify-between">
-      <Link to="/">
-        <img src={logo} alt="logo" />
-      </Link>
+    <HedaerLayout>
+      <div className="w-full flex items-center justify-between">
+        <Link to="/">
+          <img src={logo} alt="logo" />
+        </Link>
 
-      {/* 더보기 메뉴 아이콘 표시 */}
-      <div className="flex gap-1">
         {/* 더보기 메뉴 */}
         {showMoreOptions && (
           <MoreOptionsSelect
@@ -36,8 +34,12 @@ function Header({ showMoreOptions }: HeaderProps) {
           />
         )}
       </div>
-    </header>
+    </HedaerLayout>
   );
 }
 
 export default Header;
+
+// 사용예시
+// <Header />
+// <Header showMoreOptions />

@@ -12,18 +12,18 @@ interface MainCardProps {
   isChatting: boolean; // 현재 채팅중인지
 }
 
-export default function MainCard() {
-  // 더미데이터
-  const dummyData: MainCardProps = {
-    nickname: '하입뽀이일곱자',
-    emotion: 'EXCITED',
-    title: 'Hype Boy',
-    artist: 'NewJeans',
-    content: '오늘은 날씨가 정말 좋다...',
-    date: '2025.02.15',
-    isChatting: true,
-  };
+// 더미데이터
+const dummyData: MainCardProps = {
+  nickname: '하입뽀이일곱자',
+  emotion: 'EXCITED',
+  title: 'Hype Boy',
+  artist: 'NewJeans',
+  content: '오늘은 날씨가 정말 좋다...',
+  date: '2025.02.15',
+  isChatting: true,
+};
 
+export default function MainCard() {
   return (
     <div className="flex-none w-full">
       <div className="flex flex-col gap-1 bg-white/80 rounded-lg card-shadow px-3 py-2.5 ">

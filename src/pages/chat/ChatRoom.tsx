@@ -35,17 +35,28 @@ export default function ChatRoom({}: ChatRoomProps) {
   };
   return (
     <div className="relative w-full">
-      <ChatMusicPlayer />
+      <div className="fixed top-[55px] max-w-[600px] w-full left-1/2 -translate-x-1/2">
+        <ChatMusicPlayer />
+      </div>
       <div className="mt-[83px] flex flex-col gap-1">
         <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
           aaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbcccccccccccccccccccccddddddddddddeeeeeeeeee
         </p>
-        <div className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
+        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
           1233232132332323213213213123213
-        </div>
-        <div className="bg-white text-gray-80 px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-start break-words">
+        </p>
+        <p className="bg-white text-gray-80 px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-start break-words">
           1233232132332323213213213123213
-        </div>
+        </p>
+        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
+          aaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbcccccccccccccccccccccddddddddddddeeeeeeeeee
+        </p>
+        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
+          1233232132332323213213213123213
+        </p>
+        <p className="bg-white text-gray-80 px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-start break-words">
+          1233232132332323213213213123213
+        </p>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
   }, [title]);
 
   return (
-    <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px] fixed top-[55px] left-0 right-0">
+    <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
         <img
           src="https://i.namu.wiki/i/w05YtvYIjsU8_F_BzLip37dZ8lmXl9clwVbjgfwraiybgU554d_ev9pSYYUgXBIJLpJtchguQ9L09xz2f_5iFWZe0mV2uCHI3XPSMo7OWnMin4tn5qEI4wsy1_j-cU8b2zNAZMX-tpfk5p6hQA2nzw.webp"

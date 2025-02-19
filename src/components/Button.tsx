@@ -18,7 +18,7 @@ export default function Button({ children, type = 'primary', className, onClick 
     <>
       <button
         className={twMerge(
-          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m',
+          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
           buttonStyle[type],
           className,
         )}

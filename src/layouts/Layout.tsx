@@ -11,7 +11,7 @@ function Layout() {
       <Header showMoreOptions />
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="flex-1 flex justify-center w-full px-3 mt-[44px]">
+      <div className="pt-[44px] flex-1 flex justify-center w-full px-3">
         <Outlet />
       </div>
 

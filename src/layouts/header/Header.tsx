@@ -21,7 +21,7 @@ function Header({ showMoreOptions = false }: HeaderProps) {
     <HedaerLayout>
       <div className="w-full flex items-center justify-between">
         <Link to="/">
-          <img src={logo} alt="logo" />
+          <img className="w-[103px] h-[22px]" src={logo} alt="logo" />
         </Link>
 
         {/* 더보기 메뉴 */}

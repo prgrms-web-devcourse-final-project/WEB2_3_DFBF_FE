@@ -1,6 +1,6 @@
 import { twMerge } from 'tailwind-merge';
 //id, label 필수
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   className?: string;
@@ -17,14 +17,14 @@ export default function Input({
   ...props
 }: InputProps) {
   return (
-    <div className="relative flex flex-col">
-      <label htmlFor={id} className="body-r text-gray-80 ml-[5px]">
+    <div className="relative flex flex-col w-full">
+      <label htmlFor={id} className="body-r text-gray-80 ml-[5px] mb-0.5">
         {label}
       </label>
       <input
         id={id}
         className={twMerge(
-          'w-full h-[38px] rounded-lg input-shadow outline-0 px-3 caption-m placeholder:text-gray-50 my-[2px] focus:ring-1 focus:ring-primary-active',
+          'w-full h-[38px] rounded-lg input-shadow outline-0 px-3 caption-m placeholder:text-gray-50 focus:ring-1 focus:ring-primary-active',
           className, //사용자 정의 스타일
         )}
         {...props} //추가 속성

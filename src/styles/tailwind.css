@@ -28,7 +28,7 @@
 
   --background-image: linear-gradient(to bottom, #faf5ff, #f3e8ff);
 
-  --input-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.15);
+  --input-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.15);
   --card-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.08);
   --select-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.25);
 

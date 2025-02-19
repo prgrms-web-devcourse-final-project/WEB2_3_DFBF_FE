@@ -1,0 +1,31 @@
+import logoIcon from '@assets/icons/logo-icon.svg';
+import exitIcon from '@assets/icons/exit-icon.svg';
+import { twMerge } from 'tailwind-merge';
+import HedaerLayout from '@/layouts/header/HedaerLayout';
+
+interface HeaderChatProps {
+  showLogo?: boolean; // 로고 표시 여부
+  showNickname?: boolean; // 닉네임 표시 여부
+}
+
+function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps) {
+  // 로고와 닉네임이 모두 숨겨진 경우 `justify-end`, 아니면 `justify-between`
+  const headerClass = showLogo || showNickname ? 'justify-between' : 'justify-end';
+
+  return (
+    <HedaerLayout>
+      <div className={twMerge('w-full flex items-center', headerClass)}>
+        {/* 로고 */}
+        {showLogo && <img src={logoIcon} alt="로고" />}
+
+        {/* 닉네임 */}
+        {showNickname && <span className="h4-b text-primary-normal">닉네임</span>}
+
+        {/* 나가기 버튼 */}
+        <img src={exitIcon} alt="나가기" />
+      </div>
+    </HedaerLayout>
+  );
+}
+
+export default HeaderChat;

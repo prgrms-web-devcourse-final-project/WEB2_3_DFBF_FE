@@ -11,6 +11,37 @@ interface HeaderChatProps {
 function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps) {
   // 로고와 닉네임이 모두 숨겨진 경우 `justify-end`, 아니면 `justify-between`
   const headerClass = showLogo || showNickname ? 'justify-between' : 'justify-end';
+  //채팅 기록 데이터 zustand
+  const data = {
+    sender: {
+      nickname: '집가고싶다',
+      profilePicture: 'sender_profile_picture_url',
+    },
+    receiver: {
+      nickname: '어디가코딩해',
+      profilePicture: 'receiver1_profile_picture_url',
+    },
+    messageList: [
+      {
+        messageId: 1001,
+        type: 0,
+        message: '제발 집좀 보내주세요 ㅠㅠ',
+        sentAt: '2025-02-13 06:03',
+      },
+      {
+        messageId: 1002,
+        type: 1,
+        message: '안돼.',
+        sentAt: '2025-02-13 06:04',
+      },
+      {
+        messageId: 1003,
+        type: 0,
+        message: '하..',
+        sentAt: '2025-02-13 06:04',
+      },
+    ],
+  };
 
   return (
     <HedaerLayout>
@@ -19,7 +50,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         {showLogo && <img src={logoIcon} alt="로고" />}
 
         {/* 닉네임 */}
-        {showNickname && <span className="h4-b text-primary-normal">닉네임</span>}
+        {showNickname && <span className="h4-b text-primary-normal">{data.receiver.nickname}</span>}
 
         {/* 나가기 버튼 */}
         <img src={exitIcon} alt="나가기" />

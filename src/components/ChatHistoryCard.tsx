@@ -3,7 +3,7 @@ import MoreOptionsSelect from './MoreOptionsSelect';
 import defaultImage from '@assets/images/default.png';
 
 interface ChatHistoryCardProps {
-  item: EmotionRecord;
+  item: ChatHistory;
 }
 
 export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
@@ -33,8 +33,8 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
     <div className="w-full p-3 card-shadow bg-white/80 rounded-lg">
       <div className="flex justify-between">
         <div className="flex caption-m text-gray-60">
-          <p className="mr-2">하입뽀이</p>
-          <p>{getTimeAgo()}</p>
+          <p className="mr-2">{item.nickname}</p>
+          <p>{getTimeAgo()} 생성</p>
         </div>
         <MoreOptionsSelect
           items={[{ label: '삭제하기', onClick: handleDeleteChat }]}
@@ -43,14 +43,14 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
       <div className="flex mt-1 mb-3">
         <img
           className="w-[40px] h-[40px] mr-2"
-          src={item.spotify_music.album_image ?? defaultImage}
+          src={item.album_image ?? defaultImage}
           alt="앨범이미지"
         />
         <div>
           <p className="body-b text-gray-80 line-clamp-1">
-            {item.spotify_music.title} - {item.spotify_music.artist}
+            {item.title} - {item.artist}
           </p>
-          <p className="caption-r text-gray-60 line-clamp-1">{item.comment}</p>
+          <p className="caption-r text-gray-60 line-clamp-1">여기에 뭘 넣어야할까</p>
         </div>
       </div>
       <Button type="primary" className="body-m">

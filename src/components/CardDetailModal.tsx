@@ -1,7 +1,7 @@
 import EmotionBadge from '@/components/EmotionBadge';
 import headsetIcon from '@/assets/icons/headset-icon.svg';
 import ChatActionButtons from '@/components/ChatActionButtons';
-import Overlay from '@/components/Overlay';
+import ModalSheetLayout from '@/layouts/ModalSheetLayout';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -25,36 +25,50 @@ function CardDetailModal({
   isOwnPost,
 }: CardDetailModalProps) {
   return (
-    <Overlay>
-      {/* 모달 */}
-      <div className="bg-white p-4 rounded-lg min-w-[280px] w-[80%] flex flex-col gap-3 h-[50vh] min-h-[300px]">
-        <div className=" flex flex-col gap-3">
-          {/* 상세정보 */}
-          <div className=" flex gap-2 items-center ">
-            <img src={albumImage} alt="앨범 이미지" className="w-16 h-16 rounded-[8px]" />
-            <div className="min-w-0">
-              <div className="flex items-center gap-1">
-                <EmotionBadge size="small" emotion={emotion} />
-                <span className=" font-light text-gray-60 text-[10px]">{date}</span>
-              </div>
-              <div className="body-b overflow-hidden text-ellipsis whitespace-nowrap">
-                {songTitle} - {artistName}
-              </div>
-              <div className="caption-r text-gray-60 flex gap-1 items-center">
-                <span>{authorName}</span>
-                {isChatting && <img src={headsetIcon} alt="헤드셋 아이콘" />}
-              </div>
+    <ModalSheetLayout isOwnPost={isOwnPost}>
+      <div className="px-[36.5px] flex flex-col items-center gap-4">
+        <div className="flex flex-col max-w-[250px] gap-4">
+          <div className="flex flex-col items-center gap-1">
+            <div className="caption-r text-gray-60 flex gap-1 items-center">
+              <span>{authorName}</span>
+              {isChatting && <img src={headsetIcon} alt="헤드셋 아이콘" />}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className=" font-light text-gray-60 text-[10px]">{date}</span>
+              <EmotionBadge size="small" emotion={emotion} />
             </div>
           </div>
-          {/* 버튼 */}
-          <div className="flex gap-[6px]">
-            {!isOwnPost && <ChatActionButtons isChatting={isChatting} />}
+
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex flex-col  gap-2">
+                <img
+                  src={albumImage}
+                  alt="앨범 이미지"
+                  className="w-[80px] h-[80px] rounded-[8px]"
+                />
+                <div className="flex flex-col items-center min-w-0">
+                  <span className="body-large-b overflow-hidden text-ellipsis whitespace-nowrap">
+                    Hype Boy
+                  </span>
+                  <span className="body-m overflow-hidden text-ellipsis whitespace-nowrap">
+                    NewJeans
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-10">
+                {!isOwnPost && <ChatActionButtons isChatting={isChatting} />}
+              </div>
+            </div>
+
+            <span className="body-r">
+              오늘은 날씨가 정말 좋다... 졸리다... 드디어 금요일이다. 내일은 주말이다. 주말엔 알바
+              간다. 귀찮다.오늘은 날씨가 정말 좋다... 졸리다ㅏㅏ
+            </span>
           </div>
         </div>
-        {/* 내용 */}
-        <div className="body-r h-full">오늘은 날씨가 정말 좋다...</div>
       </div>
-    </Overlay>
+    </ModalSheetLayout>
   );
 }
 

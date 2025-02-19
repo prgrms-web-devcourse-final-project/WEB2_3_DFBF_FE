@@ -32,7 +32,7 @@ export default function MainCard() {
           <span className="caption-m text-gray-70">{dummyData.nickname}</span>
           {dummyData.isChatting && (
             <span>
-              <img src={headset} alt={headset} />
+              <img src={headset} alt="헤드셋 아이콘" />
             </span>
           )}
           <span className="caption-r text-gray-60">님은 지금</span>

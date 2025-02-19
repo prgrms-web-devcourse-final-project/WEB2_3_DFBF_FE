@@ -25,8 +25,8 @@ const dummyData: MainCardProps = {
 
 export default function MainCard() {
   return (
-    <div className="flex-none w-full">
-      <div className="flex flex-col gap-1 bg-white/80 rounded-lg card-shadow px-3 py-2.5 ">
+    <div className="flex-none w-full cursor-pointer">
+      <div className="flex flex-col gap-1 bg-white/80 rounded-lg card-shadow px-3 py-2.5 hover:bg-white transition ">
         {/* 닉네임 + 상태 */}
         <div className="flex items-center gap-1">
           <span className="caption-m text-gray-70">{dummyData.nickname}</span>

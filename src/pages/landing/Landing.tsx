@@ -1,9 +1,10 @@
 import PuffLoader from 'react-spinners/PuffLoader';
 import musicIcon from '@/assets/icons/music-icon.svg';
+import Button from '@/components/Button';
 function Landing() {
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col items-center gap-3 mt-[30px]">
+    <div className="flex flex-col w-full justify-center relative">
+      <div className="flex flex-col gap-3 mb-[140px]">
         <p className="h3-b text-gray-80 text-center">
           음악으로 감정을 기록하고 <br /> 누군가와 이어지는 순간
         </p>
@@ -13,17 +14,24 @@ function Landing() {
         <div className="relative w-full h-full mt-[120px] flex items-center justify-center">
           {/* PuffLoader */}
           <div className="absolute z-0">
-            <PuffLoader size={250} color="#F5E8FD" />
+            <PuffLoader size={240} color="#EFDAFB" />
           </div>
 
-          {/* 음표 배경*/}
-          <div className="absolute z-10">
+          {/* 배경2*/}
+          <div className="absolute z-1">
+            <div className="bg-[#F5E8FD] w-[170px] h-[170px] rounded-full flex items-center justify-center"></div>
+          </div>
+          {/* 음표 + 배경1*/}
+          <div className="absolute z-2">
             <div className="bg-[#efdafb] w-[140px] h-[140px] rounded-full flex items-center justify-center">
               <img src={musicIcon} alt="음표" />
             </div>
           </div>
         </div>
       </div>
+      <Button type="primary" className="absolute bottom-10 z-3">
+        지금 시작하기
+      </Button>
     </div>
   );
 }

@@ -4,11 +4,16 @@ import { Outlet } from 'react-router';
 
 function Layout() {
   return (
-    <div className="relative max-w-[600px] min-w-[320px] w-full h-full min-h-screen mx-auto bg-background">
+    <div className="relative max-w-[600px] min-w-[320px] w-full min-h-screen mx-auto bg-background flex flex-col">
+      {/* 헤더 */}
       <Header showMoreOptions />
-      <div className="flex justify-center h-full w-full px-3">
+
+      {/* 메인 컨텐츠 영역 */}
+      <div className="flex-1 flex justify-center w-full px-3">
         <Outlet />
       </div>
+
+      {/* 하단 네비게이션 */}
       <BottomNav />
     </div>
   );

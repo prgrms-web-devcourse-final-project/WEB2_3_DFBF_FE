@@ -29,3 +29,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
 }
 
 export default HeaderChat;
+
+// 사용방법
+// <HeaderChat showLogo showNickname />
+// <HeaderChat />

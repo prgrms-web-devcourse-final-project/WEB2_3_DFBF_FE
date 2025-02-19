@@ -40,3 +40,7 @@ function HeaderWithBack({ showMoreOptions = false, isSignup = false }: HeaderWit
 }
 
 export default HeaderWithBack;
+
+// 사용방법
+// <HeaderWithBack isSignup />
+// <HeaderWithBack showMoreOptions />

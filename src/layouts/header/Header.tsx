@@ -39,3 +39,7 @@ function Header({ showMoreOptions = false }: HeaderProps) {
 }
 
 export default Header;
+
+// 사용예시
+// <Header />
+// <Header showMoreOptions />

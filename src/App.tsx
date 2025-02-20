@@ -8,6 +8,7 @@ import Chat from './pages/chat/Chat';
 import ChatRoom from './pages/chat/ChatRoom';
 import NotFound from './pages/NotFound';
 import SignUp from '@/pages/signup/SignUp';
+import UserProfile from '@/pages/userprofile.tsx/UserProfile';
 
 function App() {
   return (
@@ -20,6 +21,9 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/chatroom" element={<ChatRoom />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/mypage" element={<UserProfile />} />
+          <Route path="/user/:userId" element={<UserProfile />} />
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -49,10 +49,10 @@ function CardDetailModal({
                 />
                 <div className="flex flex-col items-center min-w-0">
                   <span className="body-large-b overflow-hidden text-ellipsis whitespace-nowrap">
-                    Hype Boy
+                    {songTitle}
                   </span>
                   <span className="body-m overflow-hidden text-ellipsis whitespace-nowrap">
-                    NewJeans
+                    {artistName}
                   </span>
                 </div>
               </div>

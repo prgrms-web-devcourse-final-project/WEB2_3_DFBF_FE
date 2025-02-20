@@ -12,7 +12,7 @@ function Layout() {
       {/* <HeaderChat showLogo={true} showNickname={true}/> */}
 
       {/* 메인 컨텐츠 영역 */}
-      <div className="pt-[44px] flex-1 flex justify-center w-full px-3">
+      <div className="pt-[44px] pb-[62px] flex-1 flex justify-center w-full px-3">
         <Outlet />
       </div>
 

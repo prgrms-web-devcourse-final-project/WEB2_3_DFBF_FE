@@ -1,13 +1,16 @@
-import logo from '@assets/icons/logo.png';
 import { Link } from 'react-router';
+
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 
+import postIcon from '@/assets/icons/post-icon.svg';
+import logo from '@assets/icons/logo.png';
 interface HeaderProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
+  showPostButton?: boolean; //게시글 작성 버튼을 표시할지 결정
 }
 
-function Header({ showMoreOptions = false }: HeaderProps) {
+function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps) {
   // 임시코드
   const handleEditProfile = () => {
     console.log('프로필 수정 클릭!');
@@ -24,15 +27,23 @@ function Header({ showMoreOptions = false }: HeaderProps) {
           <img className="w-[103px] h-[22px]" src={logo} alt="logo" />
         </Link>
 
-        {/* 더보기 메뉴 */}
-        {showMoreOptions && (
-          <MoreOptionsSelect
-            items={[
-              { label: '프로필 수정', onClick: handleEditProfile },
-              { label: '로그아웃', onClick: handleLogout },
-            ]}
-          />
-        )}
+        <div className="flex gap-1">
+          {showPostButton && (
+            <button className="w-6 h-6 flex justify-center items-center cursor-pointer">
+              <img src={postIcon} alt="글작성" />
+            </button>
+          )}
+
+          {/* 더보기 메뉴 */}
+          {showMoreOptions && (
+            <MoreOptionsSelect
+              items={[
+                { label: '프로필 수정', onClick: handleEditProfile },
+                { label: '로그아웃', onClick: handleLogout },
+              ]}
+            />
+          )}
+        </div>
       </div>
     </HedaerLayout>
   );
@@ -43,3 +54,4 @@ export default Header;
 // 사용예시
 // <Header />
 // <Header showMoreOptions />
+// <Header showMoreOptions showPostButton/>

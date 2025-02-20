@@ -39,9 +39,11 @@ export default function InputField({
           </Button>
         )}
       </div>
-      {!isValid && (
-        <p className="text-functional-danger text-[9px]/[18px] ml-[5px]">{errorMessage}</p>
-      )}
+      <div className="flex items-center h-5">
+        {!isValid && (
+          <p className="text-functional-danger text-[9px]/[18px] ml-[5px]">{errorMessage}</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -4,11 +4,11 @@ import backIcon from '@assets/icons/back-icon.svg';
 
 interface HeaderWithBackProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
-  isSignup?: boolean; // 회원가입 보이기
+  text?: string; // 헤더 텍스트
 }
 
 // 뒤로 가기 있는 헤더
-function HeaderWithBack({ showMoreOptions = false, isSignup = false }: HeaderWithBackProps) {
+function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) {
   // 임시함수
   const handleEditProfile = () => {
     console.log('임시함수');
@@ -16,13 +16,13 @@ function HeaderWithBack({ showMoreOptions = false, isSignup = false }: HeaderWit
 
   return (
     <HedaerLayout>
-      <div className="w-full flex items-center justify-between">
+      <div className="flex items-center justify-between w-full">
         {/* 뒤로가기 / 회원가입 */}
         <div className="gap-[10px] flex items-center">
           <button className="px-2 py-3 cursor-pointer">
             <img src={backIcon} alt="뒤로가기 아이콘" />
           </button>
-          {isSignup && <span className="h4-b text-primary-normal">회원가입</span>}
+          {text && <span className="h4-b text-primary-normal">{text}</span>}
         </div>
 
         {/* 더보기 메뉴 */}
@@ -42,5 +42,5 @@ function HeaderWithBack({ showMoreOptions = false, isSignup = false }: HeaderWit
 export default HeaderWithBack;
 
 // 사용방법
-// <HeaderWithBack isSignup />
+// <HeaderWithBack text='회원가입' />
 // <HeaderWithBack showMoreOptions />

@@ -1,4 +1,6 @@
+import sendIcon from '@/assets/icons/send-icon.svg';
 import ChatMusicPlayer from './components/ChatMusicPlayer';
+import Button from '@/components/Button';
 
 interface ChatRoomProps {}
 
@@ -72,6 +74,25 @@ export default function ChatRoom({}: ChatRoomProps) {
 
         {/* 마지막 메시지의 시간 표시 */}
         <p className="text-gray-500 text-xs text-center mt-2">{data.messageList.at(-1)?.sentAt}</p>
+      </div>
+
+      <div className="px-3 py-[5px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
+        <div className="flex justify-between mb-2 caption-b">
+          <p className="text-gray-80">
+            남은시간: <span className="text-primary-normal">08:45</span>
+          </p>
+          <p className="text-primary-normal">연장 요청 (0/2)</p>
+        </div>
+        <div className="flex gap-1">
+          <input
+            type="text"
+            className="flex-1 border border-primary-hover rounded-full px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50"
+            placeholder="메시지 입력"
+          />
+          <Button className="w-[32px] h-[32px] rounded-full">
+            <img src={sendIcon} alt="send" />
+          </Button>
+        </div>
       </div>
     </div>
   );

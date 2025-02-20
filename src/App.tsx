@@ -7,6 +7,7 @@ import ChatConnectLoadingSheet from './components/ChatConnectLoadingSheet';
 import Chat from './pages/chat/Chat';
 import ChatRoom from './pages/chat/ChatRoom';
 import NotFound from './pages/NotFound';
+import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chatroom" element={<ChatRoom />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<NotFound />} />
         </Route>

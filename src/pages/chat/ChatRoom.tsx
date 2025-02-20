@@ -76,7 +76,7 @@ export default function ChatRoom({}: ChatRoomProps) {
         <p className="text-gray-500 text-xs text-center mt-2">{data.messageList.at(-1)?.sentAt}</p>
       </div>
 
-      <div className="px-3 py-[5px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
+      <div className="px-3 pt-[5px] pb-[19px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
         <div className="flex justify-between mb-2 caption-b">
           <p className="text-gray-80">
             남은시간: <span className="text-primary-normal">08:45</span>

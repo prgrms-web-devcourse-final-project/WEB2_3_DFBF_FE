@@ -5,7 +5,7 @@ import EmotionFilter from '@/components/EmotionFilter';
 
 function Home() {
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const handleClickedEmotion = (emotion: string) => {
+  const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
     console.log(emotion);
   };
@@ -18,7 +18,7 @@ function Home() {
         <h2 className="font-saeeum text-2xl text-gray-60">
           나와 같은 감정을 느끼는 사람을 찾아보세요
         </h2>
-        <EmotionFilter onEmotionClick={handleClickedEmotion} selectedEmotion={selectedEmotion} />
+        <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
       </div>
       {/* 메인카드 리스트 */}
       <div className="flex flex-col items-center gap-2.5 pb-5">

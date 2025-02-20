@@ -2,6 +2,7 @@ import EmotionBadge from '@/components/EmotionBadge';
 import headsetIcon from '@/assets/icons/headset-icon.svg';
 import ChatActionButtons from '@/components/modalSheet/ChatActionButtons';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
+import { useState } from 'react';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -24,12 +25,14 @@ function CardDetailModal({
   isChatting,
   isOwnPost,
 }: CardDetailModalProps) {
+  const [isPlaying, setIsPlaying] = useState(false); // 현재 노래 재생 여부
+
   return (
     <ModalSheetLayout isOwnPost={isOwnPost}>
       <div className="px-[36.5px] flex flex-col items-center gap-4">
         <div className="flex flex-col max-w-[250px] gap-4">
           <div className="flex flex-col items-center gap-1">
-            <div className="caption-r text-gray-60 flex gap-1 items-center">
+            <div className="flex items-center gap-1 caption-r text-gray-60">
               <span>{authorName}</span>
               {isChatting && <img src={headsetIcon} alt="헤드셋 아이콘" />}
             </div>
@@ -41,23 +44,27 @@ function CardDetailModal({
 
           <div className="flex flex-col gap-5">
             <div className="flex flex-col items-center gap-2">
-              <div className="flex flex-col  gap-2">
+              <div className="flex flex-col gap-2">
                 <img
                   src={albumImage}
                   alt="앨범 이미지"
                   className="w-[80px] h-[80px] rounded-[8px]"
                 />
                 <div className="flex flex-col items-center min-w-0">
-                  <span className="body-large-b overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span className="overflow-hidden body-large-b text-ellipsis whitespace-nowrap">
                     {songTitle}
                   </span>
-                  <span className="body-m overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span className="overflow-hidden body-m text-ellipsis whitespace-nowrap">
                     {artistName}
                   </span>
                 </div>
               </div>
               <div className="flex gap-10">
-                {!isOwnPost && <ChatActionButtons isChatting={isChatting} />}
+                <ChatActionButtons
+                  isChatting={isChatting}
+                  isPlaying={false}
+                  isOwnPost={isOwnPost}
+                />
               </div>
             </div>
 

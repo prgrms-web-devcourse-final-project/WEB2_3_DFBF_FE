@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import play from '@/assets/icons/play.svg';
+import play from '@/assets/icons/play/play.svg';
 import pause from '@/assets/icons/pause.svg';
 
 type ChatMusicPlayerProps = {};
@@ -47,7 +47,7 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
           alt="album"
           className="w-[43px] h-[43px]"
         />
-        <div className="mx-2 flex-grow overflow-hidden relative">
+        <div className="relative flex-grow mx-2 overflow-hidden">
           <div ref={containerRef} className="w-full">
             <p
               ref={titleRef}

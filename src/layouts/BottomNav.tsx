@@ -10,7 +10,7 @@ import {
 import { twMerge } from 'tailwind-merge';
 
 const navItems = [
-  { path: '/', label: '홈', icons: { default: homeDefault, active: homeActive } },
+  { path: '/home', label: '홈', icons: { default: homeDefault, active: homeActive } },
   {
     path: '/chat',
     label: '채팅',

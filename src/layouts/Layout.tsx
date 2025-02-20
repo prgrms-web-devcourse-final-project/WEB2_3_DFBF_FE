@@ -36,7 +36,7 @@ function Layout() {
       //내 정보 페이지
       location.pathname === '/mypage'
     ) {
-      <Header showMoreOptions showPostButton />;
+      return <Header showMoreOptions showPostButton />;
     } else if (
       //글 작성 페이지
       location.pathname === '/posting' ||

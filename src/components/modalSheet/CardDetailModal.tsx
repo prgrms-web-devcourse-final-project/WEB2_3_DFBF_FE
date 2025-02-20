@@ -1,6 +1,6 @@
 import EmotionBadge from '@/components/EmotionBadge';
 import headsetIcon from '@/assets/icons/headset-icon.svg';
-import ChatActionButtons from '@/components/ChatActionButtons';
+import ChatActionButtons from '@/components/modalSheet/ChatActionButtons';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
 
 interface CardDetailModalProps {

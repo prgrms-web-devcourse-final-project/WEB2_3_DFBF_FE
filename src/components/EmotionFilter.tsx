@@ -9,7 +9,7 @@ interface EmotionFilterProps {
 
 export default function EmotionFilter({ selectedEmotion, onEmotionClick }: EmotionFilterProps) {
   return (
-    <div className="w-fit grid grid-cols-4 gap-y-3 gap-x-5">
+    <div className="w-fit h-fit grid grid-cols-4 gap-y-3 gap-x-5">
       {EMOTIONS.map((emotion) => (
         <EmotionBadge
           key={emotion.key}

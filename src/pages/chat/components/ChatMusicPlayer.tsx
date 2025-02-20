@@ -1,32 +1,36 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import play from '@/assets/icons/play.svg';
-import pause from '@/assets/icons/pause.svg';
+import defaultImage from '@assets/images/default.png';
+import YouTubeAudioPlayer from '@/components/YouTubeAudioPlayer';
+import { searchYoutubeVideo } from '@/apis/youtube';
 
-type ChatMusicPlayerProps = {};
-
-export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
+export default function ChatMusicPlayer() {
   const [moveDistance, setMoveDistance] = useState(0);
   const titleRef = useRef<HTMLParagraphElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const title = '봄여름가을겨울봄여름가을겨울봄여름가을겨울';
-  // '사랑하긴 했었나요 스쳐가는 인연이었나요 짧지않은 우리 함께했던 시간들이 자꾸 내 마음을 가둬두네';
-
-  // 재생 / 일시정지 토글
-  const togglePlay = () => {
-    // if (!playerRef.current) return;
-
-    // if (isPlaying) {
-    //   playerRef.current.pauseVideo();
-    // } else {
-    //   playerRef.current.playVideo();
-    // }
-    // setIsPlaying(!isPlaying);
-    setIsPlaying(!isPlaying);
+  // 음악 정보
+  const musicInfo = {
+    spotify_id: 33,
+    title: '라일락',
+    artist: '아이유',
+    album_image:
+      'https://i.namu.wiki/i/L4gbrOjwTsNcvpsCq8b4P-3eX9Cs0lrIvwHxtFE7S5jaeMsbdelvBqCLMwe6AJJw2zBQqSI4wE0_Qn-EwaeZdnLvseFvt1w9dg-xo9KrFF_GacO_R7BnHI6XRyDDXvr-PHMmSEnqgcrzLjdbQF9obA.webp',
   };
 
-  //setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
+  // React Query로 유튜브 비디오 ID 가져오기
+  const {
+    data: videoId,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['youtube', musicInfo.artist, musicInfo.title],
+    queryFn: () => searchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`),
+  });
+
+  // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
   useEffect(() => {
     if (titleRef.current && containerRef.current) {
       setTimeout(() => {
@@ -37,16 +41,48 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
         setMoveDistance(titleWidth > containerWidth ? titleWidth - containerWidth : 0);
       }, 50); // 약간의 지연을 줘서 렌더링 이후 측정
     }
-  }, [title]);
+  }, [musicInfo]);
+
+  // 유튜브 비디오 로딩 중 처리
+  if (isLoading)
+    return (
+      <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
+        <div className="flex w-[calc(100%-28px)]">
+          <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
+          <div className="mx-2 flex-grow overflow-hidden relative">
+            <div ref={containerRef} className="w-full">
+              <p className="inline-block whitespace-nowrap body-m text-gray-80">로딩 중...</p>
+            </div>
+          </div>
+        </div>
+        <button className="cursor-pointer">
+          <img src={play} className="w-[28px]" alt="play" />
+        </button>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
+        <div className="flex w-[calc(100%-28px)]">
+          <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
+          <div className="mx-2 flex-grow overflow-hidden relative">
+            <div ref={containerRef} className="w-full">
+              <p className="inline-block whitespace-nowrap body-m text-gray-80">
+                노래를 불러오는데 실패했습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+        <button className="cursor-pointer">
+          <img src={play} className="w-[28px]" alt="play" />
+        </button>
+      </div>
+    );
 
   return (
     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
-        <img
-          src="https://i.namu.wiki/i/w05YtvYIjsU8_F_BzLip37dZ8lmXl9clwVbjgfwraiybgU554d_ev9pSYYUgXBIJLpJtchguQ9L09xz2f_5iFWZe0mV2uCHI3XPSMo7OWnMin4tn5qEI4wsy1_j-cU8b2zNAZMX-tpfk5p6hQA2nzw.webp"
-          alt="album"
-          className="w-[43px] h-[43px]"
-        />
+        <img src={musicInfo.album_image} alt="album" className="w-[48px] h-[48px]" />
         <div className="mx-2 flex-grow overflow-hidden relative">
           <div ref={containerRef} className="w-full">
             <p
@@ -62,15 +98,20 @@ export default function ChatMusicPlayer({}: ChatMusicPlayerProps) {
                 } as React.CSSProperties
               }
             >
-              {title}
+              {musicInfo.title}
             </p>
           </div>
-          <p className="caption-r text-gray-60">BIGBANG</p>
+          <p className="inline-block whitespace-nowrap caption-r text-gray-60">
+            {musicInfo.artist}
+          </p>
         </div>
       </div>
-      <button onClick={togglePlay}>
-        <img src={isPlaying ? pause : play} className="w-[28px]" alt="play" />
-      </button>
+      {/* 플레이 버튼에 유튜브 플레이어 연결 */}
+      <YouTubeAudioPlayer
+        videoId={videoId}
+        isPlaying={isPlaying}
+        onPlayPauseToggle={() => setIsPlaying(!isPlaying)}
+      />
     </div>
   );
 }

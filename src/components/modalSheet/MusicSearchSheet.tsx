@@ -1,5 +1,5 @@
 import InfoMessage from '@/components/InfoMessage';
-import MusicSearchList from '@/components/MusicSearchList';
+import MusicSearchList from '@/components/modalSheet/MusicSearchList';
 import SearchBar from '@/components/SearchBar';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
 import { useState } from 'react';

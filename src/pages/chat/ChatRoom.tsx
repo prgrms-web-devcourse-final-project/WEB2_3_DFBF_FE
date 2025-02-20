@@ -16,47 +16,62 @@ export default function ChatRoom({}: ChatRoomProps) {
       {
         messageId: 1001,
         type: 0,
-        message: '제발 집좀 보내주세요 ㅠㅠ',
+        message: '제발 집좀 보내주세요 ㅠㅠ 111111111111223231',
         sentAt: '2025-02-13 06:03',
       },
       {
         messageId: 1002,
         type: 1,
-        message: '안돼.',
+        message: '안돼. 1111111111111111112222222222',
         sentAt: '2025-02-13 06:04',
       },
       {
         messageId: 1003,
         type: 0,
-        message: '하..',
+        message: '하..1111111111111111111232323',
+        sentAt: '2025-02-13 06:04',
+      },
+      {
+        messageId: 1004,
+        type: 0,
+        message: '하하호호111111111111111111111123233',
         sentAt: '2025-02-13 06:04',
       },
     ],
   };
+
   return (
-    <div className="relative w-full">
-      <div className="fixed top-[55px] max-w-[600px] w-full left-1/2 -translate-x-1/2">
+    <div className="relative w-full max-w-[600px] mx-auto">
+      {/* 상단 고정된 뮤직 플레이어 */}
+      <div className="fixed top-[55px] left-1/2 -translate-x-1/2 w-full max-w-[600px]">
         <ChatMusicPlayer />
       </div>
-      <div className="mt-[83px] flex flex-col gap-1">
-        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
-          aaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbcccccccccccccccccccccddddddddddddeeeeeeeeee
-        </p>
-        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
-          1233232132332323213213213123213
-        </p>
-        <p className="bg-white text-gray-80 px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-start break-words">
-          1233232132332323213213213123213
-        </p>
-        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
-          aaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbcccccccccccccccccccccddddddddddddeeeeeeeeee
-        </p>
-        <p className="bg-primary-normal text-white px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-end break-words">
-          1233232132332323213213213123213
-        </p>
-        <p className="bg-white text-gray-80 px-[11px] py-1 rounded-lg text-left w-fit max-w-[85%] self-start break-words">
-          1233232132332323213213213123213
-        </p>
+
+      {/* 채팅 메시지 영역 */}
+      <div className="mt-[100px] flex flex-col px-4">
+        {data.messageList.map((msg, index) => {
+          const isMyMessage = msg.type === 0;
+          const prevMsg = data.messageList[index - 1];
+          const isSameSender = prevMsg && prevMsg.type === msg.type;
+
+          return (
+            <div
+              key={msg.messageId}
+              className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`px-4 py-2 rounded-lg max-w-[75%] break-words ${
+                  isMyMessage ? 'bg-primary-normal text-white' : 'bg-white text-gray-80'
+                } ${isSameSender ? 'mt-1' : 'mt-4'}`}
+              >
+                {msg.message}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* 마지막 메시지의 시간 표시 */}
+        <p className="text-gray-500 text-xs text-center mt-2">{data.messageList.at(-1)?.sentAt}</p>
       </div>
     </div>
   );

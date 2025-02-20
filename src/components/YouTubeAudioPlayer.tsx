@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import YouTube from 'react-youtube';
-import play from '@/assets/icons/play.svg';
+import play from '@/assets/icons/play/play.svg';
 import pause from '@/assets/icons/pause.svg';
-import playCircle from '@/assets/icons/play-circle.svg';
+import playCircle from '@/assets/icons/play/play-circle.svg';
 import pauseCircle from '@/assets/icons/pause-circle.svg';
 import playGray from '@/assets/icons/play-icon-gray.svg';
 import pauseGray from '@/assets/icons/pause-icon-gray.svg';

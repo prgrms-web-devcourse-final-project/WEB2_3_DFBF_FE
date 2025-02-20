@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import play from '@/assets/icons/play.svg';
+import play from '@/assets/icons/play/play.svg';
 import defaultImage from '@assets/images/default.png';
 import YouTubeAudioPlayer from '@/components/YouTubeAudioPlayer';
 import { searchYoutubeVideo } from '@/apis/youtube';
@@ -84,7 +84,6 @@ export default function ChatMusicPlayer() {
       <div className="flex w-[calc(100%-28px)]">
         <img src={musicInfo.album_image} alt="album" className="w-[48px] h-[48px]" />
         <div className="relative flex-grow mx-2 overflow-hidden">
-
           <div ref={containerRef} className="w-full">
             <p
               ref={titleRef}

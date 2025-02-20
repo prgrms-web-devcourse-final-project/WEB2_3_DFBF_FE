@@ -4,6 +4,8 @@ import play from '@/assets/icons/play.svg';
 import pause from '@/assets/icons/pause.svg';
 import playCircle from '@/assets/icons/play-circle.svg';
 import pauseCircle from '@/assets/icons/pause-circle.svg';
+import playGray from '@/assets/icons/play-icon-gray.svg';
+import pauseGray from '@/assets/icons/pause-icon-gray.svg';
 import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
@@ -11,14 +13,14 @@ interface YouTubeAudioPlayerProps {
   videoId: string;
   isPlaying: boolean;
   onPlayPauseToggle: () => void;
-  isCircleIcon?: boolean;
+  iconType?: 'normal' | 'circle' | 'gray';
 }
 
 const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
   videoId,
   isPlaying,
   onPlayPauseToggle,
-  isCircleIcon = false,
+  iconType = 'normal',
 }) => {
   const playerRef = useRef<any>(null); // YouTube Player 인스턴스를 저장
   const [isVideoLoaded, setIsVideoLoaded] = useState(false); // 사용자가 play 버튼을 눌러야만 youtube 로드하기
@@ -62,17 +64,24 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
     onPlayPauseToggle(); // 부모 컴포넌트에 상태 변경 알림
   };
 
+  const getIcon = () => {
+    switch (iconType) {
+      case 'circle':
+        return isPlaying ? pauseCircle : playCircle;
+      case 'gray':
+        return isPlaying ? pauseGray : playGray;
+      default:
+        return isPlaying ? pause : play;
+    }
+  };
+
   return (
     <div>
       {isVideoLoaded && (
         <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
       )}
       <button onClick={togglePlay} className="cursor-pointer h-full">
-        <img
-          src={isCircleIcon ? (isPlaying ? pauseCircle : playCircle) : isPlaying ? pause : play}
-          className={twMerge('w-[28px]', isCircleIcon && 'w-[32px]s')}
-          alt="play"
-        />
+        <img src={getIcon()} alt="play" />
       </button>
     </div>
   );

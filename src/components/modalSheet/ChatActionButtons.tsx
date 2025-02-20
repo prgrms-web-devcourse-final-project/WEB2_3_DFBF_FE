@@ -1,6 +1,6 @@
 import commentIcon from '@assets/icons/comment-icon.svg';
 import homeIcon from '@assets/icons/home-icon.svg';
-import CardDetailButtons from '@/components/CardDetailButtons';
+import CardDetailButtons from '@/components/modalSheet/CardDetailButtons';
 import headsetIcon from '@assets/icons/headset-icon-gray.svg';
 
 // 카드상세 모달에서 채팅중인지에 따라서 버튼 속성 결정

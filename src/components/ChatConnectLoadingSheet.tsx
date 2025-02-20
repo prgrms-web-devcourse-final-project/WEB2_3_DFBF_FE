@@ -27,7 +27,7 @@ export default function ChatConnectLoadingSheet() {
           <img src={sad} alt="연결실패" />
 
           <div className="absolute bottom-10 flex gap-[6px] px-3 w-full">
-            <Button type="primary">홈으로 가기</Button>
+            <Button variant="primary">홈으로 가기</Button>
           </div>
         </div>
       </div>
@@ -66,8 +66,8 @@ export default function ChatConnectLoadingSheet() {
         {/* 받는 사람일 경우 */}
         {isReceiver && (
           <div className="absolute bottom-10 flex gap-[6px] px-3 w-full">
-            <Button type="primary">수락하기</Button>
-            <Button type="secondary">거절하기</Button>
+            <Button variant="primary">수락하기</Button>
+            <Button variant="secondary">거절하기</Button>
           </div>
         )}
       </div>

@@ -5,7 +5,9 @@ import Modal from './components/Modal';
 import Home from '@/pages/home/Home';
 import ChatConnectLoadingSheet from './components/ChatConnectLoadingSheet';
 import Chat from './pages/chat/Chat';
+import ChatRoom from './pages/chat/ChatRoom';
 import NotFound from './pages/NotFound';
+
 
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
           {/* test용 */}
           <Route path="/home" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/chatroom" element={<ChatRoom />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

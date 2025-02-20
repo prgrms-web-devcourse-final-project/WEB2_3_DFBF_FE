@@ -9,6 +9,7 @@ function Layout() {
     <div className="relative max-w-[600px] min-w-[320px] w-full min-h-screen mx-auto bg-background flex flex-col">
       {/* 헤더 */}
       <Header showMoreOptions />
+      {/* <HeaderChat showLogo={true} showNickname={true}/> */}
 
       {/* 메인 컨텐츠 영역 */}
       <div className="pt-[44px] flex-1 flex justify-center w-full px-3">

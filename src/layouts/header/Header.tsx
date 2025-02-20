@@ -4,7 +4,7 @@ import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 
 import postIcon from '@/assets/icons/post-icon.svg';
-import logo from '@assets/icons/logo.png';
+import logo from '@assets/icons/logo.svg';
 interface HeaderProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
   showPostButton?: boolean; //게시글 작성 버튼을 표시할지 결정

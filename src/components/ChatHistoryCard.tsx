@@ -53,7 +53,7 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
           <p className="caption-r text-gray-60 line-clamp-1">여기에 뭘 넣어야할까</p>
         </div>
       </div>
-      <Button type="primary" className="body-m">
+      <Button variant="primary" className="body-m">
         다시 대화 요청하기
       </Button>
     </div>

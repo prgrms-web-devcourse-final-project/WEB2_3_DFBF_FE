@@ -18,11 +18,11 @@ export default function Modal({}: ModalProps) {
         <h2 className="h4-b text-center">{modal.title}</h2>
         <p className="caption-r text-center">{modal.message}</p>
         <div className="mt-4 flex justify-end gap-[6px]">
-          <Button type="primary" onClick={modal.onConfirm} className="body-m">
+          <Button variant="primary" onClick={modal.onConfirm} className="body-m">
             확인
           </Button>
           {modal.onCancel && (
-            <Button type="secondary" onClick={modal.onCancel} className="body-m">
+            <Button variant="secondary" onClick={modal.onCancel} className="body-m">
               취소
             </Button>
           )}

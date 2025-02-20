@@ -83,7 +83,8 @@ export default function ChatMusicPlayer() {
     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
         <img src={musicInfo.album_image} alt="album" className="w-[48px] h-[48px]" />
-        <div className="mx-2 flex-grow overflow-hidden relative">
+        <div className="relative flex-grow mx-2 overflow-hidden">
+
           <div ref={containerRef} className="w-full">
             <p
               ref={titleRef}

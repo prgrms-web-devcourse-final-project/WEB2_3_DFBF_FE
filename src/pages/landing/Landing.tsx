@@ -12,7 +12,7 @@ function Landing() {
         </p>
         <MusicAnimation />
       </div>
-      <Button type="primary" className="absolute bottom-10 z-3">
+      <Button variant="primary" className="absolute bottom-10 z-3">
         지금 시작하기
       </Button>
     </div>

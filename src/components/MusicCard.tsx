@@ -1,6 +1,6 @@
 import Button from '@/components/Button';
 import defaultImage from '@assets/images/default.png';
-import play from '@assets/icons/play-circle.svg';
+import play from '@assets/icons/play/play-circle.svg';
 import pause from '@assets/icons/pause-circle.svg';
 
 interface MusicCardProps {
@@ -28,14 +28,14 @@ export default function MusicCard({
     <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
       <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
         <img
-          className="w-full h-full object-cover"
+          className="object-cover w-full h-full"
           src={image}
           alt={`${title || '음악'} 앨범 커버`}
         />
       </div>
       <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
-        <div className="flex flex-1 flex-col  min-w-0">
-          <div className=" body-large-m whitespace-nowrap text-ellipsis overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0">
+          <div className="overflow-hidden  body-large-m whitespace-nowrap text-ellipsis">
             {title}
           </div>
           <div className="font-saeeum text-[14px] leading-[18px] whitespace-nowrap text-ellipsis overflow-hidden">
@@ -43,12 +43,12 @@ export default function MusicCard({
           </div>
         </div>
         {rightElement === 'button' && (
-          <Button type={buttonType} className="w-[51px] h-[32px] flex-shrink-0">
+          <Button variant={buttonType} className="w-[51px] h-[32px] flex-shrink-0">
             {buttonContent}
           </Button>
         )}
         {rightElement === 'play' && (
-          <button className="hover:brightness-120 transition">
+          <button className="transition hover:brightness-120">
             <img src={playIcon} alt={`playIcon`} />
           </button>
         )}

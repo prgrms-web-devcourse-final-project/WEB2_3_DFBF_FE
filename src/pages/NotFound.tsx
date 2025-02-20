@@ -15,7 +15,7 @@ export default function NotFound() {
       </div>
 
       <div className="absolute bottom-10 flex px-3 w-full">
-        <Button type="primary">홈으로 가기</Button>
+        <Button variant="primary">홈으로 가기</Button>
       </div>
     </div>
   );

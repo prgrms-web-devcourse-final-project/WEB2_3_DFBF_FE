@@ -43,7 +43,7 @@ export default function MusicCard({
           </div>
         </div>
         {rightElement === 'button' && (
-          <Button type={buttonType} className="w-[51px] h-[32px] flex-shrink-0">
+          <Button variant={buttonType} className="w-[51px] h-[32px] flex-shrink-0">
             {buttonContent}
           </Button>
         )}

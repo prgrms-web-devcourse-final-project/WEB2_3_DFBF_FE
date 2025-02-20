@@ -1,6 +1,11 @@
 @layer base {
+  *:focus {
+    outline: none;
+  }
+
   body {
     font-family: var(--font-pretendard);
+    font-synthesis: none;
     @apply text-gray-80;
   }
 

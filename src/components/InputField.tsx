@@ -34,7 +34,7 @@ export default function InputField({
       <div className="flex gap-2">
         <Input id={id} {...props} />
         {variant && (
-          <Button variant={variant} className="w-[65px]" onClick={onClick}>
+          <Button variant={variant} className="w-[65px] flex-shrink-0" onClick={onClick}>
             {buttonText}
           </Button>
         )}

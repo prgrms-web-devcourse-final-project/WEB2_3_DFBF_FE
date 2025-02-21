@@ -9,6 +9,7 @@ import ChatRoom from './pages/chat/ChatRoom';
 import NotFound from './pages/NotFound';
 import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
+import Post from '@/pages/post/Post';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {/* test용 */}
           <Route path="/home" element={<Home />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/post" element={<Post />} />
           <Route path="/chatroom" element={<ChatRoom />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />

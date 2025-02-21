@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
@@ -11,9 +11,10 @@ interface HeaderProps {
 }
 
 function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps) {
+  const navigate = useNavigate();
   // 임시코드
   const handleEditProfile = () => {
-    console.log('프로필 수정 클릭!');
+    navigate('/mypage/edit')
   };
 
   const handleLogout = () => {
@@ -29,7 +30,10 @@ function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps
 
         <div className="flex gap-1">
           {showPostButton && (
-            <button className="w-6 h-6 flex justify-center items-center cursor-pointer">
+            <button
+              onClick={() => navigate('/post')}
+              className="w-6 h-6 flex justify-center items-center cursor-pointer"
+            >
               <img src={postIcon} alt="글작성" />
             </button>
           )}

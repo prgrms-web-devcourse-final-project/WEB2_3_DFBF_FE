@@ -1,6 +1,7 @@
 import React from 'react';
 import closeIcon from '@assets/icons/close-icon.svg';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
+import { useSheetStore } from '@/store/sheetStore';
 
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface ModalSheetLayoutProps {
 }
 
 function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
+  const { closeSheet } = useSheetStore();
   const handleEditProfile = () => {
     console.log('임시 함수');
   };
@@ -16,7 +18,10 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
       <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow overflow-y-auto">
         {/* 헤더 */}
         <div className="sticky top-0 flex min-h-[60px] h-[60px] items-center px-4 justify-between bg-white ">
-          <button className="w-6 h-6 flex justify-center items-center cursor-pointer">
+          <button
+            onClick={closeSheet}
+            className="w-6 h-6 flex justify-center items-center cursor-pointer"
+          >
             <img src={closeIcon} alt="닫기" />
           </button>
           {isOwnPost && (

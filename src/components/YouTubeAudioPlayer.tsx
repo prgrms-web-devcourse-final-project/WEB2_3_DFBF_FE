@@ -96,7 +96,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
       {isVideoLoaded && (
         <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
       )}
-      <button onClick={togglePlay} className="cursor-pointer h-full">
+      <button onClick={togglePlay} className="cursor-pointer h-full flex items-center">
         <img src={getIcon()} alt="play" />
       </button>
     </div>

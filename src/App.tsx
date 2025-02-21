@@ -11,6 +11,7 @@ import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
 import UserProfile from '@/pages/userprofile.tsx/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
+import EditProfile from '@/pages/editprofile/EditProfile';
 
 function App() {
   // 실제 로그인 여부를 체크하는 함수 (임시로 false, 실제 인증 로직 적용 필요)
@@ -29,6 +30,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/mypage" element={<UserProfile />} />
+            <Route path="/mypage/edit" element={<EditProfile />} />
             <Route path="/user/:userId" element={<UserProfile />} />
           </Route>
           <Route path="*" element={<NotFound />} />

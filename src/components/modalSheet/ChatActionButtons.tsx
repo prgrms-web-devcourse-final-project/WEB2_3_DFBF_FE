@@ -4,15 +4,24 @@ import CardDetailButtons from '@/components/modalSheet/CardDetailButtons';
 import headsetIcon from '@assets/icons/headset-icon-gray.svg';
 import playIcon from '@assets/icons/play/play-icon-gray.svg';
 import pauseIcon from '@assets/icons/pause-icon-gray.svg';
+import YouTubeAudioPlayer from '../YouTubeAudioPlayer';
 
 interface ChatActionButtonsProps {
   isChatting: boolean;
   isPlaying: boolean;
   isOwnPost: boolean; // 본인 글 여부(임시)
+  videoId: string;
+  onPlayPauseToggle: () => void;
 }
 
 // 카드상세 모달에서 채팅중인지에 따라서 버튼 속성 결정
-function ChatActionButtons({ isChatting, isPlaying, isOwnPost }: ChatActionButtonsProps) {
+function ChatActionButtons({
+  isChatting,
+  isPlaying,
+  isOwnPost,
+  videoId,
+  onPlayPauseToggle,
+}: ChatActionButtonsProps) {
   // 채팅 유무에 따라서 props다르게
   const chatButtonProps = isChatting
     ? { icon: headsetIcon, label: '대화 중...' }
@@ -26,7 +35,17 @@ function ChatActionButtons({ isChatting, isPlaying, isOwnPost }: ChatActionButto
   return (
     <>
       {!isOwnPost && <CardDetailButtons {...chatButtonProps} />}
-      <CardDetailButtons {...playButtonProps} />
+      {videoId ? (
+        <YouTubeAudioPlayer
+          videoId={videoId}
+          isPlaying={isPlaying}
+          onPlayPauseToggle={onPlayPauseToggle}
+          iconType="gray"
+        />
+      ) : (
+        <CardDetailButtons {...playButtonProps} />
+      )}
+
       {!isOwnPost && <CardDetailButtons icon={homeIcon} label="구경가기" />}
     </>
   );

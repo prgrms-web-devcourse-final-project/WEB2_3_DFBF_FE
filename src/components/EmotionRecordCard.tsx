@@ -16,19 +16,19 @@ function EmotionRecordCard({
   date,
 }: EmotionRecordCardProps) {
   return (
-    <div className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg">
+    <div className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg cursor-pointer">
       <div className="flex flex-col gap-[6px]">
         <EmotionBadge size="small" emotion={emotion} />
         <img
           src={albumImage}
           alt="앨범 이미지"
-          className="w-full aspect-square object-cover rounded-lg"
+          className="object-cover w-full rounded-lg aspect-square"
         />
       </div>
       <div className="">
-        <span className="body-b">
+        <div className="overflow-hidden body-b text-ellipsis whitespace-nowrap">
           {artistName} - {songTitle}
-        </span>
+        </div>
         <span className="caption-r">{date}</span>
       </div>
     </div>
@@ -36,3 +36,14 @@ function EmotionRecordCard({
 }
 
 export default EmotionRecordCard;
+
+// 사용 예시
+{
+  /* <EmotionRecordCard
+  emotion="HAPPY"
+  albumImage="https://pbs.twimg.com/media/E68WkI4VIAIW8eT.jpg"
+  songTitle="Hype Boy"
+  artistName="NewJeans"
+  date="2025.02.20"
+/> */
+}

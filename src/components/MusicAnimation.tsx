@@ -6,7 +6,7 @@ export default function MusicAnimation() {
     <div className="relative w-full mt-[120px] flex items-center justify-center">
       {/* PuffLoader */}
       <div className="absolute z-0">
-        <PuffLoader size={240} color="#EFDAFB" />
+        <PuffLoader size={240} color="#dca4f4" />
       </div>
 
       {/* 배경2*/}

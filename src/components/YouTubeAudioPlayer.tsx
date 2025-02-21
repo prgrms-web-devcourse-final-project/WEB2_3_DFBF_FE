@@ -4,7 +4,7 @@ import play from '@/assets/icons/play/play.svg';
 import pause from '@/assets/icons/pause.svg';
 import playCircle from '@/assets/icons/play/play-circle.svg';
 import pauseCircle from '@/assets/icons/pause-circle.svg';
-import playGray from '@/assets/icons/play-icon-gray.svg';
+import playGray from '@/assets/icons/play/play-icon-gray.svg';
 import pauseGray from '@/assets/icons/pause-icon-gray.svg';
 import { twMerge } from 'tailwind-merge';
 
@@ -74,13 +74,29 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
         return isPlaying ? pause : play;
     }
   };
+  if (iconType === 'gray') {
+    return (
+      <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={togglePlay}>
+        {isVideoLoaded && (
+          <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
+        )}
+        <button
+         
+          className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10 cursor-pointer"
+        >
+          <img src={getIcon()} alt="play" />
+        </button>
+        <span className="text-[9px] text-gray-50 font-normal">{isPlaying ? '재생 중...' : '재생하기'}</span>
+      </div>
+    );
+  }
 
   return (
     <div>
       {isVideoLoaded && (
         <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
       )}
-      <button onClick={togglePlay} className="cursor-pointer h-full">
+      <button onClick={togglePlay} className="cursor-pointer h-full flex items-center">
         <img src={getIcon()} alt="play" />
       </button>
     </div>

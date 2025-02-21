@@ -8,18 +8,21 @@ import {
   mypageActive,
 } from '@/assets/icons/nav';
 import { twMerge } from 'tailwind-merge';
+import HomeActive from '@/assets/icons/nav/HomeActive';
+import ChatActive from '@/assets/icons/nav/ChatActive';
+import MyPageActive from '@/assets/icons/nav/MyPageActive';
 
 const navItems = [
-  { path: '/home', label: '홈', icons: { default: homeDefault, active: homeActive } },
+  { path: '/home', label: '홈', icons: { default: homeDefault, active: <HomeActive /> } },
   {
     path: '/chat',
     label: '채팅',
-    icons: { default: chatDefault, active: chatActive },
+    icons: { default: chatDefault, active: <ChatActive /> },
   },
   {
     path: '/mypage',
     label: '마이페이지',
-    icons: { default: mypageDefault, active: mypageActive },
+    icons: { default: mypageDefault, active: <MyPageActive /> },
   },
 ];
 
@@ -34,7 +37,8 @@ export default function BottomNav() {
         >
           {({ isActive }) => (
             <>
-              <img src={isActive ? icons.active : icons.default} alt={`${label} Icon`} />
+              {isActive ? icons.active : <img src={icons.default} alt={`${label} Icon`} />}
+
               <span
                 className={twMerge(
                   'text-[10px] leading-[18px] text-gray-50',

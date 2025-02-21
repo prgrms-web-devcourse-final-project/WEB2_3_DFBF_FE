@@ -2,6 +2,7 @@ import React from 'react';
 import closeIcon from '@assets/icons/close-icon.svg';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import { useSheetStore } from '@/store/sheetStore';
+import { motion } from 'framer-motion';
 
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
@@ -13,9 +14,21 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
   const handleEditProfile = () => {
     console.log('임시 함수');
   };
+
+  // 애니메이션 설정
+  const modalVariants = {
+    hidden: { opacity: 0, y: -200 }, // 모달이 화면 밖에 위치하도록
+    visible: { opacity: 1, y: 0 }, // 화면 안으로 날아오는 효과
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 pb-4">
-      <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow overflow-y-auto">
+      <motion.div
+        className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow overflow-y-auto"
+        initial="hidden"
+        animate="visible"
+        variants={modalVariants}
+        transition={{ duration: 0.3 }}
+      >
         {/* 헤더 */}
         <div className="sticky top-0 flex min-h-[60px] h-[60px] items-center px-4 justify-between bg-white ">
           <button
@@ -34,7 +47,7 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
           )}
         </div>
         {children}
-      </div>
+      </motion.div>
     </div>
   );
 }

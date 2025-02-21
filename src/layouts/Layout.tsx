@@ -41,9 +41,7 @@ function Layout() {
       //글 작성 페이지
       location.pathname === '/posting' ||
       //회원가입 페이지
-      location.pathname === '/signup' ||
-      //내 정보 수정 페이지
-      location.pathname === '/mypageEdit'
+      location.pathname === '/signup'
     ) {
       return <HeaderWithBack />;
     } else if (
@@ -56,6 +54,11 @@ function Layout() {
       location.pathname.includes('/chatroom')
     ) {
       return <HeaderChat showLogo showNickname />;
+    } else if (
+      //정보 수정 페이지
+      location.pathname.includes('/mypage/edit')
+    ) {
+      return <HeaderWithBack text="내 정보 수정" />;
     } else return <Header />;
   };
 

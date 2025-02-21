@@ -4,6 +4,7 @@ import ChatActionButtons from '@/components/modalSheet/ChatActionButtons';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
 import { useEffect, useState } from 'react';
 import { searchYoutubeVideo } from '@/apis/youtube';
+import { useSheetStore } from '@/store/sheetStore';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -29,6 +30,8 @@ function CardDetailModal({
   const [isPlaying, setIsPlaying] = useState(false); // 현재 노래 재생 여부
   const [videoId, setVideoId] = useState(null);
 
+  const { isSheetOpen } = useSheetStore();
+
   useEffect(() => {
     const getVideoId = async () => {
       const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
@@ -36,6 +39,10 @@ function CardDetailModal({
     };
     getVideoId();
   }, []);
+
+  if (!isSheetOpen) {
+    return null;
+  }
 
   return (
     <ModalSheetLayout isOwnPost={isOwnPost}>

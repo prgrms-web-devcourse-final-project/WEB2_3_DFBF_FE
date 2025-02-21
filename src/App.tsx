@@ -13,10 +13,15 @@ import Post from '@/pages/post/Post';
 import UserProfile from '@/pages/userprofile.tsx/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
+import { useSpotifyAuth } from './hooks/useSpotifyAuth';
 
 function App() {
   // 실제 로그인 여부를 체크하는 함수 (임시로 false, 실제 인증 로직 적용 필요)
   const isAuthenticated = true;
+  // soundlink 로그인한 경우에만 spotify 로그인 후 토큰 가져오기
+  if (isAuthenticated) {
+    useSpotifyAuth();
+  }
   return (
     <>
       <Routes>

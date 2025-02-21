@@ -1,7 +1,6 @@
 import InfoMessage from '@/components/InfoMessage';
 import MusicSearchList from '@/components/modalSheet/MusicSearchList';
 import SearchBar from '@/components/SearchBar';
-import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
 import { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/default.png';
@@ -11,8 +10,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 function MusicSearchSheet() {
   const [searchText, setSearchText] = useState('');
   const [query, setQuery] = useState('');
-  //spotify 로그인 후 토큰 가져오기
-  const { token } = useSpotifyAuth();
+  //로컬 스토리지에서 토큰 가져오기
+  const spotifyAccessToken = localStorage.getItem('spotify_access_token');
 
   // 무한 스크롤 감지용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +22,7 @@ function MusicSearchSheet() {
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&offset=${pageParam}`,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${spotifyAccessToken}`,
         },
       },
     );
@@ -32,8 +31,8 @@ function MusicSearchSheet() {
 
   const {
     data, // 가져온 데이터
-    isLoading, // 첫 페이지 로딩 중
-    isFetchingNextPage, // 다음 페이지 로딩 중
+    // isLoading, // 첫 페이지 로딩 중
+    // isFetchingNextPage, // 다음 페이지 로딩 중
     hasNextPage, // 다음 페이지 여부
     fetchNextPage, // 다음 페이지 요청 함수
   } = useInfiniteQuery({
@@ -82,6 +81,9 @@ function MusicSearchSheet() {
 
   //음악 리스트 렌더링
   const musicListRender = () => {
+    if (!spotifyAccessToken) {
+      return <InfoMessage text="Spotify 로그인이 필요합니다." />;
+    }
     if (!query) {
       return <InfoMessage text="지금 생각나는 음악이 있나요?" />;
     }

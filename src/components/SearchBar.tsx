@@ -6,13 +6,13 @@ import { twMerge } from 'tailwind-merge';
 
 interface SearchBarProps {
   isSticky?: boolean;
-  query: string;
-  setQuery: (query: string) => void;
+  searchText: string;
+  setSearchText: (query: string) => void;
 }
 
 // 검색바
 // isSticky를 props로 줄때 검색바 고정
-function SearchBar({ isSticky = false, query, setQuery }: SearchBarProps) {
+function SearchBar({ isSticky = false, searchText, setSearchText }: SearchBarProps) {
   const [icon, setIcon] = useState(searchIconDefault); // 아이콘
   return (
     <div
@@ -25,8 +25,8 @@ function SearchBar({ isSticky = false, query, setQuery }: SearchBarProps) {
         type="text"
         className="w-full outline-none body-m placeholder:text-gray-400"
         placeholder="오늘의 음악을 검색해 보세요"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
       />
       <button
         className="cursor-pointer"

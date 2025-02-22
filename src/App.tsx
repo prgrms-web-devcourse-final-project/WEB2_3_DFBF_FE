@@ -13,6 +13,8 @@ import Post from '@/pages/post/Post';
 import UserProfile from '@/pages/userprofile.tsx/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
+import { useEffect } from 'react';
+import { loadYouTubeAPI } from './utils/youtubeApiLoader';
 import { useSpotifyAuth } from './hooks/useSpotifyAuth';
 
 function App() {
@@ -22,6 +24,10 @@ function App() {
   if (isAuthenticated) {
     useSpotifyAuth();
   }
+
+  useEffect(() => {
+    loadYouTubeAPI(); // 앱이 처음 실행될 때 API 로드
+  }, []);
   return (
     <>
       <Routes>

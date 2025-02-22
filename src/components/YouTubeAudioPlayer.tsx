@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import YouTube from 'react-youtube';
+import React, { useEffect, useRef } from 'react';
+// import YouTube from 'react-youtube';
 import play from '@/assets/icons/play/play.svg';
 import pause from '@/assets/icons/pause.svg';
 import playCircle from '@/assets/icons/play/play-circle.svg';
 import pauseCircle from '@/assets/icons/pause-circle.svg';
 import playGray from '@/assets/icons/play/play-icon-gray.svg';
 import pauseGray from '@/assets/icons/pause-icon-gray.svg';
-import { twMerge } from 'tailwind-merge';
+// import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
 interface YouTubeAudioPlayerProps {
@@ -22,48 +22,6 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
   onPlayPauseToggle,
   iconType = 'normal',
 }) => {
-  const playerRef = useRef<any>(null); // YouTube Player 인스턴스를 저장
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false); // 사용자가 play 버튼을 눌러야만 youtube 로드하기
-
-  // YouTube Player가 준비되었을 때 실행되는 함수
-  const onReady = (event: any) => {
-    playerRef.current = event.target; // 플레이어 인스턴스를 저장
-    if (isPlaying) {
-      playerRef.current.playVideo(); // 자동 재생
-    }
-  };
-
-  // YouTube Player 옵션
-  const opts = {
-    playerVars: {
-      autoplay: isVideoLoaded ? 1 : 0, // 자동 재생
-      controls: 0, // 컨트롤 숨기기
-      showinfo: 0, // 정보 숨기기
-      modestbranding: 1, // 브랜드 로고 숨기기
-      rel: 0, // 관련 영상 숨기기
-      iv_load_policy: 3, // 자막 숨기기
-    },
-  };
-
-  // 재생 / 일시정지 토글
-  const togglePlay = () => {
-    if (!isVideoLoaded) {
-      setIsVideoLoaded(true); // 비디오 로드 상태 업데이트
-      onPlayPauseToggle();
-      return;
-    }
-
-    if (!playerRef.current) return;
-
-    if (isPlaying) {
-      playerRef.current.pauseVideo(); // 유튜브 비디오 일시정지
-    } else {
-      playerRef.current.playVideo(); // 유튜브 비디오 재생
-    }
-
-    onPlayPauseToggle(); // 부모 컴포넌트에 상태 변경 알림
-  };
-
   const getIcon = () => {
     switch (iconType) {
       case 'circle':
@@ -74,29 +32,66 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
         return isPlaying ? pause : play;
     }
   };
+
+  const playerRef = useRef<YT.Player | null>(null);
+
+  // 플레이어 생성
+  const createPlayer = () => {
+    if (!playerRef.current) {
+      playerRef.current = new window.YT.Player('player-container', {
+        height: '0',
+        width: '0',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 1,
+          playsinline: 1,
+        },
+      });
+    } else {
+      playerRef.current.loadVideoById(videoId);
+    }
+  };
+
+  // 플레이 버튼 클릭 핸들러
+  const handlePlayButtonClick = () => {
+    if (!playerRef.current) {
+      createPlayer(); // 플레이어가 없으면 새로 생성
+    } else {
+      if (isPlaying) {
+        playerRef.current.pauseVideo(); // 재생 중이면 일시정지
+      } else {
+        playerRef.current.playVideo(); // 일시정지 중이면 재생
+      }
+    }
+    onPlayPauseToggle(); // 상태 변경 후 부모 컴포넌트로 알림
+  };
+
+  useEffect(() => {
+    createPlayer();
+  }, [videoId]);
+
   if (iconType === 'gray') {
     return (
-      <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={togglePlay}>
-        {isVideoLoaded && (
-          <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
-        )}
-        <button
-         
-          className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10 cursor-pointer"
-        >
+      <div
+        className="flex flex-col items-center gap-1 cursor-pointer"
+        onClick={handlePlayButtonClick}
+      >
+        <div id="player-container"></div>
+        <button className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10 cursor-pointer">
           <img src={getIcon()} alt="play" />
         </button>
-        <span className="text-[9px] text-gray-50 font-normal">{isPlaying ? '재생 중...' : '재생하기'}</span>
+        <span className="text-[9px] text-gray-50 font-normal">
+          {isPlaying ? '재생 중...' : '재생하기'}
+        </span>
       </div>
     );
   }
 
   return (
     <div>
-      {isVideoLoaded && (
-        <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
-      )}
-      <button onClick={togglePlay} className="cursor-pointer h-full flex items-center">
+      <div id="player-container"></div>
+      <button onClick={handlePlayButtonClick} className="cursor-pointer h-full flex items-center">
         <img src={getIcon()} alt="play" />
       </button>
     </div>

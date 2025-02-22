@@ -1,10 +1,10 @@
 import Button from '@/components/Button';
 import defaultImage from '@assets/images/default.png';
-import play from '@assets/icons/play/play-circle.svg';
-import pause from '@assets/icons/pause-circle.svg';
+// import play from '@assets/icons/play/play-circle.svg';
+// import pause from '@assets/icons/pause-circle.svg';
 import YouTubeAudioPlayer from './YouTubeAudioPlayer';
-import { useEffect, useState } from 'react';
-import { searchYoutubeVideo } from '@/apis/youtube';
+import { useState } from 'react';
+import { useSearchYoutubeVideo } from '@/apis/youtube';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 
@@ -26,17 +26,10 @@ export default function MusicCard({
   rightElement = 'button',
 }: MusicCardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoId, setVideoId] = useState(null);
 
   const { isSheetOpen, openSheet } = useSheetStore();
 
-  useEffect(() => {
-    const getVideoId = async () => {
-      const id = await searchYoutubeVideo(`${artist} - ${title} lyrics`);
-      setVideoId(id);
-    };
-    getVideoId();
-  }, []);
+  const { data: videoId } = useSearchYoutubeVideo(`${artist} - ${title} lyrics`);
   return (
     <>
       <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">

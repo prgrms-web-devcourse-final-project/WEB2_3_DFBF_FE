@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import play from '@/assets/icons/play/play.svg';
 import defaultImage from '@assets/images/default.png';
 import YouTubeAudioPlayer from '@/components/YouTubeAudioPlayer';
-import { searchYoutubeVideo } from '@/apis/youtube';
+import { useSearchYoutubeVideo } from '@/apis/youtube';
 
 export default function ChatMusicPlayer() {
   const [moveDistance, setMoveDistance] = useState(0);
@@ -21,14 +20,7 @@ export default function ChatMusicPlayer() {
   };
 
   // React Query로 유튜브 비디오 ID 가져오기
-  const {
-    data: videoId,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ['youtube', musicInfo.artist, musicInfo.title],
-    queryFn: () => searchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`),
-  });
+  const { data: videoId, isLoading, isError } = useSearchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
   useEffect(() => {
@@ -60,7 +52,7 @@ export default function ChatMusicPlayer() {
         </button>
       </div>
     );
-  if (error)
+  if (isError)
     return (
       <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
         <div className="flex w-[calc(100%-28px)]">

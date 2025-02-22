@@ -20,8 +20,8 @@ export default defineConfig({
         description: 'SoundLink',
         start_url: '/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#000000',
+        background_color: '#f3e8ff',
+        theme_color: '#faf5ff',
         icons: [
           {
             src: './icons/apple-touch-icon-57x57.png',
@@ -61,6 +61,11 @@ export default defineConfig({
           {
             src: './icons/apple-touch-icon-152x152.png',
             sizes: '152x152',
+            type: 'image/png',
+          },
+          {
+            src: './icons/apple-touch-icon-192x192.png',
+            sizes: '192x192',
             type: 'image/png',
           },
         ],

@@ -1,11 +1,8 @@
 import { NavLink } from 'react-router';
 import {
   chatDefault,
-  chatActive,
   homeDefault,
-  homeActive,
   mypageDefault,
-  mypageActive,
 } from '@/assets/icons/nav';
 import { twMerge } from 'tailwind-merge';
 import HomeActive from '@/assets/icons/nav/HomeActive';

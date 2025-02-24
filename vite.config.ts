@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'url';
 
 // https://vite.dev/config/
+
 export default defineConfig({
   plugins: [
     react(),
@@ -67,6 +68,15 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://43.203.98.65:8080',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        changeOrigin: true, // 백엔드 서버 주소로 변경
+      },
+    },
+  },
   // path설정
   resolve: {
     alias: {

@@ -39,11 +39,14 @@ function Layout() {
       return <Header showMoreOptions showPostButton />;
     } else if (
       //글 작성 페이지
-      location.pathname === '/posting' ||
+      location.pathname === '/posting'
+    ) {
+      return <HeaderWithBack />;
+    } else if (
       //회원가입 페이지
       location.pathname === '/signup'
     ) {
-      return <HeaderWithBack />;
+      return <HeaderWithBack text="회원가입" />;
     } else if (
       //유저 페이지
       location.pathname.includes('/user')

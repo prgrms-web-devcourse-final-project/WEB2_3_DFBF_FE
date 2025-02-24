@@ -22,7 +22,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
       if (playerRef.current && playerRef.current.seekTo) {
         playerRef.current.seekTo(0, false);
         playerRef.current.pauseVideo();
-      } 
+      }
       return;
     } // API 준비되지 않았거나 videoId가 없으면
 
@@ -32,9 +32,10 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
         width: '1px',
         videoId: videoId,
         playerVars: {
-          autoplay: 0,
+          autoplay: 1,
           controls: 0,
           playsinline: 1,
+          origin: window.location.origin, // 현재 페이지의 origin을 전달
         },
       });
     } else {
@@ -66,11 +67,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
       playerElement.style.top = '0px';
     }
   }, []);
-  return (
-    <div>
-      <div id={`player-${playerId}`}></div>
-    </div>
-  );
+  return <div id={`player-${playerId}`}></div>;
 };
 
 export default YouTubeAudioPlayer;

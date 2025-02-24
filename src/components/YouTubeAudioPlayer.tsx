@@ -1,99 +1,72 @@
 import React, { useEffect, useRef } from 'react';
 // import YouTube from 'react-youtube';
-import play from '@/assets/icons/play/play.svg';
-import pause from '@/assets/icons/pause.svg';
-import playCircle from '@/assets/icons/play/play-circle.svg';
-import pauseCircle from '@/assets/icons/pause-circle.svg';
-import playGray from '@/assets/icons/play/play-icon-gray.svg';
-import pauseGray from '@/assets/icons/pause-icon-gray.svg';
+import { useYouTubeStore } from '@/store/youtubeStore';
 // import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
 interface YouTubeAudioPlayerProps {
-  videoId: string;
-  isPlaying: boolean;
-  onPlayPauseToggle: () => void;
-  iconType?: 'normal' | 'circle' | 'gray';
+  playerId: '1' | '2' | '3';
 }
 
-const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
-  videoId,
-  isPlaying,
-  onPlayPauseToggle,
-  iconType = 'normal',
-}) => {
-  const getIcon = () => {
-    switch (iconType) {
-      case 'circle':
-        return isPlaying ? pauseCircle : playCircle;
-      case 'gray':
-        return isPlaying ? pauseGray : playGray;
-      default:
-        return isPlaying ? pause : play;
-    }
-  };
+const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => {
+  const { isApiReady, players, setIsPlaying } = useYouTubeStore();
 
   const playerRef = useRef<YT.Player | null>(null);
+  const videoId = players[playerId]?.videoId || null;
+  const isPlaying = players[playerId]?.isPlaying || false;
 
   // 플레이어 생성
   const createPlayer = () => {
+    if (!isApiReady || !videoId) {
+      if (playerRef.current) {
+        playerRef.current.seekTo(0, false);
+      }
+      return;
+    } // API 준비되지 않았거나 videoId가 없으면
+
     if (!playerRef.current) {
-      playerRef.current = new window.YT.Player('player-container', {
-        height: '0',
-        width: '0',
+      playerRef.current = new window.YT.Player(`player-${playerId}`, {
+        height: '1px',
+        width: '1px',
         videoId: videoId,
         playerVars: {
-          autoplay: 1,
-          controls: 1,
+          autoplay: 0,
+          controls: 0,
           playsinline: 1,
         },
       });
     } else {
-      playerRef.current.loadVideoById(videoId);
+      playerRef.current.loadVideoById(videoId); // 이미 플레이어가 있으면 비디오를 새로 로드
+      playerRef.current.pauseVideo();
+      setIsPlaying(playerId, false);
     }
   };
 
-  // 플레이 버튼 클릭 핸들러
-  const handlePlayButtonClick = () => {
-    if (!playerRef.current) {
-      createPlayer(); // 플레이어가 없으면 새로 생성
+  // isPlaying 변경 시 실행
+  useEffect(() => {
+    if (!playerRef.current) return; // 플레이어가 초기화되지 않았으면 실행 안 함
+
+    if (isPlaying) {
+      playerRef.current.playVideo?.();
     } else {
-      if (isPlaying) {
-        playerRef.current.pauseVideo(); // 재생 중이면 일시정지
-      } else {
-        playerRef.current.playVideo(); // 일시정지 중이면 재생
-      }
+      playerRef.current.pauseVideo?.();
     }
-    onPlayPauseToggle(); // 상태 변경 후 부모 컴포넌트로 알림
-  };
+  }, [isPlaying]);
 
   useEffect(() => {
     createPlayer();
-  }, [videoId]);
+  }, [videoId, isApiReady]);
 
-  if (iconType === 'gray') {
-    return (
-      <div
-        className="flex flex-col items-center gap-1 cursor-pointer"
-        onClick={handlePlayButtonClick}
-      >
-        <div id="player-container"></div>
-        <button className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10 cursor-pointer">
-          <img src={getIcon()} alt="play" />
-        </button>
-        <span className="text-[9px] text-gray-50 font-normal">
-          {isPlaying ? '재생 중...' : '재생하기'}
-        </span>
-      </div>
-    );
-  }
-
+  useEffect(() => {
+    const playerElement = document.getElementById(`player-${playerId}`);
+    if (playerElement) {
+      playerElement.style.position = 'absolute';
+      playerElement.style.top = '0px';
+    }
+  }, []);
   return (
     <div>
-      <div id="player-container"></div>
-      <button onClick={handlePlayButtonClick} className="cursor-pointer h-full flex items-center">
-        <img src={getIcon()} alt="play" />
-      </button>
+      <div id={`player-${playerId}`}></div>
     </div>
   );
 };

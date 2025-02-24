@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import play from '@/assets/icons/play/play.svg';
 import defaultImage from '@assets/images/default.png';
-import YouTubeAudioPlayer from '@/components/YouTubeAudioPlayer';
+import play from '@assets/icons/play/play.svg';
+import pause from '@assets/icons/pause.svg';
 import { useSearchYoutubeVideo } from '@/apis/youtube';
+import { useYouTubeStore } from '@/store/youtubeStore';
 
 export default function ChatMusicPlayer() {
   const [moveDistance, setMoveDistance] = useState(0);
@@ -19,8 +20,25 @@ export default function ChatMusicPlayer() {
       'https://i.namu.wiki/i/L4gbrOjwTsNcvpsCq8b4P-3eX9Cs0lrIvwHxtFE7S5jaeMsbdelvBqCLMwe6AJJw2zBQqSI4wE0_Qn-EwaeZdnLvseFvt1w9dg-xo9KrFF_GacO_R7BnHI6XRyDDXvr-PHMmSEnqgcrzLjdbQF9obA.webp',
   };
 
+  const { setVideoId } = useYouTubeStore();
+
   // React Query로 유튜브 비디오 ID 가져오기
-  const { data: videoId, isLoading, isError } = useSearchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`);
+  const {
+    data: searchedVideoId,
+    isLoading,
+    isError,
+  } = useSearchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`);
+
+  const handlePlayButton = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
+  useEffect(() => {
+    if (searchedVideoId) {
+      setVideoId('2',searchedVideoId); // YouTube store의 videoId를 업데이트
+    }
+  }, [searchedVideoId]);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
   useEffect(() => {
@@ -98,12 +116,9 @@ export default function ChatMusicPlayer() {
           </p>
         </div>
       </div>
-      {/* 플레이 버튼에 유튜브 플레이어 연결 */}
-      <YouTubeAudioPlayer
-        videoId={videoId}
-        isPlaying={isPlaying}
-        onPlayPauseToggle={() => setIsPlaying(!isPlaying)}
-      />
+      <button onClick={handlePlayButton}>
+        <img src={isPlaying ? pause : play} className="w-[28px]" alt="play" />
+      </button>
     </div>
   );
 }

@@ -16,6 +16,8 @@ import EditProfile from '@/pages/editprofile/EditProfile';
 import { useEffect } from 'react';
 import { loadYouTubeAPI } from './utils/youtubeApiLoader';
 import { useSpotifyAuth } from './hooks/useSpotifyAuth';
+import { useYouTubeStore } from './store/youtubeStore';
+import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
 function App() {
   // 실제 로그인 여부를 체크하는 함수 (임시로 false, 실제 인증 로직 적용 필요)
@@ -25,8 +27,12 @@ function App() {
     useSpotifyAuth();
   }
 
+  const { setApiReady } = useYouTubeStore();
+
   useEffect(() => {
-    loadYouTubeAPI(); // 앱이 처음 실행될 때 API 로드
+    loadYouTubeAPI().then(() => {
+      setApiReady();
+    }); // 앱이 처음 실행될 때 API 로드
   }, []);
   return (
     <>
@@ -51,6 +57,9 @@ function App() {
       </Routes>
       <Modal />
       <ChatConnectLoadingSheet />
+      <YouTubeAudioPlayer playerId="1" />
+      <YouTubeAudioPlayer playerId="2" />
+      <YouTubeAudioPlayer playerId="3" />
     </>
   );
 }

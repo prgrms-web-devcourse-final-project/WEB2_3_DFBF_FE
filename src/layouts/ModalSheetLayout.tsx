@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import closeIcon from '@assets/icons/close-icon.svg';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import { useSheetStore } from '@/store/sheetStore';
 import { motion } from 'framer-motion';
+import { useYouTubeStore } from '@/store/youtubeStore';
 
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
@@ -10,9 +11,18 @@ interface ModalSheetLayoutProps {
 }
 
 function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
+  const wasPlayingRef = useRef(false); // 이전 상태 저장
+
   const { closeSheet } = useSheetStore();
+  const { players, setIsPlaying, setVideoId } = useYouTubeStore();
+
   const handleEditProfile = () => {
     console.log('임시 함수');
+  };
+  const handleCloseButton = () => {
+    closeSheet();
+    setIsPlaying('3', false);
+    setVideoId('3', null);
   };
 
   // 애니메이션 설정
@@ -20,10 +30,25 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
     hidden: { opacity: 0, y: -200 }, // 모달이 화면 밖에 위치하도록
     visible: { opacity: 1, y: 0 }, // 화면 안으로 날아오는 효과
   };
+
+  useEffect(() => {
+    // 1번 플레이어의 현재 재생 상태 저장
+    wasPlayingRef.current = players['1']?.isPlaying || false;
+
+    // 1번 플레이어 정지
+    setIsPlaying('1', false);
+
+    return () => {
+      // 이전에 재생 중이었다면 다시 재생
+      if (wasPlayingRef.current) {
+        setIsPlaying('1', true);
+      }
+    };
+  }, []);
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 pb-4">
       <motion.div
-        className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow overflow-y-auto"
+        className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow border border-gray-5 overflow-y-auto"
         initial="hidden"
         animate="visible"
         variants={modalVariants}
@@ -32,7 +57,7 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
         {/* 헤더 */}
         <div className="sticky top-0 flex min-h-[60px] h-[60px] items-center px-4 justify-between bg-white ">
           <button
-            onClick={closeSheet}
+            onClick={handleCloseButton}
             className="w-6 h-6 flex justify-center items-center cursor-pointer"
           >
             <img src={closeIcon} alt="닫기" />

@@ -42,9 +42,16 @@ export default function MusicCard({
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
     if (searchedVideoId) {
-      setVideoId('1',searchedVideoId); // YouTube store의 videoId를 업데이트
+      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
     }
   }, [searchedVideoId]);
+
+  useEffect(() => {
+    return () => {
+      setVideoId('1', null);
+      setIsPlaying('1', false);
+    };
+  }, []);
   return (
     <>
       <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">

@@ -1,6 +1,7 @@
+import { useAuthStore } from '@/store/authStore';
+import { Navigate, Route, Routes } from 'react-router';
 import Layout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
-import { Navigate, Route, Routes } from 'react-router';
 import Modal from './components/Modal';
 import Home from '@/pages/home/Home';
 import ChatConnectLoadingSheet from './components/ChatConnectLoadingSheet';
@@ -19,9 +20,13 @@ import { useSpotifyAuth } from './hooks/useSpotifyAuth';
 import { useYouTubeStore } from './store/youtubeStore';
 import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
+// TODO: 테스트용 나중에 지우기
+import TestLoginModal from '@/components/testLogin/TestLoginModal';
+
 function App() {
   // 실제 로그인 여부를 체크하는 함수 (임시로 false, 실제 인증 로직 적용 필요)
-  const isAuthenticated = true;
+  // const isAuthenticated = true;
+  const { isAuthenticated } = useAuthStore();
   // soundlink 로그인한 경우에만 spotify 로그인 후 토큰 가져오기
   if (isAuthenticated) {
     useSpotifyAuth();
@@ -36,9 +41,15 @@ function App() {
   }, []);
   return (
     <>
+      {/* 테스트용 나중에 지우기 */}
+      <TestLoginModal />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />} />
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+
           {/* test용 */}
           {/* PrivateRoute 적용 */}
           <Route element={<PrivateRoute />}>
@@ -46,8 +57,6 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/post" element={<Post />} />
             <Route path="/chatroom" element={<ChatRoom />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
             <Route path="/mypage" element={<UserProfile />} />
             <Route path="/mypage/edit" element={<EditProfile />} />
             <Route path="/user/:userId" element={<UserProfile />} />

@@ -1,8 +1,13 @@
+import { fetchBlockList } from '@/apis/blockList';
 import Button from '@/components/Button';
+import Loading from '@/components/Loading';
 import { useModalStore } from '@/store/modalStore';
+import { useEffect, useState } from 'react';
 
 export default function BlockList() {
   const { openModal, closeModal } = useModalStore();
+
+  const [blockList, setBlockList] = useState(null);
 
   const mockData = [
     {
@@ -43,8 +48,17 @@ export default function BlockList() {
     });
   };
 
+  useEffect(() => {
+    const getBlockList = async () => {
+      const data = await fetchBlockList();
+      console.log(data);
+      setBlockList(data);
+    };
+    getBlockList();
+  }, []);
+
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-[10px]">
       <div className="bg-white/80 w-full flex justify-between items-center p-3 rounded-lg">
         <div>
           <p className="body-m text-gray-80">하입뽀이</p>
@@ -54,6 +68,17 @@ export default function BlockList() {
           차단 해제
         </Button>
       </div>
+
+      <div className="bg-white/80 w-full flex justify-between items-center p-3 rounded-lg">
+        <div>
+          <p className="body-m text-gray-80">하입뽀이</p>
+          <p className="caption-r text-gray-60">@boy1234</p>
+        </div>
+        <Button variant="primary" className="w-[64px]" onClick={handleBlock}>
+          차단 해제
+        </Button>
+      </div>
+      <Loading />
     </div>
   );
 }

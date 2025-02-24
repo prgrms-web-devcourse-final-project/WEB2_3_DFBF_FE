@@ -14,7 +14,11 @@ import Post from '@/pages/post/Post';
 import UserProfile from '@/pages/userprofile.tsx/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
+import { useEffect } from 'react';
+import { loadYouTubeAPI } from './utils/youtubeApiLoader';
 import { useSpotifyAuth } from './hooks/useSpotifyAuth';
+import { useYouTubeStore } from './store/youtubeStore';
+import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
 // TODO: 테스트용 나중에 지우기
 import TestLoginModal from '@/components/testLogin/TestLoginModal';
@@ -27,6 +31,14 @@ function App() {
   if (isAuthenticated) {
     useSpotifyAuth();
   }
+
+  const { setApiReady } = useYouTubeStore();
+
+  useEffect(() => {
+    loadYouTubeAPI().then(() => {
+      setApiReady();
+    }); // 앱이 처음 실행될 때 API 로드
+  }, []);
   return (
     <>
       {/* 테스트용 나중에 지우기 */}
@@ -54,6 +66,9 @@ function App() {
       </Routes>
       <Modal />
       <ChatConnectLoadingSheet />
+      <YouTubeAudioPlayer playerId="1" />
+      <YouTubeAudioPlayer playerId="2" />
+      <YouTubeAudioPlayer playerId="3" />
     </>
   );
 }

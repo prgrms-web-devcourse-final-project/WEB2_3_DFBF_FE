@@ -1,23 +1,24 @@
-// 감정 정보 타입
-interface Emotion {
-  emotion_id: number;
-  name: string;
-}
-
-// 음악 정보 타입
-interface SpotifyMusic {
-  spotify_id: number;
+// Spotify 음악 정보
+interface RecordSpotifyMusic {
+  spotifyId: number;
   title: string;
   artist: string;
-  album_image: string | null | undefined;
+  albumImage: string;
 }
 
-// 감정 기록 타입
+// 개별 기록 데이터
 interface EmotionRecord {
-  record_id: number;
-  user_id: number;
-  emotion: Emotion;
-  spotify_music: SpotifyMusic;
+  recordId: number;
+  emotion: string;
+  spotifyMusic: RecordSpotifyMusic;
   comment: string;
-  created_at: string; // ISO 8601 날짜 문자열
+  createdAt: string;
+}
+
+// 전체 데이터 구조
+interface EmotionRecordResponse {
+  records: Record[];
+  currentPage: number;
+  totalPages: number;
+  totalElements: number;
 }

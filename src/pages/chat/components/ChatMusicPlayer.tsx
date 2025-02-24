@@ -9,7 +9,6 @@ export default function ChatMusicPlayer() {
   const [moveDistance, setMoveDistance] = useState(0);
   const titleRef = useRef<HTMLParagraphElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   // 음악 정보
   const musicInfo = {
@@ -20,7 +19,8 @@ export default function ChatMusicPlayer() {
       'https://i.namu.wiki/i/L4gbrOjwTsNcvpsCq8b4P-3eX9Cs0lrIvwHxtFE7S5jaeMsbdelvBqCLMwe6AJJw2zBQqSI4wE0_Qn-EwaeZdnLvseFvt1w9dg-xo9KrFF_GacO_R7BnHI6XRyDDXvr-PHMmSEnqgcrzLjdbQF9obA.webp',
   };
 
-  const { setVideoId } = useYouTubeStore();
+  const { setVideoId, players, setIsPlaying } = useYouTubeStore();
+  const isPlaying = players['2']?.isPlaying || false;
 
   // React Query로 유튜브 비디오 ID 가져오기
   const {
@@ -30,13 +30,13 @@ export default function ChatMusicPlayer() {
   } = useSearchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`);
 
   const handlePlayButton = () => {
-    setIsPlaying((prev) => !prev);
+    setIsPlaying('2', (prev) => !prev);
   };
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
     if (searchedVideoId) {
-      setVideoId('2',searchedVideoId); // YouTube store의 videoId를 업데이트
+      setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
     }
   }, [searchedVideoId]);
 

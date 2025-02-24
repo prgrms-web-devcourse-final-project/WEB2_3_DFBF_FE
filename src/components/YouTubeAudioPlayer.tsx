@@ -4,6 +4,7 @@ import { useYouTubeStore } from '@/store/youtubeStore';
 // import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
+//1: MusicCard 2: chat 3: post
 interface YouTubeAudioPlayerProps {
   playerId: '1' | '2' | '3';
 }
@@ -18,9 +19,10 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
   // 플레이어 생성
   const createPlayer = () => {
     if (!isApiReady || !videoId) {
-      if (playerRef.current) {
+      if (playerRef.current && playerRef.current.seekTo) {
         playerRef.current.seekTo(0, false);
-      }
+        playerRef.current.pauseVideo();
+      } 
       return;
     } // API 준비되지 않았거나 videoId가 없으면
 

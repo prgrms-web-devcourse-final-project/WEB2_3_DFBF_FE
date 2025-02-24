@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { login } from '@/apis/auth';
 import Button from '@/components/Button';
 import logo from '@assets/icons/logo.svg';
@@ -7,6 +7,8 @@ import Input from '@/components/Input';
 import { useState } from 'react';
 
 export default function Login() {
+const navigate = useNavigate();
+
   const [userId, setUserId] = useState(''); //아이디
   const [userPassword, setUserPassword] = useState(''); //비밀번호
 
@@ -27,6 +29,8 @@ export default function Login() {
       const { code, data } = await login(userId, userPassword);
       // TODO: 실패 반환시 에러 모달 추가
       console.log('로그인 됨', code, data.accessToken);
+      navigate('/home')
+      
     } catch (error) {
       console.log('로그인 에러', error);
     }
@@ -79,6 +83,7 @@ export default function Login() {
         <div className="caption-r">
           계정이 없으신가요?
           <Link to="/signup" className="text-primary-active">
+            {' '}
             회원가입
           </Link>
         </div>

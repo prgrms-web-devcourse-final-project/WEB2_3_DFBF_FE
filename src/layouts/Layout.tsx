@@ -41,7 +41,9 @@ function Layout() {
       //글 작성 페이지
       location.pathname === '/post' ||
       //회원가입 페이지
-      location.pathname === '/signup'
+      location.pathname === '/signup'||
+       //차단목록 페이지
+      location.pathname === '/mypage/blocklist'
     ) {
       return <HeaderWithBack />;
     } else if (

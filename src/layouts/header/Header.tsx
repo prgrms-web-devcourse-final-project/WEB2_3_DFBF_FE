@@ -14,12 +14,15 @@ function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps
   const navigate = useNavigate();
   // 임시코드
   const handleEditProfile = () => {
-    navigate('/mypage/edit')
+    navigate('/mypage/edit');
   };
 
   const handleLogout = () => {
     console.log('로그아웃 클릭!');
   };
+  const handleBLockList = () =>{
+    navigate('/mypage/blocklist');
+  }
 
   return (
     <HedaerLayout>
@@ -43,6 +46,7 @@ function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps
             <MoreOptionsSelect
               items={[
                 { label: '프로필 수정', onClick: handleEditProfile },
+                { label: '차단 목록', onClick: handleBLockList },
                 { label: '로그아웃', onClick: handleLogout },
               ]}
             />

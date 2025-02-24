@@ -65,7 +65,7 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-5 mt-5 h-fit w-full border border-amber-300">
+    <div className="flex flex-col gap-5 mt-5 h-fit w-full">
       <SearchBar />
       {/* 감정 필터링 */}
       <div className="flex flex-col items-center gap-5">

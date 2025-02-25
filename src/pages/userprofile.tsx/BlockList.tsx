@@ -1,5 +1,6 @@
-import { fetchBlockList } from '@/apis/blockList';
+import { deleteBlockList, fetchBlockList } from '@/apis/blockList';
 import Button from '@/components/Button';
+import InfoMessage from '@/components/InfoMessage';
 import Loading from '@/components/Loading';
 import { useModalStore } from '@/store/modalStore';
 import { useEffect, useState } from 'react';
@@ -52,13 +53,13 @@ export default function BlockList() {
         { text: '님 차단을 해제할까요?' },
       ],
       message: '이제 피드에서 상대방의 글을 볼 수 있어요',
-      onConfirm() {
+      onConfirm: async () => {
         console.log('확인');
-        const filtered = mockData.filter((data) => data.blockedUserId !== id);
-        setBlockList(filtered);
+        setBlockList((prev) => prev.filter((item) => item.blockedUserId !== id));
+        // await deleteBlockList(id);
         closeModal();
       },
-      onCancel() {
+      onCancel: () => {
         console.log('취소');
         closeModal();
       },
@@ -66,14 +67,22 @@ export default function BlockList() {
   };
 
   useEffect(() => {
-    // const getBlockList = async () => {
-    //   const data = await fetchBlockList();
-    //   console.log(data);
-    //   setBlockList(data);
-    // };
-    // getBlockList();
-    setBlockList(mockData);
+    const getBlockList = async () => {
+      const data = await fetchBlockList();
+      console.log(data);
+      setBlockList(data);
+    };
+    getBlockList();
+    // setBlockList(mockData);
   }, []);
+
+  if (!blockList.length) {
+    return (
+      <div className="flex items-center justify-center w-full">
+        <InfoMessage text="차단 목록이 비어있어요" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-[10px]">

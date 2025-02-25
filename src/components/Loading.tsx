@@ -1,17 +1,8 @@
 import { useEffect, useState } from 'react';
-import Lottie from 'react-lottie';
+import Lottie from 'lottie-react';
 
 export default function Loading() {
   const [animationData, setAnimationData] = useState(null);
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true, // 자동 재생
-    animationData: animationData, // 애니메이션 JSON 데이터
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  };
 
   useEffect(() => {
     fetch('https://cdn.lottielab.com/l/Dep5onAFaPJbNs.json')
@@ -20,7 +11,7 @@ export default function Loading() {
   }, []);
   return (
     <div className=" w-full h-[50px] overflow-hidden flex justify-center items-center">
-      <Lottie options={defaultOptions} height={70} width={70} />
+      <Lottie animationData={animationData} style={{ width: 70, height: 70 }} />
     </div>
   );
 }

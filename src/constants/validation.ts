@@ -1,4 +1,4 @@
-export const ID_ALLOWED_CHARACTERS = /^[a-zA-Z0-9]+$/; // 영문 + 숫자만 허용
+export const ID_REGEX = /^[a-zA-Z0-9]{5,20}$/; // 영문 + 숫자만 허용 (5~20자)
 
 export const PASSWORD_REQUIRED_RULES =
   /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;

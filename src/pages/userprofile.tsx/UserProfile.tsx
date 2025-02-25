@@ -10,7 +10,7 @@ function UserProfile() {
   const { openSheet } = useSheetStore();
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
-  const [posts, setPosts] = useState([]); // 게시물
+  // const [posts, setPosts] = useState([]); // 게시물
   const musicInfo = {
     spotifyId: 33,
     title: '라일락',

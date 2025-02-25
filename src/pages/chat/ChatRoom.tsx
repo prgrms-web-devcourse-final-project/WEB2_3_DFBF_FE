@@ -1,6 +1,9 @@
 import sendIcon from '@/assets/icons/send-icon.svg';
 import ChatMusicPlayer from './components/ChatMusicPlayer';
 import Button from '@/components/Button';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { useState } from 'react';
 
 interface ChatRoomProps {}
 
@@ -41,6 +44,72 @@ export default function ChatRoom({}: ChatRoomProps) {
       },
     ],
   };
+
+  const [stompClient, setStompClient] = useState<Client | null>(null);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [messageInput, setMessageInput] = useState("");
+
+
+  const connect = () => {
+    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const client = new Client({
+      webSocketFactory: () => socket,
+      onConnect: (frame) => {
+        console.log('[연결됨]', frame);
+        addMessage('WebSocket 연결 성공!');
+
+        // 과거 채팅 메시지 불러오기
+        fetch('http://localhost:8080/api/chat/history')
+          .then((res) => res.json())
+          .then((messages) => {
+            messages.forEach((msg: any) => addMessage(`[기록] ${msg.message}`));
+          });
+
+        // 실시간 채팅 메시지 구독
+        client.subscribe('/topic/public', (message) => {
+          addMessage(`[받음] ${message.body}`);
+        });
+
+        // 나쁜 말 필터링 메시지 구독
+        client.subscribe('/topic/badword', (message) => {
+          addMessage(`[나쁜말 감지] ${message.body}`);
+        });
+      },
+      onDisconnect: () => {
+        console.log('[연결 해제]');
+        addMessage('WebSocket 연결이 해제되었습니다.');
+      },
+    });
+    client.activate();
+    setStompClient(client);
+  };
+  // 웹소켓 연결 해제
+  const disconnect = () => {
+    if (stompClient) {
+      stompClient.deactivate();
+      setStompClient(null);
+      setMessages([]); // 연결 해제 시 채팅 초기화
+    }
+  };
+
+  // 메시지 전송
+  const sendMessage = () => {
+    if (messageInput.trim() && stompClient?.connected) {
+      stompClient.publish({
+        destination: '/app/sendMessage',
+        body: JSON.stringify({ userId: 1, message: messageInput }),
+      });
+
+      addMessage(`[보냄] ${messageInput}`);
+      setMessageInput(''); // 입력창 초기화
+    }
+  };
+
+  // 채팅 메시지 추가
+  const addMessage = (msg: string) => {
+    setMessages((prev) => [...prev, msg]);
+  };
+
 
   return (
     <div className="relative w-full max-w-[600px] mx-auto">

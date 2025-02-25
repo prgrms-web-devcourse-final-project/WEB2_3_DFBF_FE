@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import MusicAnimation from '@/components/MusicAnimation';
+import { Link } from 'react-router';
 function Landing() {
   return (
     <div className="flex flex-col w-full justify-center relative">
@@ -12,9 +13,11 @@ function Landing() {
         </p>
         <MusicAnimation />
       </div>
-      <Button variant="primary" className="absolute bottom-10 z-3">
-        지금 시작하기
-      </Button>
+      <Link to="/login">
+        <Button variant="primary" className="absolute bottom-10 z-3">
+          지금 시작하기
+        </Button>
+      </Link>
     </div>
   );
 }

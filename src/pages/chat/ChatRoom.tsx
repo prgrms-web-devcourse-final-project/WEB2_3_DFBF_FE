@@ -3,7 +3,8 @@ import ChatMusicPlayer from './components/ChatMusicPlayer';
 import Button from '@/components/Button';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { axiosInstance } from '@/apis/axios';
 
 interface ChatRoomProps {}
 
@@ -47,11 +48,10 @@ export default function ChatRoom({}: ChatRoomProps) {
 
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<string[]>([]);
-  const [messageInput, setMessageInput] = useState("");
-
+  const [messageInput, setMessageInput] = useState('');
 
   const connect = () => {
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const socket = new SockJS('ws://~~/chat');
     const client = new Client({
       webSocketFactory: () => socket,
       onConnect: (frame) => {
@@ -59,7 +59,7 @@ export default function ChatRoom({}: ChatRoomProps) {
         addMessage('WebSocket 연결 성공!');
 
         // 과거 채팅 메시지 불러오기
-        fetch('http://localhost:8080/api/chat/history')
+        fetch('ws://~~/chat')
           .then((res) => res.json())
           .then((messages) => {
             messages.forEach((msg: any) => addMessage(`[기록] ${msg.message}`));
@@ -68,11 +68,6 @@ export default function ChatRoom({}: ChatRoomProps) {
         // 실시간 채팅 메시지 구독
         client.subscribe('/topic/public', (message) => {
           addMessage(`[받음] ${message.body}`);
-        });
-
-        // 나쁜 말 필터링 메시지 구독
-        client.subscribe('/topic/badword', (message) => {
-          addMessage(`[나쁜말 감지] ${message.body}`);
         });
       },
       onDisconnect: () => {
@@ -110,6 +105,9 @@ export default function ChatRoom({}: ChatRoomProps) {
     setMessages((prev) => [...prev, msg]);
   };
 
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   return (
     <div className="relative w-full max-w-[600px] mx-auto">
@@ -143,6 +141,23 @@ export default function ChatRoom({}: ChatRoomProps) {
 
         {/* 마지막 메시지의 시간 표시 */}
         <p className="text-gray-500 text-xs text-center mt-2">{data.messageList.at(-1)?.sentAt}</p>
+      </div>
+
+      <div>
+        {messages.map((message) => (
+          <div></div>
+        ))}
+      </div>
+      <div>
+        <Button>채팅 연결</Button>
+        <Button>채팅 연결 해제</Button>
+        <input
+          type="text"
+          value={messageInput}
+          onChange={(e) => setMessageInput(e.target.value)}
+          className="bg-white"
+        />
+        <Button>전송</Button>
       </div>
 
       <div className="px-3 pt-[5px] pb-[19px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">

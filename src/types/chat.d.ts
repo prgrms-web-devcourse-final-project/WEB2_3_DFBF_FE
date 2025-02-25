@@ -7,4 +7,5 @@ interface ChatHistory {
   artist: string;
   album_image: string | null;
   created_at: string; // 또는 Date
+  comment: string;
 }

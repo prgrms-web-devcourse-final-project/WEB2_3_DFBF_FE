@@ -6,6 +6,11 @@ import { fileURLToPath, URL } from 'url';
 
 // https://vite.dev/config/
 export default defineConfig({
+  //sockjs : global is not defined 문제
+  define: {
+    global: 'window', // global을 window로 설정
+  },
+
   plugins: [
     react(),
     tailwindcss(),

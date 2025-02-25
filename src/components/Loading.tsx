@@ -10,8 +10,11 @@ export default function Loading() {
       .then((data) => setAnimationData(data));
   }, []);
   return (
-    <div className=" w-full h-[50px] overflow-hidden flex justify-center items-center">
-      <Lottie animationData={animationData} style={{ width: 70, height: 70 }} />
+    <div className="relative w-full h-[45px] overflow-hidden flex justify-center items-center">
+      <Lottie
+        animationData={animationData}
+        style={{ width: 50, height: 50, position: 'absolute', top: '0px' }}
+      />
     </div>
   );
 }

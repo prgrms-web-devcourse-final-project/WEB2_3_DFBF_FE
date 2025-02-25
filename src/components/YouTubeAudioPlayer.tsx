@@ -32,7 +32,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
         width: '1px',
         videoId: videoId,
         playerVars: {
-          autoplay: 1,
+          autoplay: 0,
           controls: 0,
           playsinline: 1,
           origin: window.location.origin, // 현재 페이지의 origin을 전달

@@ -2,9 +2,11 @@ import Button from '@/components/Button';
 import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play-circle.svg';
 import pause from '@assets/icons/pause-circle.svg';
-import YouTubeAudioPlayer from './YouTubeAudioPlayer';
-import { useEffect, useState } from 'react';
-import { searchYoutubeVideo } from '@/apis/youtube';
+import { useEffect } from 'react';
+import { useSearchYoutubeVideo } from '@/apis/youtube';
+import { useSheetStore } from '@/store/sheetStore';
+import MusicSearchSheet from './modalSheet/MusicSearchSheet';
+import { useYouTubeStore } from '@/store/youtubeStore';
 
 interface MusicCardProps {
   image?: string; // 음악 이미지
@@ -23,49 +25,70 @@ export default function MusicCard({
   buttonType = 'primary',
   rightElement = 'button',
 }: MusicCardProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [videoId, setVideoId] = useState(null);
+  // const [isPlaying, setIsPlaying] = useState(false);
+
+  const { isSheetOpen, openSheet } = useSheetStore();
+
+  const { data: searchedVideoId } = useSearchYoutubeVideo(`${artist} - ${title} lyrics`);
+
+  const { setVideoId, players, setIsPlaying } = useYouTubeStore();
+
+  const isPlaying = players['1']?.isPlaying || false;
+
+  const handlePlayButton = () => {
+    setIsPlaying('1', (prev) => !prev);
+  };
+
+  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
+  useEffect(() => {
+    if (searchedVideoId) {
+      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
+    }
+  }, [searchedVideoId]);
 
   useEffect(() => {
-    const getVideoId = async () => {
-      const id = await searchYoutubeVideo(`${artist} - ${title} lyrics`);
-      setVideoId(id);
+    return () => {
+      setVideoId('1', null);
+      setIsPlaying('1', false);
     };
-    getVideoId();
   }, []);
   return (
-    <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
-      <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
-        <img
-          className="object-cover w-full h-full"
-          src={image}
-          alt={`${title || '음악'} 앨범 커버`}
-        />
-      </div>
-      <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
-        <div className="flex flex-col flex-1 min-w-0">
-          <div className="overflow-hidden  body-large-m whitespace-nowrap text-ellipsis">
-            {title}
-          </div>
-          <div className="font-saeeum text-[14px] leading-[18px] whitespace-nowrap text-ellipsis overflow-hidden">
-            {artist}
-          </div>
-        </div>
-        {rightElement === 'button' && (
-          <Button variant={buttonType} className="w-[51px] h-[32px] flex-shrink-0">
-            {buttonContent}
-          </Button>
-        )}
-        {rightElement === 'play' && (
-          <YouTubeAudioPlayer
-            videoId={videoId!}
-            isPlaying={isPlaying}
-            onPlayPauseToggle={() => setIsPlaying((prev) => !prev)}
-            iconType="circle"
+    <>
+      <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
+        <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
+          <img
+            className="object-cover w-full h-full"
+            src={image}
+            alt={`${title || '음악'} 앨범 커버`}
           />
-        )}
+        </div>
+        <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
+          <div className="flex flex-col flex-1 min-w-0">
+            <div className="overflow-hidden  body-large-m whitespace-nowrap text-ellipsis">
+              {title}
+            </div>
+            <div className="font-saeeum text-[14px] leading-[18px] whitespace-nowrap text-ellipsis overflow-hidden">
+              {artist}
+            </div>
+          </div>
+          {rightElement === 'button' && (
+            <Button
+              onClick={openSheet}
+              variant={buttonType}
+              className="w-[51px] h-[32px] flex-shrink-0"
+            >
+              {buttonContent}
+            </Button>
+          )}
+          {rightElement === 'play' && (
+            <button onClick={handlePlayButton} className="transition hover:brightness-120">
+              <img src={isPlaying ? pause : play} alt={`playIcon`} />
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+      {isSheetOpen && <MusicSearchSheet />}
+    </>
   );
 }
 

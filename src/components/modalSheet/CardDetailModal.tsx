@@ -2,8 +2,10 @@ import EmotionBadge from '@/components/EmotionBadge';
 import headsetIcon from '@/assets/icons/headset-icon.svg';
 import ChatActionButtons from '@/components/modalSheet/ChatActionButtons';
 import ModalSheetLayout from '@/layouts/ModalSheetLayout';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { searchYoutubeVideo } from '@/apis/youtube';
+import { useSheetStore } from '@/store/sheetStore';
+import { useYouTubeStore } from '@/store/youtubeStore';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -26,16 +28,23 @@ function CardDetailModal({
   isChatting,
   isOwnPost,
 }: CardDetailModalProps) {
-  const [isPlaying, setIsPlaying] = useState(false); // 현재 노래 재생 여부
-  const [videoId, setVideoId] = useState(null);
+  const { isSheetOpen } = useSheetStore();
+
+  const { setVideoId, players, setIsPlaying } = useYouTubeStore();
+
+  const isPlaying = players['3']?.isPlaying || false;
 
   useEffect(() => {
     const getVideoId = async () => {
       const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
-      setVideoId(id);
+      setVideoId('3', id);
     };
     getVideoId();
   }, []);
+
+  if (!isSheetOpen) {
+    return null;
+  }
 
   return (
     <ModalSheetLayout isOwnPost={isOwnPost}>
@@ -74,8 +83,7 @@ function CardDetailModal({
                   isChatting={isChatting}
                   isPlaying={isPlaying}
                   isOwnPost={isOwnPost}
-                  videoId={videoId!}
-                  onPlayPauseToggle={() => setIsPlaying(!isPlaying)}
+                  onPlayPauseToggle={() => setIsPlaying('3', !isPlaying)}
                 />
               </div>
             </div>

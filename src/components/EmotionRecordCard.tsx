@@ -16,7 +16,7 @@ function EmotionRecordCard({
   date,
 }: EmotionRecordCardProps) {
   return (
-    <div className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg cursor-pointer">
+    <div className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg cursor-pointer bg-white/80">
       <div className="flex flex-col gap-[6px]">
         <EmotionBadge size="small" emotion={emotion} />
         <img

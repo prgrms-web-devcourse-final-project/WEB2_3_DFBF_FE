@@ -1,5 +1,6 @@
 import { useModalStore } from '@/store/modalStore';
 import Button from './Button';
+import { spawn } from 'child_process';
 
 interface ModalProps {}
 
@@ -15,7 +16,15 @@ export default function Modal({}: ModalProps) {
         className="bg-white p-5 mx-5 rounded-lg card-shadow w-[287px] min-h-[148px] flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="h4-b text-center">{modal.title}</h2>
+        <h2 className="h4-b text-center">
+          {Array.isArray(modal.title)
+            ? modal.title.map((part, index) => (
+                <span key={index} className={part.className}>
+                  {part.text}
+                </span>
+              ))
+            : modal.title}
+        </h2>
         <p className="caption-r text-center">{modal.message}</p>
         <div className="mt-4 flex justify-end gap-[6px]">
           <Button variant="primary" onClick={modal.onConfirm} className="body-m">

@@ -1,106 +1,73 @@
-import React, { useRef, useState } from 'react';
-import YouTube from 'react-youtube';
-import play from '@/assets/icons/play/play.svg';
-import pause from '@/assets/icons/pause.svg';
-import playCircle from '@/assets/icons/play/play-circle.svg';
-import pauseCircle from '@/assets/icons/pause-circle.svg';
-import playGray from '@/assets/icons/play/play-icon-gray.svg';
-import pauseGray from '@/assets/icons/pause-icon-gray.svg';
-import { twMerge } from 'tailwind-merge';
+import React, { useEffect, useRef } from 'react';
+// import YouTube from 'react-youtube';
+import { useYouTubeStore } from '@/store/youtubeStore';
+// import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
+//1: MusicCard 2: chat 3: post
 interface YouTubeAudioPlayerProps {
-  videoId: string;
-  isPlaying: boolean;
-  onPlayPauseToggle: () => void;
-  iconType?: 'normal' | 'circle' | 'gray';
+  playerId: '1' | '2' | '3';
 }
 
-const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({
-  videoId,
-  isPlaying,
-  onPlayPauseToggle,
-  iconType = 'normal',
-}) => {
-  const playerRef = useRef<any>(null); // YouTube Player 인스턴스를 저장
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false); // 사용자가 play 버튼을 눌러야만 youtube 로드하기
+const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => {
+  const { isApiReady, players, setIsPlaying } = useYouTubeStore();
 
-  // YouTube Player가 준비되었을 때 실행되는 함수
-  const onReady = (event: any) => {
-    playerRef.current = event.target; // 플레이어 인스턴스를 저장
-    if (isPlaying) {
-      playerRef.current.playVideo(); // 자동 재생
-    }
-  };
+  const playerRef = useRef<YT.Player | null>(null);
+  const videoId = players[playerId]?.videoId || null;
+  const isPlaying = players[playerId]?.isPlaying || false;
 
-  // YouTube Player 옵션
-  const opts = {
-    playerVars: {
-      autoplay: isVideoLoaded ? 1 : 0, // 자동 재생
-      controls: 0, // 컨트롤 숨기기
-      showinfo: 0, // 정보 숨기기
-      modestbranding: 1, // 브랜드 로고 숨기기
-      rel: 0, // 관련 영상 숨기기
-      iv_load_policy: 3, // 자막 숨기기
-    },
-  };
-
-  // 재생 / 일시정지 토글
-  const togglePlay = () => {
-    if (!isVideoLoaded) {
-      setIsVideoLoaded(true); // 비디오 로드 상태 업데이트
-      onPlayPauseToggle();
+  // 플레이어 생성
+  const createPlayer = () => {
+    if (!isApiReady || !videoId) {
+      if (playerRef.current && playerRef.current.seekTo) {
+        playerRef.current.seekTo(0, false);
+        playerRef.current.pauseVideo();
+      }
       return;
-    }
+    } // API 준비되지 않았거나 videoId가 없으면
 
-    if (!playerRef.current) return;
+    if (!playerRef.current) {
+      playerRef.current = new window.YT.Player(`player-${playerId}`, {
+        height: '1px',
+        width: '1px',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          playsinline: 1,
+          origin: window.location.origin, // 현재 페이지의 origin을 전달
+        },
+      });
+    } else {
+      playerRef.current.loadVideoById(videoId); // 이미 플레이어가 있으면 비디오를 새로 로드
+      playerRef.current.pauseVideo();
+      setIsPlaying(playerId, false);
+    }
+  };
+
+  // isPlaying 변경 시 실행
+  useEffect(() => {
+    if (!playerRef.current) return; // 플레이어가 초기화되지 않았으면 실행 안 함
 
     if (isPlaying) {
-      playerRef.current.pauseVideo(); // 유튜브 비디오 일시정지
+      playerRef.current.playVideo?.();
     } else {
-      playerRef.current.playVideo(); // 유튜브 비디오 재생
+      playerRef.current.pauseVideo?.();
     }
+  }, [isPlaying]);
 
-    onPlayPauseToggle(); // 부모 컴포넌트에 상태 변경 알림
-  };
+  useEffect(() => {
+    createPlayer();
+  }, [videoId, isApiReady]);
 
-  const getIcon = () => {
-    switch (iconType) {
-      case 'circle':
-        return isPlaying ? pauseCircle : playCircle;
-      case 'gray':
-        return isPlaying ? pauseGray : playGray;
-      default:
-        return isPlaying ? pause : play;
+  useEffect(() => {
+    const playerElement = document.getElementById(`player-${playerId}`);
+    if (playerElement) {
+      playerElement.style.position = 'absolute';
+      playerElement.style.top = '0px';
     }
-  };
-  if (iconType === 'gray') {
-    return (
-      <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={togglePlay}>
-        {isVideoLoaded && (
-          <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
-        )}
-        <button
-         
-          className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10 cursor-pointer"
-        >
-          <img src={getIcon()} alt="play" />
-        </button>
-        <span className="text-[9px] text-gray-50 font-normal">{isPlaying ? '재생 중...' : '재생하기'}</span>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      {isVideoLoaded && (
-        <YouTube videoId={videoId} opts={opts} onReady={onReady} className="hidden" />
-      )}
-      <button onClick={togglePlay} className="cursor-pointer h-full flex items-center">
-        <img src={getIcon()} alt="play" />
-      </button>
-    </div>
-  );
+  }, []);
+  return <div id={`player-${playerId}`}></div>;
 };
 
 export default YouTubeAudioPlayer;

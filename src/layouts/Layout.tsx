@@ -14,7 +14,7 @@ function Layout() {
     //마이 페이지
     location.pathname === '/mypage' ||
     //유저 페이지
-    location.pathname === '/user' ||
+    location.pathname.includes('/user') ||
     //지난 대화 기록 페이지
     location.pathname === '/chat';
 
@@ -39,12 +39,11 @@ function Layout() {
       return <Header showMoreOptions showPostButton />;
     } else if (
       //글 작성 페이지
-      location.pathname === '/posting'
-    ) {
-      return <HeaderWithBack />;
-    } else if (
+      location.pathname === '/post' ||
       //회원가입 페이지
-      location.pathname === '/signup'
+      location.pathname === '/signup'||
+       //차단목록 페이지
+      location.pathname === '/mypage/blocklist'
     ) {
       return <HeaderWithBack text="회원가입" />;
     } else if (

@@ -4,9 +4,15 @@ import searchIconHover from '@assets/icons/search-icon/search-icon-hover.svg';
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
+interface SearchBarProps {
+  isSticky?: boolean;
+  searchText: string;
+  setSearchText: (query: string) => void;
+}
+
 // 검색바
 // isSticky를 props로 줄때 검색바 고정
-function SearchBar({ isSticky = false }: { isSticky?: boolean }) {
+function SearchBar({ isSticky = false, searchText, setSearchText }: SearchBarProps) {
   const [icon, setIcon] = useState(searchIconDefault); // 아이콘
   return (
     <div
@@ -19,6 +25,8 @@ function SearchBar({ isSticky = false }: { isSticky?: boolean }) {
         type="text"
         className="w-full outline-none body-m placeholder:text-gray-400"
         placeholder="오늘의 음악을 검색해 보세요"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
       />
       <button
         className="cursor-pointer"

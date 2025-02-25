@@ -23,20 +23,28 @@ const dummyData: MainCardProps = {
   isChatting: true,
 };
 
-export default function MainCard() {
+export default function MainCard({
+  nickname,
+  emotion,
+  title,
+  artist,
+  content,
+  date,
+  isChatting,
+}: MainCardProps) {
   return (
     <div className="flex-none w-full cursor-pointer">
       <div className="flex flex-col gap-1 bg-white/80 rounded-lg card-shadow px-3 py-2.5 hover:bg-white transition ">
         {/* 닉네임 + 상태 */}
         <div className="flex items-center gap-1">
-          <span className="caption-m text-gray-70">{dummyData.nickname}</span>
-          {dummyData.isChatting && (
+          <span className="caption-m text-gray-70">{nickname}</span>
+          {isChatting && (
             <span>
               <img src={headset} alt="헤드셋 아이콘" />
             </span>
           )}
           <span className="caption-r text-gray-60">님은 지금</span>
-          <EmotionBadge size="small" emotion={dummyData.emotion} />
+          <EmotionBadge size="small" emotion={emotion} />
         </div>
 
         {/* 노래 + 글 정보 */}
@@ -48,10 +56,10 @@ export default function MainCard() {
           {/* 정보 */}
           <div className="flex flex-col gap-1">
             <p className="body-b text-gray-80 line-clamp-1 break-all">
-              {dummyData.title} - {dummyData.artist}
+              {title} - {artist}
             </p>
-            <p className="caption-r text-gray-60 line-clamp-1 break-all">{dummyData.content}</p>
-            <span className="text-[9px] text-gray-60 font-light">{dummyData.date}</span>
+            <p className="caption-r text-gray-60 line-clamp-1 break-all">{content}</p>
+            <span className="text-[9px] text-gray-60 font-light">{date}</span>
           </div>
         </div>
       </div>

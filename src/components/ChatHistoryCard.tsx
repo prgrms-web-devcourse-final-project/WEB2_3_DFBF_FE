@@ -50,7 +50,7 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
           <p className="body-b text-gray-80 line-clamp-1">
             {item.title} - {item.artist}
           </p>
-          <p className="caption-r text-gray-60 line-clamp-1">여기에 뭘 넣어야할까</p>
+          <p className="caption-r text-gray-60 line-clamp-1">{item.comment}</p>
         </div>
       </div>
       <Button variant="primary" className="body-m">

@@ -1,6 +1,5 @@
+import { postSignUp } from '@/apis/user';
 import Button from '@/components/Button';
-import InputAuthCode from '@/components/InputAuthCode';
-import InputField from '@/components/InputField';
 import AuthCodeInput from '@/pages/signup/components/AuthCodeInput';
 import EmailInput from '@/pages/signup/components/EmailInput';
 import IdInput from '@/pages/signup/components/IdInput';
@@ -44,57 +43,86 @@ function SignUp() {
     emailVerificationConfirm: { type: '', message: '' },
   });
 
-  return (
-    <div className=" flex w-full pt-5 pb-[40px] flex-col justify-between">
-      <form className="w-full" onSubmit={(e) => e.preventDefault()}>
-        <IdInput
-          value={formData.id}
-          setValue={(id) => setFormData((prev) => ({ ...prev, id }))}
-          validation={validationMessages.id}
-          setValidation={(validation) =>
-            setValidationMessages((prev) => ({ ...prev, id: validation }))
-          }
-        />
-        <PasswordInput
-          value={formData.password}
-          setValue={(password) => setFormData((prev) => ({ ...prev, password }))}
-          validation={validationMessages.password}
-          setValidation={(validation) =>
-            setValidationMessages((prev) => ({ ...prev, password: validation }))
-          }
-        />
-        <PasswordConfirmInput
-          value={formData.passwordConfirm}
-          password={formData.password}
-          setValue={(passwordConfirm) => setFormData((prev) => ({ ...prev, passwordConfirm }))}
-          validation={validationMessages.passwordConfirm}
-          setValidation={(validation) =>
-            setValidationMessages((prev) => ({ ...prev, passwordConfirm: validation }))
-          }
-        />
-        <NicknameInput
-          value={formData.nickname}
-          setValue={(nickname) => setFormData((prev) => ({ ...prev, nickname }))}
-          validation={validationMessages.nickname}
-          setValidation={(validation) =>
-            setValidationMessages((prev) => ({ ...prev, nickname: validation }))
-          }
-        />
-        <EmailInput
-          value={formData.email}
-          setValue={(email) => setFormData((prev) => ({ ...prev, email }))}
-          validation={validationMessages.email}
-          setValidation={(validation) =>
-            setValidationMessages((prev) => ({ ...prev, email: validation }))
-          }
-          onSendEmail={() => setEmailSent(true)}
-        />
-        <AuthCodeInput emailSent={emailSent} />
-      </form>
+  const allSuccess = Object.values(validationMessages).every((field) => field.type === 'success'); //모든 필드가 'success'인지 확인
 
-      <Button variant="disabled" className="py-[7px] body-m">
-        지금 시작하기
-      </Button>
+  console.log(validationMessages);
+
+  const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('hi');
+    e.preventDefault();
+    try {
+      const { data } = await postSignUp(
+        formData.nickname,
+        formData.id,
+        formData.password,
+        formData.email,
+      );
+      if (data.code === 200) {
+        console.log('회원가입 성공', data);
+      }
+    } catch (error) {
+      console.log('회원가입 실패');
+    }
+  };
+
+  return (
+    <div className="flex w-full pt-5 pb-[40px] flex-col">
+      <form className="flex flex-col justify-between w-full h-full" onSubmit={handleSumbit}>
+        <div className="flex flex-col">
+          <IdInput
+            value={formData.id}
+            setValue={(id) => setFormData((prev) => ({ ...prev, id }))}
+            validation={validationMessages.id}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, id: validation }))
+            }
+          />
+          <PasswordInput
+            value={formData.password}
+            setValue={(password) => setFormData((prev) => ({ ...prev, password }))}
+            validation={validationMessages.password}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, password: validation }))
+            }
+          />
+          <PasswordConfirmInput
+            value={formData.passwordConfirm}
+            password={formData.password}
+            setValue={(passwordConfirm) => setFormData((prev) => ({ ...prev, passwordConfirm }))}
+            validation={validationMessages.passwordConfirm}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, passwordConfirm: validation }))
+            }
+          />
+          <NicknameInput
+            value={formData.nickname}
+            setValue={(nickname) => setFormData((prev) => ({ ...prev, nickname }))}
+            validation={validationMessages.nickname}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, nickname: validation }))
+            }
+          />
+          <EmailInput
+            value={formData.email}
+            setValue={(email) => setFormData((prev) => ({ ...prev, email }))}
+            validation={validationMessages.email}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, email: validation }))
+            }
+            onSendEmail={() => setEmailSent(true)}
+          />
+          <AuthCodeInput
+            emailSent={emailSent}
+            email={formData.email}
+            setValidation={(validation) =>
+              setValidationMessages((prev) => ({ ...prev, emailVerificationConfirm: validation }))
+            }
+          />
+        </div>
+        <Button variant={allSuccess ? 'primary' : 'disabled'} className="py-[7px] body-m">
+          지금 시작하기
+        </Button>
+      </form>
     </div>
   );
 }

@@ -47,10 +47,6 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
     try {
       const { data } = await getEmailAvailability(value);
       if (data.code === 200) {
-        setValidation({
-          type: 'success',
-          message: '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
-        });
         handlePostEmailVerificationRequest(); // 사용 가능한 이메일 경우에만 이메일 인증 요청 보내기
       } else {
         setValidation({
@@ -68,15 +64,24 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
     console.log('test', value);
     try {
       await postEmailVerificationRequest(value);
-      setButtonVariant('disabled'); // 이메일 인증 요청을 하면 버튼 disabled
       onSendEmail(); // 이메일 보냈음을 확인하는 함수
-    } catch (error) {}
+      setValidation({
+        type: 'success',
+        message: '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
+      });
+      setButtonVariant('disabled'); // 이메일 인증 요청을 하면 버튼 disabled
+    } catch (error) {
+      setValidation({ type: 'error', message: '이메일 인증 요청 중 오류가 발생했습니다.' });
+      setButtonVariant('primary'); // ❗ 실패한 경우 primary로 복구
+    }
   };
 
   // value나 validation 상태가 변경될 때마다 버튼 상태 업데이트
   useEffect(() => {
-    if (value === '' || validation.type == 'error') {
+    if (value === '' || validation.type === 'error') {
       setButtonVariant('disabled');
+    } else if (validation.type === 'success') {
+      setButtonVariant('disabled'); // ✅ 성공한 경우에도 disabled 유지!
     } else {
       setButtonVariant('primary');
     }

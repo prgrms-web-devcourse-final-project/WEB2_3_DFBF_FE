@@ -45,7 +45,7 @@ function Layout() {
        //차단목록 페이지
       location.pathname === '/mypage/blocklist'
     ) {
-      return <HeaderWithBack />;
+      return <HeaderWithBack text="회원가입" />;
     } else if (
       //유저 페이지
       location.pathname.includes('/user')

@@ -48,8 +48,8 @@ export default function MusicCard({
 
   useEffect(() => {
     return () => {
-      setVideoId('1', null);
       setIsPlaying('1', false);
+      setVideoId('1', null);
     };
   }, []);
   return (

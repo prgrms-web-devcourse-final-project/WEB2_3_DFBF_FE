@@ -99,6 +99,7 @@ function MusicSearchSheet() {
             {page.items.map((music: SpotifyMusic, i: number) => (
               <MusicSearchList
                 key={i}
+                spotifyId={music.id}
                 albumImage={music.album.images?.[0]?.url || defaultImage}
                 songTitle={music.name}
                 artistName={music.artists[0].name}

@@ -8,7 +8,7 @@ export default function Chat({}) {
 
   useEffect(() => {
     const getChatList = async () => {
-      const data = await loadChatList();
+      const { data } = await loadChatList();
       setChatList(data);
     };
     getChatList();

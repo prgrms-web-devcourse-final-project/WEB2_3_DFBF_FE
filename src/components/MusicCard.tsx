@@ -7,6 +7,7 @@ import { useSearchYoutubeVideo } from '@/apis/youtube';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
+import { useLocation } from 'react-router';
 
 interface MusicCardProps {
   image?: string; // 음악 이미지
@@ -25,7 +26,8 @@ export default function MusicCard({
   buttonType = 'primary',
   rightElement = 'button',
 }: MusicCardProps) {
-  // const [isPlaying, setIsPlaying] = useState(false);
+  const location = useLocation();
+  const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
 
   const { isSheetOpen, openSheet } = useSheetStore();
 
@@ -41,9 +43,9 @@ export default function MusicCard({
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (searchedVideoId) {
-      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
-    }
+    // if (searchedVideoId && isUserPage) {
+    //   setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
+    // }
   }, [searchedVideoId]);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function MusicCard({
               {buttonContent}
             </Button>
           )}
-          {rightElement === 'play' && (
+          {isUserPage && rightElement === 'play' && (
             <button onClick={handlePlayButton} className="transition hover:brightness-120">
               <img src={isPlaying ? pause : play} alt={`playIcon`} />
             </button>

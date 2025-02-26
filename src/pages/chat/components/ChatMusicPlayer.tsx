@@ -34,9 +34,9 @@ export default function ChatMusicPlayer() {
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (searchedVideoId) {
-      setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
-    }
+    // if (searchedVideoId) {
+    //   setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
+    // }
   }, [searchedVideoId]);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정

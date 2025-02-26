@@ -36,11 +36,11 @@ function CardDetailModal({
   const isPlaying = players['3']?.isPlaying || false;
 
   useEffect(() => {
-    const getVideoId = async () => {
-      const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
-      setVideoId('3', id);
-    };
-    getVideoId();
+    // const getVideoId = async () => {
+    //   const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
+    //   setVideoId('3', id);
+    // };
+    // getVideoId();
   }, []);
 
   if (!isSheetOpen) {

@@ -4,10 +4,10 @@ import MusicCard from '@/components/MusicCard';
 
 function EditProfile() {
   return (
-    <div className="flex w-full pt-5 pb-10 flex-col">
-      <form className=" flex flex-col h-full justify-between" onSubmit={(e) => e.preventDefault()}>
+    <div className="flex flex-col w-full pt-5 pb-10 border-2 border-red-500">
+      <form className="flex flex-col justify-between h-full " onSubmit={(e) => e.preventDefault()}>
         <div className="flex flex-col gap-5">
-          <div className="w-full flex justify-center">
+          <div className="flex justify-center w-full">
             <MusicCard />
           </div>
           <div>

@@ -1,5 +1,6 @@
-import { fetchBlockList } from '@/apis/blockList';
+import { deleteBlockList, fetchBlockList } from '@/apis/blockList';
 import Button from '@/components/Button';
+import InfoMessage from '@/components/InfoMessage';
 import Loading from '@/components/Loading';
 import { useModalStore } from '@/store/modalStore';
 import { useEffect, useState } from 'react';
@@ -18,33 +19,6 @@ export default function BlockList() {
 
   const [blockList, setBlockList] = useState<BlockedUser[]>([]);
 
-  const mockData = [
-    {
-      userId: 1,
-      blockedUserId: 4,
-      nickname: '닉넴',
-      tag: '@plm3033',
-      createdAt: '2025-02-19T02:14:25.997+00:00',
-      updatedAt: '2025-02-19T02:14:25.997+00:00',
-    },
-    {
-      userId: 1,
-      blockedUserId: 3,
-      nickname: 'hell',
-      tag: '@whatthe',
-      createdAt: '2025-02-19T02:14:32.526+00:00',
-      updatedAt: '2025-02-19T02:14:32.526+00:00',
-    },
-    {
-      userId: 1,
-      blockedUserId: 2,
-      nickname: 'maroon',
-      tag: '@sugar',
-      createdAt: '2025-02-19T02:15:20.647+00:00',
-      updatedAt: '2025-02-19T02:15:20.647+00:00',
-    },
-  ];
-
   const handleBlock = (nickname: string, id: number) => {
     openModal({
       title: [
@@ -52,13 +26,32 @@ export default function BlockList() {
         { text: '님 차단을 해제할까요?' },
       ],
       message: '이제 피드에서 상대방의 글을 볼 수 있어요',
-      onConfirm() {
-        console.log('확인');
-        const filtered = mockData.filter((data) => data.blockedUserId !== id);
-        setBlockList(filtered);
+      onConfirm: async () => {
+        // 기존 차단 목록을 저장
+        const prevBlockList = blockList;
+
+        // UI에서 먼저 제거
+        setBlockList((prev) => prev.filter((item) => item.blockedUserId !== id));
+
+        try {
+          // 서버 요청
+          const data = await deleteBlockList(id);
+          console.log(data);
+
+          // 만약 요청이 실패했다면, 기존 상태를 복원
+          if (data.code !== 200) {
+            console.log(data);
+            throw new Error('삭제 실패');
+          }
+        } catch (error) {
+          console.error('삭제 요청 실패:', error);
+          // 기존 상태로 복원
+          setBlockList(prevBlockList);
+        }
+
         closeModal();
       },
-      onCancel() {
+      onCancel: () => {
         console.log('취소');
         closeModal();
       },
@@ -66,14 +59,22 @@ export default function BlockList() {
   };
 
   useEffect(() => {
-    // const getBlockList = async () => {
-    //   const data = await fetchBlockList();
-    //   console.log(data);
-    //   setBlockList(data);
-    // };
-    // getBlockList();
-    setBlockList(mockData);
+    const getBlockList = async () => {
+      const data = await fetchBlockList();
+      console.log(data);
+      setBlockList(data.data);
+    };
+    getBlockList();
+    // setBlockList(mockData);
   }, []);
+
+  if (!blockList.length) {
+    return (
+      <div className="flex items-center justify-center w-full">
+        <InfoMessage text="차단 목록이 비어있어요" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col gap-[10px]">

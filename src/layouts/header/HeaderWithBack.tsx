@@ -1,7 +1,8 @@
+import { addBlockList } from '@/apis/blockList';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 import backIcon from '@assets/icons/back-icon.svg';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 interface HeaderWithBackProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
@@ -11,9 +12,14 @@ interface HeaderWithBackProps {
 // 뒤로 가기 있는 헤더
 function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) {
   const navigate = useNavigate();
+  const param = useParams();
   // 임시함수
-  const handleEditProfile = () => {
-    console.log('임시함수');
+  const handleBlockUser = async () => {
+    console.log(param.userId);
+    if (param.userId) {
+      const data = await addBlockList(param.userId);
+      console.log(data);
+    }
   };
 
   return (
@@ -29,12 +35,7 @@ function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) 
 
         {/* 더보기 메뉴 */}
         {showMoreOptions && (
-          <MoreOptionsSelect
-            items={[
-              { label: '프로필 수정', onClick: handleEditProfile },
-              { label: '로그아웃', onClick: handleEditProfile },
-            ]}
-          />
+          <MoreOptionsSelect items={[{ label: '차단', onClick: handleBlockUser }]} />
         )}
       </div>
     </HedaerLayout>

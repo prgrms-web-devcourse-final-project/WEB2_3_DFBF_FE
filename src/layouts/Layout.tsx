@@ -24,44 +24,24 @@ function Layout() {
     } else return null;
   };
 
+  const headerConfig: { [key: string]: React.ReactNode } = {
+    '/home': <Header showPostButton />,
+    '/chat': <Header showPostButton />,
+    '/mypage': <Header showMoreOptions showPostButton />,
+    '/post': <HeaderWithBack text="글 등록" />,
+    '/signup': <HeaderWithBack text="회원가입" />,
+    '/mypage/blocklist': <HeaderWithBack text="차단 목록" />,
+    '/mypage/edit': <HeaderWithBack text="내 정보 수정" />,
+  };
+
   const renderHeader = () => {
-    if (
-      //메인 페이지
-      location.pathname === '/home' ||
-      //지난 채팅 기록 페이지
-      location.pathname === '/chat'
-    ) {
-      return <Header showPostButton />;
-    } else if (
-      //내 정보 페이지
-      location.pathname === '/mypage'
-    ) {
-      return <Header showMoreOptions showPostButton />;
-    } else if (
-      //글 작성 페이지
-      location.pathname === '/post' ||
-      //회원가입 페이지
-      location.pathname === '/signup'||
-       //차단목록 페이지
-      location.pathname === '/mypage/blocklist'
-    ) {
-      return <HeaderWithBack text="회원가입" />;
-    } else if (
-      //유저 페이지
-      location.pathname.includes('/user')
-    ) {
+    if (location.pathname.includes('/user')) {
       return <HeaderWithBack showMoreOptions />;
-    } else if (
-      //채팅방 페이지
-      location.pathname.includes('/chatroom')
-    ) {
+    }
+    if (location.pathname.includes('/chatroom')) {
       return <HeaderChat showLogo showNickname />;
-    } else if (
-      //정보 수정 페이지
-      location.pathname.includes('/mypage/edit')
-    ) {
-      return <HeaderWithBack text="내 정보 수정" />;
-    } else return <Header />;
+    }
+    return headerConfig[location.pathname] ?? <Header />;
   };
 
   return (

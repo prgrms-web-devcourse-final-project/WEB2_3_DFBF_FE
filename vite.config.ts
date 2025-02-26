@@ -10,6 +10,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
+      //sockjs : global is not defined 문제
+  define: {
+    global: 'window', // global을 window로 설정
+  },
     plugins: [
       react(),
       tailwindcss(),

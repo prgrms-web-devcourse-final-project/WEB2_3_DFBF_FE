@@ -2,6 +2,7 @@ import logoIcon from '@assets/icons/logo-icon.svg';
 import exitIcon from '@assets/icons/exit-icon.svg';
 import { twMerge } from 'tailwind-merge';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
+import { useModalStore } from '@/store/modalStore';
 
 interface HeaderChatProps {
   showLogo?: boolean; // 로고 표시 여부
@@ -43,6 +44,8 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
     ],
   };
 
+  const { openModal, closeModal } = useModalStore();
+
   return (
     <HedaerLayout>
       <div className={twMerge('w-full flex items-center', headerClass)}>
@@ -53,7 +56,25 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         {showNickname && <span className="h4-b text-primary-normal">{data.receiver.nickname}</span>}
 
         {/* 나가기 버튼 */}
-        <img src={exitIcon} alt="나가기" />
+        <button
+          onClick={() =>
+            openModal({
+              title: '이 대화를 마무리할까요?',
+              message: '채팅을 종료하면 다시 복구할 수 없습니다.',
+              onConfirm: async () => {
+                console.log('확인');
+                closeModal();
+              },
+              onCancel: () => {
+                console.log('취소');
+                closeModal();
+              },
+            })
+          }
+          className="cursor-pointer"
+        >
+          <img src={exitIcon} alt="나가기" />
+        </button>
       </div>
     </HedaerLayout>
   );

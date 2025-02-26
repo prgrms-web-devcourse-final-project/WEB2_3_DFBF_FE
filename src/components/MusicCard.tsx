@@ -7,6 +7,7 @@ import { useSearchYoutubeVideo } from '@/apis/youtube';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
+import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 interface MusicCardProps {
@@ -28,10 +29,10 @@ export default function MusicCard({
   buttonType = 'primary',
   rightElement = 'button',
 }: MusicCardProps) {
+  const location = useLocation();
+  const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
   // 음악 선택 여부에 따른 텍스트 스타일
   const artistTextStyle = isMusicSelect ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
-
-  // const [isPlaying, setIsPlaying] = useState(false);
 
   const { isSheetOpen, openSheet } = useSheetStore();
 
@@ -49,15 +50,15 @@ export default function MusicCard({
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (shouldFetchYouTube && searchedVideoId) {
-      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
-    }
+    // if (shouldFetchYouTube&&searchedVideoId && isUserPage) {
+    //   setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
+    // }
   }, [searchedVideoId]);
 
   useEffect(() => {
     return () => {
-      setVideoId('1', null);
       setIsPlaying('1', false);
+      setVideoId('1', null);
     };
   }, []);
 
@@ -68,6 +69,11 @@ export default function MusicCard({
           <img
             className="object-cover w-full h-full"
             src={image}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // 무한 루프 방지
+              target.src = defaultImage; // 기본 이미지로 변경
+            }}
             alt={`${title || '음악'} 앨범 커버`}
           />
         </div>
@@ -94,7 +100,7 @@ export default function MusicCard({
               {buttonContent}
             </Button>
           )}
-          {rightElement === 'play' && (
+          {isUserPage && rightElement === 'play' && (
             <button onClick={handlePlayButton} className="transition hover:brightness-120">
               <img src={isPlaying ? pause : play} alt={`playIcon`} />
             </button>

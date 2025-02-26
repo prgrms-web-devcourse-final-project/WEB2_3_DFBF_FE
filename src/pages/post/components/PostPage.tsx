@@ -5,6 +5,7 @@ import Comment from '@/pages/post/components/Comment';
 import { useContext, useEffect, useState } from 'react';
 import { PostMusicContext } from '@/pages/post/context/PostMusicContext';
 import { useSheetStore } from '@/store/sheetStore';
+import { postEmotionRecord } from '@/apis/emotionRecord';
 
 export default function PostPage() {
   const { selectedPostMusic } = useContext(PostMusicContext)!;
@@ -13,7 +14,10 @@ export default function PostPage() {
   //음악 선택 상태 확인
   const [isMusicSelect, setIsMusicSelect] = useState(false);
 
-  // 음악 선택 됨
+  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
+  const [comment, setComment] = useState<string | null>(null); // 코멘트
+
+  // 음악 선택 됨 -> 아티스트 폰트 스타일 변경, 모달 닫기
   useEffect(() => {
     if (selectedPostMusic) {
       setIsMusicSelect(true);
@@ -21,11 +25,7 @@ export default function PostPage() {
     } else {
       setIsMusicSelect(false);
     }
-    console.log(selectedPostMusic);
   }, [selectedPostMusic]);
-
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const [comment, setComment] = useState<string>(''); // 코멘트
 
   // 감정 선택 시
   const onEmotionClick = (emotion: string) => {
@@ -35,6 +35,31 @@ export default function PostPage() {
   // 코멘트 입력 시
   const onChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
+  };
+
+  // 기록 완료 조건 확인
+  const isCompletePost = selectedPostMusic && selectedEmotion && comment;
+
+  // 기록 완료
+  const onCompletePost = async () => {
+    if (!isCompletePost) return;
+
+    try {
+      const requestData = {
+        spotifyId: selectedPostMusic?.spotifyId,
+        title: selectedPostMusic?.songTitle,
+        artist: selectedPostMusic?.artistName,
+        albumImage: selectedPostMusic?.albumImage,
+        emotion: selectedEmotion,
+        comment: comment,
+      };
+      console.log('전송할 데이터:', requestData);
+
+      const data = await postEmotionRecord(requestData);
+      console.log('기록 완료:', data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -65,7 +90,9 @@ export default function PostPage() {
         />
       </div>
       {/* 버튼 */}
-      <Button>기록 완료</Button>
+      <Button variant={isCompletePost ? 'primary' : 'disabled'} onClick={onCompletePost}>
+        기록 완료
+      </Button>
     </div>
   );
 }

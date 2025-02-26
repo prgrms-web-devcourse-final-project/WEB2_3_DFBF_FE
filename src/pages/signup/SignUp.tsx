@@ -53,13 +53,13 @@ function SignUp() {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const { data } = await postSignUp(
+      const { code } = await postSignUp(
         formData.nickname,
         formData.id,
         formData.password,
         formData.email,
       );
-      if (data.code === 200) {
+      if (code === 200) {
         openModal({
           title: '회원가입 성공 🎉',
           message: '사운드링크에 오신 것을 환영합니다',

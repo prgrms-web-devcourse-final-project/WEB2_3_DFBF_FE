@@ -43,12 +43,11 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
 
   // 이메일 중복을 확인하는 함수
   const handleEmailCheck = async () => {
-    console.log(value);
     try {
-      const { data } = await getEmailAvailability(value);
-      if (data.code === 200) {
+      const { code } = await getEmailAvailability(value);
+      if (code === 200) {
         handlePostEmailVerificationRequest(); // 사용 가능한 이메일 경우에만 이메일 인증 요청 보내기
-      } else {
+      } else if (code === 409) {
         setValidation({
           type: 'error',
           message: '이 이메일은 이미 사용 중입니다. 다른 이메일을 입력해주세요',
@@ -63,13 +62,15 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
   const handlePostEmailVerificationRequest = async () => {
     console.log('test', value);
     try {
-      await postEmailVerificationRequest(value);
-      onSendEmail(); // 이메일 보냈음을 확인하는 함수
-      setValidation({
-        type: 'success',
-        message: '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
-      });
-      setButtonVariant('disabled'); // 이메일 인증 요청을 하면 버튼 disabled
+      const { code } = await postEmailVerificationRequest(value);
+      if (code === 200) {
+        onSendEmail(); // 이메일 보냈음을 확인하는 함수
+        setValidation({
+          type: 'success',
+          message: '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
+        });
+        setButtonVariant('disabled'); // 이메일 인증 요청을 하면 버튼 disabled
+      }
     } catch (error) {
       setValidation({ type: 'error', message: '이메일 인증 요청 중 오류가 발생했습니다.' });
       setButtonVariant('primary'); // ❗ 실패한 경우 primary로 복구

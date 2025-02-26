@@ -23,7 +23,7 @@ export const postSignUp = async (
   password: string,
   email: string,
 ) => {
-  const response = await axiosInstance.post('/user/signup', {
+  const { data } = await axiosInstance.post('/user/signup', {
     nickName,
     socialId: null,
     socialType: 'NONE',
@@ -31,5 +31,5 @@ export const postSignUp = async (
     password,
     email,
   });
-  return response;
+  return data;
 };

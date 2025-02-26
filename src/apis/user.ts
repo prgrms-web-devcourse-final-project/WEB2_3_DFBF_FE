@@ -2,18 +2,18 @@ import { axiosInstance } from '@/apis/axios';
 
 // 닉네임 중복를 확인하는 함수
 export const getNicknameAvailability = async (nickname: string) => {
-  const response = await axiosInstance.get('/user/checkNickName', {
+  const { data } = await axiosInstance.get('/user/checkNickName', {
     params: { nickName: nickname },
   });
-  return response;
+  return data;
 };
 
 // 아이디 중복를 확인하는 함수
 export const getIdAvailability = async (loginId: string) => {
-  const response = await axiosInstance.get('user/checkLoginId', {
+  const { data } = await axiosInstance.get('user/checkLoginId', {
     params: { loginId },
   });
-  return response;
+  return data;
 };
 
 // 회원가입
@@ -23,7 +23,7 @@ export const postSignUp = async (
   password: string,
   email: string,
 ) => {
-  const response = await axiosInstance.post('/user/signup', {
+  const { data } = await axiosInstance.post('/user/signup', {
     nickName,
     socialId: null,
     socialType: 'NONE',
@@ -31,5 +31,5 @@ export const postSignUp = async (
     password,
     email,
   });
-  return response;
+  return data;
 };

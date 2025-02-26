@@ -38,7 +38,12 @@ export default function InputField({
       <div className="flex gap-2">
         <Input id={id} {...props} />
         {buttonText && (
-          <Button variant={variant} className="w-[65px] flex-shrink-0" onClick={onClick}>
+          <Button
+            variant={variant}
+            className="w-[65px] flex-shrink-0"
+            onClick={onClick}
+            type="button"
+          >
             {buttonText}
           </Button>
         )}
@@ -68,7 +73,6 @@ export default function InputField({
   //   id="nickname"
   //   label="닉네임"
   //   placeholder="닉네임을 입력해 주세요"
-  //   isValid={false}
   //   errorMessage="닉네임 중복"
   //   variant="primary"
   //   buttonText="중복확인"

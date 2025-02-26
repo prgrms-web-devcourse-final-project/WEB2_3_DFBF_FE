@@ -54,13 +54,18 @@ function InputAuthCode({
       </label>
       <div className="flex gap-2">
         <div className="w-full h-[38px] rounded-lg input-shadow outline-0 px-3 caption-m placeholder:text-gray-50 focus-within:ring-1 focus-within:ring-primary-active bg-white flex items-center">
-          <input id={id} type="text" className=" w-full" {...props} />
+          <input id={id} type="text" className="w-full " {...props} />
           {emailSent && messages?.type !== 'success' && (
             <CountdownTimer key={resendCount} onTimeout={onTimeout} />
           )}
         </div>
         {buttonText && (
-          <Button variant={variant} className="w-[65px] flex-shrink-0" onClick={onClick}>
+          <Button
+            variant={variant}
+            className="w-[65px] flex-shrink-0"
+            onClick={onClick}
+            type="button"
+          >
             {buttonText}
           </Button>
         )}

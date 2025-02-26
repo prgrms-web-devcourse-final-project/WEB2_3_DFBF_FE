@@ -45,10 +45,10 @@ function NicknameInput({ value, setValue, validation, setValidation }: NicknameI
   // 닉네임 중복을 확인하는 함수
   const handleNicknameCheck = async () => {
     try {
-      const { data } = await getNicknameAvailability(value);
-      if (data.code === 200) {
+      const { code } = await getNicknameAvailability(value);
+      if (code === 200) {
         setValidation({ type: 'success', message: '사용 가능한 닉네임입니다' });
-      } else {
+      } else if (code === 409) {
         setValidation({ type: 'error', message: '이미 사용 중인 닉네임입니다' });
       }
     } catch (error) {

@@ -47,10 +47,10 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
   // 아이디 중복을 확인하는 함수
   const handleIdCheck = async () => {
     try {
-      const { data } = await getIdAvailability(value);
-      if (data.code === 200) {
+      const { code } = await getIdAvailability(value);
+      if (code === 200) {
         setValidation({ type: 'success', message: '사용 가능한 아이디입니다' });
-      } else if (data.code === 409) {
+      } else if (code === 409) {
         setValidation({ type: 'error', message: '이미 사용 중인 아이디입니다' });
       }
     } catch (error) {

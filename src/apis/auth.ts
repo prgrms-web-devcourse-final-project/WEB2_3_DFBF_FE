@@ -37,7 +37,7 @@ export const reissueToken = async () => {
   if (code === 400) {
     useAuthStore.getState().logout(); // 전역 상태 초기화
     console.log('토큰 재발급 실패:', data);
-    window.location.href = '/'; // 랜딩 페이지로 이동
+    // window.location.href = '/'; // 랜딩 페이지로 이동
   }
 
   return data;

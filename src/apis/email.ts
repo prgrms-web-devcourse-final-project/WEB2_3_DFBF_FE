@@ -2,22 +2,22 @@ import { axiosInstance } from '@/apis/axios';
 
 // 이메일 중복을 확인하는 함수
 export const getEmailAvailability = async (email: string) => {
-  const response = await axiosInstance.get('/mail/check-email', {
+  const { data } = await axiosInstance.get('/mail/check-email', {
     params: { email: email },
   });
-  return response;
+  return data;
 };
 
 // 이메일 인증을 요청하는 함수
 export const postEmailVerificationRequest = async (email: string) => {
-  const response = await axiosInstance.post('/mail/verify', null, { params: { email } });
-  return response;
+  const { data } = await axiosInstance.post('/mail/verify', null, { params: { email } });
+  return data;
 };
 
 // 이메일 인증을 확인하는 함수
 export const postEmailVerificationCheck = async (email: string, code: string) => {
-  const response = await axiosInstance.post('/mail/verify/check', null, {
+  const { data } = await axiosInstance.post('/mail/verify/check', null, {
     params: { email, authCode: code },
   });
-  return response;
+  return data;
 };

@@ -8,12 +8,14 @@ import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
 import { useLocation } from 'react-router';
+import { twMerge } from 'tailwind-merge';
 
 interface MusicCardProps {
   image?: string; // 음악 이미지
   title?: string; // 음악 제목
   artist?: string; // 음악 설명
   buttonContent?: string; // 버튼 텍스트
+  isMusicSelect?: boolean; // 음악 선택 상태
   buttonType?: 'primary' | 'secondary'; // 버튼 타입
   rightElement?: 'none' | 'play' | 'button'; // 오른쪽 요소 타입
 }
@@ -22,12 +24,15 @@ export default function MusicCard({
   image = defaultImage,
   title = '음악을 등록해 주세요',
   artist = ' 지금 생각나는 음악이 있나요?',
+  isMusicSelect = false,
   buttonContent = '등록',
   buttonType = 'primary',
   rightElement = 'button',
 }: MusicCardProps) {
   const location = useLocation();
   const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
+  // 음악 선택 여부에 따른 텍스트 스타일
+  const artistTextStyle = isMusicSelect ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
 
   const { isSheetOpen, openSheet } = useSheetStore();
 
@@ -40,10 +45,12 @@ export default function MusicCard({
   const handlePlayButton = () => {
     setIsPlaying('1', (prev) => !prev);
   };
+  // 유튜브 API는 `rightElement === 'play'`일 때만 호출
+  const shouldFetchYouTube = rightElement === 'play';
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    // if (searchedVideoId && isUserPage) {
+    // if (shouldFetchYouTube&&searchedVideoId && isUserPage) {
     //   setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
     // }
   }, [searchedVideoId]);
@@ -54,6 +61,7 @@ export default function MusicCard({
       setVideoId('1', null);
     };
   }, []);
+
   return (
     <>
       <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
@@ -74,7 +82,12 @@ export default function MusicCard({
             <div className="overflow-hidden  body-large-m whitespace-nowrap text-ellipsis">
               {title}
             </div>
-            <div className="font-saeeum text-[14px] leading-[18px] whitespace-nowrap text-ellipsis overflow-hidden">
+            <div
+              className={twMerge(
+                ' whitespace-nowrap text-ellipsis overflow-hidden text-gray-60',
+                artistTextStyle,
+              )}
+            >
               {artist}
             </div>
           </div>

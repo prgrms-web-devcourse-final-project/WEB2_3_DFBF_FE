@@ -1,12 +1,17 @@
 import Button from '@/components/Button';
+import { useContext } from 'react';
+import { PostMusicContext } from '@/pages/post/context/PostMusicContext';
 
 interface MusicSearchListProps {
-  albumImage: string; // 앨범이미지
+  spotifyId: string; // 스포티파이 ID
   songTitle: string; // 노래 제목
   artistName: string; // 가수
+  albumImage: string; // 앨범이미지
 }
 
-function MusicSearchList({ albumImage, songTitle, artistName }: MusicSearchListProps) {
+function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: MusicSearchListProps) {
+  const { selectPostMusic } = useContext(PostMusicContext)!;
+
   return (
     <div className="px-3 py-2 flex items-center justify-between bg-white cursor-pointer hover:bg-gray-5">
       <div className="flex gap-2 items-center">
@@ -16,7 +21,12 @@ function MusicSearchList({ albumImage, songTitle, artistName }: MusicSearchListP
           <span className="caption-r text-gray-60">{artistName}</span>
         </div>
       </div>
-      <Button className="w-[51px] h-[32px]">선택</Button>
+      <Button
+        onClick={() => selectPostMusic({ spotifyId, songTitle, artistName, albumImage })}
+        className="w-[51px] h-[32px]"
+      >
+        선택
+      </Button>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
-  login: (token: string | null) => void;
+  setAccessToken: (token: string | null) => void;
   logout: () => void;
 }
 
@@ -15,7 +15,7 @@ export const useAuthStore = create(
       isAuthenticated: false,
 
       // 로그인 후 accessToken 저장
-      login: (token) => {
+      setAccessToken: (token) => {
         set({ accessToken: token, isAuthenticated: !!token });
       },
 

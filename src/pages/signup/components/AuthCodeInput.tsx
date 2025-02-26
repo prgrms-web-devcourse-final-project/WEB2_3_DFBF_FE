@@ -41,8 +41,8 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
   // 이메일과 인증코드들 확인하는 함수
   const handleEmailVerificationCheck = async () => {
     try {
-      const { data } = await postEmailVerificationCheck(email, authCode);
-      if (data.code === 200) {
+      const { code } = await postEmailVerificationCheck(email, authCode);
+      if (code === 200) {
         setMessage({ type: 'success', message: '이메일 인증이 완료되었습니다' });
         setButtonVariant('disabled');
         setValidation({ type: 'success', message: '' }); // 완료 처리
@@ -66,12 +66,14 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       return;
     }
     try {
-      await postEmailVerificationRequest(email);
-      setResendCount((prev) => prev + 1); // 재전송 횟수 증가
-      setMessage({
-        type: 'default',
-        message: '인증번호가 오지 않았나요?',
-      });
+      const { code } = await postEmailVerificationRequest(email);
+      if (code === 200) {
+        setResendCount((prev) => prev + 1); // 재전송 횟수 증가
+        setMessage({
+          type: 'default',
+          message: '인증번호가 오지 않았나요?',
+        });
+      }
     } catch (error) {
       setMessage({ type: 'error', message: '이메일 인증 요청 중 오류가 발생했습니다.' });
     }

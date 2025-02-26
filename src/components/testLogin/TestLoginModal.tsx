@@ -8,6 +8,7 @@ const password = 'test1234!';
 
 // 로그인
 const handleLogin = async () => {
+  console.log('로그인 시작');
   try {
     const { code, data } = await login(id, password);
     console.log('로그인 됨', code, data.accessToken);
@@ -26,6 +27,7 @@ const handleLogout = async () => {
   }
 };
 
+// 토큰 재발급
 const handleTokenReissue = async () => {
   try {
     await reissueToken();
@@ -58,7 +60,7 @@ export default function TestLoginModal() {
           >
             로그아웃
           </button>
-          <button
+          {/* <button
             onClick={handleTokenReissue}
             className="caption-r bg-black/30 text-white px-1 py-1 rounded"
           >
@@ -66,7 +68,7 @@ export default function TestLoginModal() {
           </button>
           <button onClick={test} className="caption-r bg-black/30 text-white px-1 py-1 rounded">
             테스트
-          </button>
+          </button> */}
         </>
       ) : (
         <button

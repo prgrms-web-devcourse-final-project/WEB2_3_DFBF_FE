@@ -29,24 +29,29 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // 응답 에러 처리
     const originalRequest = error.config; // 실패한 요청 정보 저장
-    console.log('📌 요청 실패:', originalRequest);
-    if (!originalRequest) return Promise.reject(error); // 요청 정보 자체가 아예 없을 경우 방어 코드
+    console.log('요청 실패:', originalRequest);
+    if (!originalRequest) return Promise.reject(error); // 요청 정보 자체가 아예 없을 경우 종료
 
     // AT 토큰 만료 시
-    if (error.response.status === 403 && !originalRequest._retry) {
-      originalRequest._retry = true; // 이 요청이 첫 번째 재시도임을 표시
-      console.log('📌 AT 토큰 만료:', originalRequest);
+    if (
+      (error.response.status === 401 || error.response.status === 403) && //TODO:임시 응답코드 확인 후 변경해야 됨
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true; // 재시도 방지
 
-      // 토큰 재발급
+      console.log('토큰 만료', originalRequest);
       try {
-        await reissueToken();
-        return axiosInstance(originalRequest); // 재시도
+        await reissueToken(); // 토큰 재발급 요청
+        return axiosInstance(originalRequest); // 원래 요청 다시 시도
       } catch (error) {
-        console.error('📌 AT 토큰 재발급 실패:', error);
+        console.error('AT 토큰 재발급 실패:', error);
         return Promise.reject(error);
       }
     }
+
+    return Promise.reject(error);
   },
 );
 

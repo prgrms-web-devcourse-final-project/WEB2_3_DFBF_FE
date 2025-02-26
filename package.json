@@ -13,6 +13,7 @@
     "@stomp/stompjs": "^7.0.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query-devtools": "^5.66.9",
     "@types/node": "^22.13.4",
     "@types/youtube": "^0.1.0",
     "axios": "^1.7.9",

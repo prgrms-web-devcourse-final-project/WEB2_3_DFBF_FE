@@ -52,8 +52,14 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />} />
 
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />}
+          />
+          <Route
+            path="/signup"
+            element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />}
+          />
 
           {/* test용 */}
           {/* PrivateRoute 적용 */}

@@ -2,6 +2,8 @@ import { twMerge } from 'tailwind-merge';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'disabled';
+  className?: string;
+  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function Button({

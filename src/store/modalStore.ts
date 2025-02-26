@@ -6,6 +6,8 @@ interface ModalState {
   message: string;
   onConfirm?: () => void;
   onCancel?: () => void;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 interface ModalStore {
@@ -15,7 +17,7 @@ interface ModalStore {
 }
 
 export const useModalStore = create<ModalStore>((set) => ({
-  modal: { isOpen: false, title: '', message: '' },
+  modal: { isOpen: false, title: '', message: '', confirmText: '확인', cancelText: '취소' },
   openModal: (modal) => set((prev) => ({ modal: { ...prev.modal, ...modal, isOpen: true } })), // 기존 상태 유지하면서 업데이트
   closeModal: () =>
     set((prev) => ({

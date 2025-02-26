@@ -1,13 +1,15 @@
 import { twMerge } from 'tailwind-merge';
 
-interface ButtonProps {
-  children: React.ReactNode;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'disabled';
-  className?: string;
-  onClick?: () => void;
 }
 
-export default function Button({ children, variant = 'primary', className, onClick }: ButtonProps) {
+export default function Button({
+  children,
+  variant = 'primary',
+  className,
+  ...props
+}: ButtonProps) {
   const buttonStyle = {
     primary: 'bg-primary-normal hover:bg-primary-hover',
     secondary: 'bg-white border border-primary-active text-primary-active hover:bg-gray-5',
@@ -23,7 +25,7 @@ export default function Button({ children, variant = 'primary', className, onCli
           className,
         )}
         disabled={variant === 'disabled'}
-        onClick={variant === 'disabled' ? undefined : onClick}
+        {...props}
       >
         {children}
       </button>

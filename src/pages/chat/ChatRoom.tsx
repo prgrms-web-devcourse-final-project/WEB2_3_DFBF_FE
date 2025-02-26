@@ -219,7 +219,7 @@ export default function ChatRoom({}: ChatRoomProps) {
             <p className="text-primary-normal">연장 요청 (0/2)</p>
           </button>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 items-end">
           <textarea
             ref={textareaRef}
             name="chatText"
@@ -228,7 +228,7 @@ export default function ChatRoom({}: ChatRoomProps) {
             onKeyDown={handleKeyDown}
             maxLength={MAX_CHAT_MESSAGE_LENGTH}
             rows={1} // 시작 시 1줄로 설정
-            className="flex-1 border h-[35px] border-primary-hover rounded-2xl py-[5px] px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50 resize-none"
+            className="flex-1 border min-h-[32px] border-primary-hover rounded-2xl py-[6px] px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50 resize-none"
             placeholder="메시지 입력"
             onInput={adjustHeight}
             style={{

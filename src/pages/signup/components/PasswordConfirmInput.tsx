@@ -44,7 +44,6 @@ function PasswordConfirmInput({
       id="passwordConfirm"
       label="비밀번호 확인"
       placeholder="비밀번호를 다시 입력해 주세요"
-      isValid={false}
       value={value}
       onChange={handleChange}
       validationMessages={validation}

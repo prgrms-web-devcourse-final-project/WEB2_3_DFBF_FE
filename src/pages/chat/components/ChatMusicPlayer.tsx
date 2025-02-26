@@ -34,9 +34,9 @@ export default function ChatMusicPlayer() {
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (searchedVideoId) {
-      setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
-    }
+    // if (searchedVideoId) {
+    //   setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
+    // }
   }, [searchedVideoId]);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
@@ -98,7 +98,16 @@ export default function ChatMusicPlayer() {
   return (
     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
-        <img src={musicInfo.album_image} alt="album" className="w-[48px] h-[48px] object-cover" />
+        <img
+          src={musicInfo.album_image}
+          alt="album"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null; // 무한 루프 방지
+            target.src = defaultImage; // 기본 이미지로 변경
+          }}
+          className="w-[48px] h-[48px] object-cover"
+        />
         <div className="relative flex-grow mx-2 overflow-hidden">
           <div ref={containerRef} className="w-full">
             <p

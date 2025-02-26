@@ -1,9 +1,5 @@
 import { NavLink } from 'react-router';
-import {
-  chatDefault,
-  homeDefault,
-  mypageDefault,
-} from '@/assets/icons/nav';
+import { chatDefault, homeDefault, mypageDefault } from '@/assets/icons/nav';
 import { twMerge } from 'tailwind-merge';
 import HomeActive from '@/assets/icons/nav/HomeActive';
 import ChatActive from '@/assets/icons/nav/ChatActive';
@@ -25,7 +21,7 @@ const navItems = [
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-40 flex max-w-[600px] min-w-[320px] w-full bg-secondary-1 py-1 pb-4">
+    <nav className="fixed bottom-padding-nav bottom-0 left-1/2 -translate-x-1/2 z-40 flex max-w-[600px] min-w-[320px] w-full bg-secondary-1 py-1">
       {navItems.map(({ path, label, icons }) => (
         <NavLink
           key={path}
@@ -34,7 +30,11 @@ export default function BottomNav() {
         >
           {({ isActive }) => (
             <>
-              {isActive ? icons.active : <img src={icons.default} alt={`${label} Icon`} />}
+              {isActive ? (
+                icons.active
+              ) : (
+                <img src={icons.default} className="w-6 h-6" alt={`${label} Icon`} />
+              )}
 
               <span
                 className={twMerge(

@@ -44,10 +44,12 @@ export default function MusicCard({
   const handlePlayButton = () => {
     setIsPlaying('1', (prev) => !prev);
   };
+  // 유튜브 API는 `rightElement === 'play'`일 때만 호출
+  const shouldFetchYouTube = rightElement === 'play';
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (searchedVideoId) {
+    if (shouldFetchYouTube && searchedVideoId) {
       setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
     }
   }, [searchedVideoId]);

@@ -6,7 +6,9 @@ import IdInput from '@/pages/signup/components/IdInput';
 import NicknameInput from '@/pages/signup/components/NicknameInput';
 import PasswordConfirmInput from '@/pages/signup/components/PasswordConfirmInput';
 import PasswordInput from '@/pages/signup/components/PasswordInput';
+import { useModalStore } from '@/store/modalStore';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 type ValidationMessage = {
   type: 'success' | 'error' | '';
@@ -23,6 +25,7 @@ interface ValidationMessages {
 }
 
 function SignUp() {
+  const navigate = useNavigate();
   // 전송할 폼데이터
   const [formData, setFormData] = useState({
     id: '',
@@ -43,12 +46,11 @@ function SignUp() {
     emailVerificationConfirm: { type: '', message: '' },
   });
 
+  const { openModal, closeModal } = useModalStore(); // 모달
+
   const allSuccess = Object.values(validationMessages).every((field) => field.type === 'success'); //모든 필드가 'success'인지 확인
 
-  console.log(validationMessages);
-
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('hi');
     e.preventDefault();
     try {
       const { data } = await postSignUp(
@@ -58,7 +60,15 @@ function SignUp() {
         formData.email,
       );
       if (data.code === 200) {
-        console.log('회원가입 성공', data);
+        openModal({
+          title: '회원가입 성공 🎉',
+          message: '사운드링크에 오신 것을 환영합니다',
+          confirmText: '로그인하러 가기',
+          onConfirm() {
+            navigate('/login');
+            closeModal();
+          },
+        });
       }
     } catch (error) {
       console.log('회원가입 실패');

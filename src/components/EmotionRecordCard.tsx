@@ -1,4 +1,5 @@
 import EmotionBadge from '@/components/EmotionBadge';
+import defaultImage from '@assets/images/default.png';  
 
 interface EmotionRecordCardProps {
   emotion: string; // 감정
@@ -22,6 +23,11 @@ function EmotionRecordCard({
         <img
           src={albumImage}
           alt="앨범 이미지"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null; // 무한 루프 방지
+            target.src = defaultImage; // 기본 이미지로 변경
+          }}
           className="object-cover w-full rounded-lg aspect-square"
         />
       </div>

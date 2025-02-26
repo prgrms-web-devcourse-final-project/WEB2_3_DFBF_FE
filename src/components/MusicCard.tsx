@@ -59,6 +59,11 @@ export default function MusicCard({
           <img
             className="object-cover w-full h-full"
             src={image}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null; // 무한 루프 방지
+              target.src = defaultImage; // 기본 이미지로 변경
+            }}
             alt={`${title || '음악'} 앨범 커버`}
           />
         </div>

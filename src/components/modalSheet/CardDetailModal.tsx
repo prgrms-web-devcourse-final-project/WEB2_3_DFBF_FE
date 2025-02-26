@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { searchYoutubeVideo } from '@/apis/youtube';
 import { useSheetStore } from '@/store/sheetStore';
 import { useYouTubeStore } from '@/store/youtubeStore';
+import defaultImage from '@assets/images/default.png';
 
 interface CardDetailModalProps {
   emotion: string; // 감정
@@ -67,6 +68,11 @@ function CardDetailModal({
                 <img
                   src={albumImage}
                   alt="앨범 이미지"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null; // 무한 루프 방지
+                    target.src = defaultImage; // 기본 이미지로 변경
+                  }}
                   className="w-[80px] h-[80px] rounded-[8px]"
                 />
                 <div className="flex flex-col items-center min-w-0">

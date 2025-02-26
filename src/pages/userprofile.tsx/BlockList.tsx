@@ -19,33 +19,6 @@ export default function BlockList() {
 
   const [blockList, setBlockList] = useState<BlockedUser[]>([]);
 
-  const mockData = [
-    {
-      userId: 1,
-      blockedUserId: 4,
-      nickname: '닉넴',
-      tag: '@plm3033',
-      createdAt: '2025-02-19T02:14:25.997+00:00',
-      updatedAt: '2025-02-19T02:14:25.997+00:00',
-    },
-    {
-      userId: 1,
-      blockedUserId: 3,
-      nickname: 'hell',
-      tag: '@whatthe',
-      createdAt: '2025-02-19T02:14:32.526+00:00',
-      updatedAt: '2025-02-19T02:14:32.526+00:00',
-    },
-    {
-      userId: 1,
-      blockedUserId: 2,
-      nickname: 'maroon',
-      tag: '@sugar',
-      createdAt: '2025-02-19T02:15:20.647+00:00',
-      updatedAt: '2025-02-19T02:15:20.647+00:00',
-    },
-  ];
-
   const handleBlock = (nickname: string, id: number) => {
     openModal({
       title: [
@@ -54,9 +27,28 @@ export default function BlockList() {
       ],
       message: '이제 피드에서 상대방의 글을 볼 수 있어요',
       onConfirm: async () => {
-        console.log('확인');
+        // 기존 차단 목록을 저장
+        const prevBlockList = blockList;
+
+        // UI에서 먼저 제거
         setBlockList((prev) => prev.filter((item) => item.blockedUserId !== id));
-        // await deleteBlockList(id);
+
+        try {
+          // 서버 요청
+          const data = await deleteBlockList(id);
+          console.log(data);
+
+          // 만약 요청이 실패했다면, 기존 상태를 복원
+          if (data.code !== 200) {
+            console.log(data);
+            throw new Error('삭제 실패');
+          }
+        } catch (error) {
+          console.error('삭제 요청 실패:', error);
+          // 기존 상태로 복원
+          setBlockList(prevBlockList);
+        }
+
         closeModal();
       },
       onCancel: () => {
@@ -70,7 +62,7 @@ export default function BlockList() {
     const getBlockList = async () => {
       const data = await fetchBlockList();
       console.log(data);
-      setBlockList(data);
+      setBlockList(data.data);
     };
     getBlockList();
     // setBlockList(mockData);

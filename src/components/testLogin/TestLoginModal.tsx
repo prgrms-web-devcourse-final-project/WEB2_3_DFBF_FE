@@ -20,10 +20,11 @@ const handleLogin = async () => {
 // 로그아웃
 const handleLogout = async () => {
   try {
+    console.log('로그아웃 시작');
     await logout();
-    console.log('로그아웃 됨');
   } catch (error) {
-    console.log('로그아웃 에러', error);
+    console.error('로그아웃 에러', error);
+    useAuthStore.getState().logout(); // 전역 상태 초기화
   }
 };
 
@@ -32,7 +33,8 @@ const handleTokenReissue = async () => {
   try {
     await reissueToken();
   } catch (error) {
-    console.error(error);
+    console.error('토큰 재발급 에러', error);
+    useAuthStore.getState().logout(); // 전역 상태 초기화
   }
 };
 

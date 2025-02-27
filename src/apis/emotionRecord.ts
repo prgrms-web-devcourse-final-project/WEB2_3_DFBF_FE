@@ -22,3 +22,9 @@ export const getUserEmotionRecords = async (tag: string, page = 0, size = 10) =>
   });
   return data;
 };
+
+// 상세 감정 기록 조회
+export const getEmotionRecordById = async (recordId: number) => {
+  const { data } = await axiosInstance.get(`/emotion/${recordId}`);
+  return data;
+};

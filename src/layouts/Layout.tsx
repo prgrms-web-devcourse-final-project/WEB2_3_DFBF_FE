@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router';
 import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
+import PostButton from '@/components/PostButton';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -44,6 +45,8 @@ function Layout() {
     return headerConfig[location.pathname] ?? <Header />;
   };
 
+  const hasPostButton = location.pathname === '/home' || location.pathname === '/mypage';
+
   return (
     <div className="relative max-w-[600px] min-w-[320px] w-full min-h-screen mx-auto bg-background flex flex-col">
       {/* 헤더 */}
@@ -61,6 +64,7 @@ function Layout() {
 
       {/* 하단 네비게이션 */}
       {renderBottomNav()}
+      {hasPostButton && <PostButton />}
     </div>
   );
 }

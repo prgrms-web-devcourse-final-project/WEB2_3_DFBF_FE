@@ -114,7 +114,7 @@ export default function Login() {
         {/* 회원가입 */}
         <div className="caption-r">
           계정이 없으신가요?
-          <Link to="/signup" className="text-primary-active">
+          <Link to="/signup" className="text-primary-active ml-1">
             회원가입
           </Link>
         </div>

@@ -2,9 +2,7 @@ import { useModalStore } from '@/store/modalStore';
 import Button from './Button';
 // import { spawn } from 'child_process';
 
-interface ModalProps {}
-
-export default function Modal({}: ModalProps) {
+export default function Modal() {
   const { modal, closeModal } = useModalStore();
   if (!modal.isOpen) return null;
   return (
@@ -16,7 +14,7 @@ export default function Modal({}: ModalProps) {
         className="bg-white p-5 mx-5 rounded-lg card-shadow w-[287px] min-h-[148px] flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-center h4-b">
+        <div className="flex flex-1 justify-center items-center text-center h4-b  ">
           {Array.isArray(modal.title)
             ? modal.title.map((part, index) => (
                 <span key={index} className={part.className}>
@@ -24,8 +22,8 @@ export default function Modal({}: ModalProps) {
                 </span>
               ))
             : modal.title}
-        </h2>
-        <p className="text-center caption-r">{modal.message}</p>
+        </div>
+        {modal.message && <p className="text-center caption-r">{modal.message}</p>}
         <div className="mt-4 flex justify-end gap-[6px]">
           <Button variant="primary" onClick={modal.onConfirm} className="body-m">
             {modal.confirmText}

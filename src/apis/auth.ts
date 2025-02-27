@@ -7,9 +7,13 @@ export const login = async (loginId: string, password: string) => {
     loginId,
     password,
   });
-  const accessToken = data.data.accessToken;
-  useAuthStore.getState().setAccessToken(accessToken); // 토큰 전역 상태 저장
-  return data;
+  if (data.code === 200) {
+    const accessToken = data.data.accessToken;
+    useAuthStore.getState().setAccessToken(accessToken); // 토큰 전역 상태 저장
+    return data;
+  } else {
+    throw new Error('로그인 실패');
+  }
 };
 
 // 로그아웃
@@ -35,10 +39,16 @@ export const reissueToken = async () => {
   }
 
   if (code === 400) {
-    useAuthStore.getState().logout(); // 전역 상태 초기화
+    // useAuthStore.getState().logout(); // 전역 상태 초기화
     console.log('토큰 재발급 실패:', data);
     // window.location.href = '/'; // 랜딩 페이지로 이동
   }
 
+  // 유효하지 않은 토큰
+  if (code === 401) {
+    // useAuthStore.getState().logout(); // 전역 상태 초기화
+    console.log('유효하지 않은 토큰:', data);
+    // window.location.href = '/'; // 랜딩 페이지로 이동
+  }
   return data;
 };

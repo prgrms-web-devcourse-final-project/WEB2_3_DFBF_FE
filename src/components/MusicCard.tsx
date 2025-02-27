@@ -34,7 +34,7 @@ export default function MusicCard({
   // 음악 선택 여부에 따른 텍스트 스타일
   const artistTextStyle = isMusicSelect ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
 
-  const { isSheetOpen, openSheet } = useSheetStore();
+  const { isMusicSheetOpen, openSheet } = useSheetStore();
 
   const { data: searchedVideoId } = useSearchYoutubeVideo(`${artist} - ${title} lyrics`);
 
@@ -79,7 +79,7 @@ export default function MusicCard({
         </div>
         <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
           <div className="flex flex-col flex-1 min-w-0">
-            <div className="overflow-hidden  body-large-m whitespace-nowrap text-ellipsis">
+            <div className="overflow-hidden body-large-m whitespace-nowrap text-ellipsis">
               {title}
             </div>
             <div
@@ -93,7 +93,7 @@ export default function MusicCard({
           </div>
           {rightElement === 'button' && (
             <Button
-              onClick={openSheet}
+              onClick={() => openSheet('isMusicSheetOpen')}
               variant={buttonType}
               className="w-[51px] h-[32px] flex-shrink-0"
             >
@@ -107,7 +107,7 @@ export default function MusicCard({
           )}
         </div>
       </div>
-      {isSheetOpen && <MusicSearchSheet />}
+      {isMusicSheetOpen && <MusicSearchSheet />}
     </>
   );
 }

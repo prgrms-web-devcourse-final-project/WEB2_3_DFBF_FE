@@ -9,7 +9,7 @@ import { postEmotionRecord } from '@/apis/emotionRecord';
 
 export default function PostPage() {
   const { selectedPostMusic } = useContext(PostMusicContext)!;
-  const { closeSheet } = useSheetStore();
+  const { closeAllSheets } = useSheetStore();
 
   //음악 선택 상태 확인
   const [isMusicSelect, setIsMusicSelect] = useState(false);
@@ -21,7 +21,7 @@ export default function PostPage() {
   useEffect(() => {
     if (selectedPostMusic) {
       setIsMusicSelect(true);
-      closeSheet();
+      closeAllSheets();
     } else {
       setIsMusicSelect(false);
     }
@@ -63,11 +63,11 @@ export default function PostPage() {
   };
 
   return (
-    <div className="flex flex-col w-full items-center justify-between pb-10">
-      <div className="flex flex-col items-center mt-5 gap-6 w-fit">
+    <div className="flex flex-col items-center justify-between w-full pb-10">
+      <div className="flex flex-col items-center gap-6 mt-5 w-fit">
         {/* 감정 선택 */}
         <div className="flex flex-col items-center gap-5">
-          <h2 className="font-saeeum text-2xl text-gray-60">이 순간, 어떤 감정이 떠오르나요?</h2>
+          <h2 className="text-2xl font-saeeum text-gray-60">이 순간, 어떤 감정이 떠오르나요?</h2>
           <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
         </div>
 

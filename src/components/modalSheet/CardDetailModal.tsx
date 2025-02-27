@@ -7,6 +7,7 @@ import { useYouTubeStore } from '@/store/youtubeStore';
 import defaultImage from '@assets/images/default.png';
 import { useQuery } from '@tanstack/react-query';
 import { getEmotionRecordById } from '@/apis/emotionRecord';
+import { formatDate } from '@/utils/formatDate';
 
 interface CardDetailModalProps {
   // emotion: string; // 감정
@@ -31,7 +32,6 @@ function CardDetailModal({
   // isOwnPost,
   recordId,
 }: CardDetailModalProps) {
-  console.log(recordId);
   const { isCardSheetOpen } = useSheetStore();
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['3']?.isPlaying || false;
@@ -55,7 +55,9 @@ function CardDetailModal({
               {isChatting && <img src={headsetIcon} alt="헤드셋 아이콘" />}
             </div>
             <div className="flex items-center gap-2">
-              <span className=" font-light text-gray-60 text-[10px]">{data?.data?.createAt}</span>
+              <span className=" font-light text-gray-60 text-[10px]">
+                {formatDate(data?.data?.createdAt)}
+              </span>
               <EmotionBadge size="small" emotion={data?.data?.emotion} />
             </div>
           </div>

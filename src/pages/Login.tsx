@@ -5,9 +5,11 @@ import logo from '@assets/icons/logo.svg';
 import kakao from '@assets/icons/kakao-icon.svg';
 import Input from '@/components/Input';
 import { useState } from 'react';
+import { useModalStore } from '@/store/modalStore';
 
 export default function Login() {
-const navigate = useNavigate();
+  const { openModal, closeModal } = useModalStore();
+  const navigate = useNavigate();
 
   const [userId, setUserId] = useState(''); //아이디
   const [userPassword, setUserPassword] = useState(''); //비밀번호
@@ -22,18 +24,45 @@ const navigate = useNavigate();
     setUserPassword(e.target.value);
   };
 
+  // 로그인 실패 모달
+  const handleLoginFailModal = (massage: string) => {
+    openModal({
+      title: '로그인 실패',
+      message: massage,
+      onConfirm: () => {
+        closeModal();
+      },
+    });
+  };
+
+  // 입력 필드 초기화
+  const resetInputs = () => {
+    setUserId('');
+    setUserPassword('');
+  };
+
   // 로그인
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const trimmedId = userId.trim();
+    const trimmedPassword = userPassword.trim();
+
+    if (!trimmedId || !trimmedPassword) {
+      handleLoginFailModal('아이디와 비밀번호는 공백일 수 없습니다');
+      resetInputs();
+      return;
+    }
+
     try {
-      const { code, data } = await login(userId, userPassword);
-      // TODO: 실패 반환시 에러 모달 추가
+      const { code, data } = await login(trimmedId, trimmedPassword);
+      navigate('/home');
       console.log('로그인 됨', code, data.accessToken);
-      navigate('/home')
-      
     } catch (error) {
+      handleLoginFailModal('아이디와 비밀번호를 다시 확인해 주세요.'); // 로그인 실패 모달
       console.log('로그인 에러', error);
     }
+    resetInputs();
   };
 
   return (
@@ -55,6 +84,7 @@ const navigate = useNavigate();
             <Input
               id="userId"
               placeholder="아이디를 입력해 주세요"
+              value={userId}
               onChange={(e) => handleChangeUserId(e)}
             />
           </div>
@@ -66,6 +96,8 @@ const navigate = useNavigate();
             <Input
               id="password"
               placeholder="비밀번호를 입력해 주세요"
+              type="password"
+              value={userPassword}
               onChange={(e) => handleChangePassword(e)}
             />
           </div>
@@ -75,15 +107,14 @@ const navigate = useNavigate();
 
       <div className="flex flex-col gap-3 items-center w-full mt-2.5 ">
         {/* 소셜 로그인 */}
-        <Button className="bg-[#FFEB3B] text-gray-80">
-          <img src={kakao} alt="카카오 아이콘" />
-          카카오 로그인
+        <Button className="bg-[#FEE500] text-gray-80 gap-1.5 hover:bg-[#fded63]">
+          <img className="w-4" src={kakao} alt="카카오 아이콘" />
+          <span className="text-black/85">카카오로 시작하기</span>
         </Button>
         {/* 회원가입 */}
         <div className="caption-r">
           계정이 없으신가요?
           <Link to="/signup" className="text-primary-active">
-            {' '}
             회원가입
           </Link>
         </div>

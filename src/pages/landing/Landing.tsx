@@ -1,12 +1,7 @@
 import Button from '@/components/Button';
 import MusicAnimation from '@/components/MusicAnimation';
-import { useNavigate } from 'react-router';
+import { Link } from 'react-router';
 function Landing() {
-  const navigate = useNavigate();
-
-  const handleStart = () => {
-    navigate('/login');
-  };
   return (
     <div className="flex flex-col w-full justify-center relative">
       <div className="flex flex-col gap-3 mt-[44px] mb-[180px]">
@@ -18,9 +13,11 @@ function Landing() {
         </p>
         <MusicAnimation />
       </div>
-      <Button variant="primary" className="absolute bottom-10 z-3" onClick={handleStart}>
-        지금 시작하기
-      </Button>
+      <Link to="/login">
+        <Button variant="primary" className="absolute bottom-10 z-3">
+          지금 시작하기
+        </Button>
+      </Link>
     </div>
   );
 }

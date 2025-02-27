@@ -33,3 +33,18 @@ export const postSignUp = async (
   });
   return data;
 };
+
+// 마이페이지 정보 불러오기
+export const getMyProfile = async () => {
+  const { data } = await axiosInstance.get('/user/mypage');
+  return data;
+};
+
+// 타 유저 정보 불러오기
+export const getUserProfile = async (tag: string) => {
+  const { data } = await axiosInstance.get('/user/profile', {
+    params: { tag },
+  });
+
+  return data;
+};

@@ -5,6 +5,7 @@ import InfoMessage from '@/components/InfoMessage';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
 import { useSheetStore } from '@/store/sheetStore';
+import { formatDate } from '@/utils/formatDate';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
@@ -29,7 +30,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         : getUserEmotionRecords(userId as string),
     enabled: !!userData, // userData가 존재할 때만 실행
   });
-
+  console.log(emotionRecords);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
   const handleOpenSheet = (recordId: number) => {
@@ -61,7 +62,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
                 albumImage={record.spotifyMusic.albumImage}
                 songTitle={record.spotifyMusic.title}
                 artistName={record.spotifyMusic.artist}
-                date={record.createdAt}
+                date={formatDate(record.createdAt)}
                 onClick={() => handleOpenSheet(record.recordId)}
               />
             ))}

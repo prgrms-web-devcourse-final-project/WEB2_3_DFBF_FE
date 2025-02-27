@@ -4,7 +4,7 @@ import { MAX_EMOTION_COMMENT_LENGTH } from '@/constants';
 interface CommentProps {
   selectedEmotion: string | null; // 선택된 감정
   onChangeComment: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; // 코멘트 입력시
-  comment: string | null; // 코멘트
+  comment: string; // 코멘트
 }
 
 export default function Comment({ selectedEmotion, onChangeComment, comment }: CommentProps) {

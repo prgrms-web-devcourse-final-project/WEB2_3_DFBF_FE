@@ -15,7 +15,7 @@ export default function PostPage() {
   const [isMusicSelect, setIsMusicSelect] = useState(false);
 
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const [comment, setComment] = useState<string | null>(null); // 코멘트
+  const [comment, setComment] = useState<string>(''); // 코멘트
 
   // 음악 선택 됨 -> 아티스트 폰트 스타일 변경, 모달 닫기
   useEffect(() => {
@@ -34,11 +34,11 @@ export default function PostPage() {
 
   // 코멘트 입력 시
   const onChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
+    setComment(e.target.value.trim());
   };
 
   // 기록 완료 조건 확인
-  const isCompletePost = selectedPostMusic && selectedEmotion && comment;
+  const isCompletePost = selectedPostMusic && selectedEmotion && comment.length > 0;
 
   // 기록 완료
   const onCompletePost = async () => {

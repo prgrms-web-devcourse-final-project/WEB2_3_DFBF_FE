@@ -1,6 +1,5 @@
 import Button from '@/components/Button';
-import { useContext } from 'react';
-import { PostMusicContext } from '@/pages/post/context/PostMusicContext';
+import { useMusicCardStore } from '@/store/MusicCardStore';
 
 interface MusicSearchListProps {
   spotifyId: string; // 스포티파이 ID
@@ -10,7 +9,7 @@ interface MusicSearchListProps {
 }
 
 function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: MusicSearchListProps) {
-  const { selectPostMusic } = useContext(PostMusicContext)!;
+  const { selectPostMusic } = useMusicCardStore();
 
   return (
     <div className="px-3 py-2 flex items-center justify-between bg-white cursor-pointer hover:bg-gray-5">

@@ -6,8 +6,12 @@ import { useContext, useEffect, useState } from 'react';
 import { PostMusicContext } from '@/pages/post/context/PostMusicContext';
 import { useSheetStore } from '@/store/sheetStore';
 import { postEmotionRecord } from '@/apis/emotionRecord';
+import { useModalStore } from '@/store/modalStore';
+import { useNavigate } from 'react-router';
 
 export default function PostPage() {
+  const navigate = useNavigate();
+  const { openModal, closeModal } = useModalStore();
   const { selectedPostMusic } = useContext(PostMusicContext)!;
   const { closeAllSheets } = useSheetStore();
 
@@ -15,7 +19,7 @@ export default function PostPage() {
   const [isMusicSelect, setIsMusicSelect] = useState(false);
 
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const [comment, setComment] = useState<string | null>(null); // 코멘트
+  const [comment, setComment] = useState<string>(''); // 코멘트
 
   // 음악 선택 됨 -> 아티스트 폰트 스타일 변경, 모달 닫기
   useEffect(() => {
@@ -34,11 +38,42 @@ export default function PostPage() {
 
   // 코멘트 입력 시
   const onChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
+    setComment(e.target.value.trim());
   };
 
   // 기록 완료 조건 확인
-  const isCompletePost = selectedPostMusic && selectedEmotion && comment;
+  const isCompletePost = selectedPostMusic && selectedEmotion && comment.length > 0;
+
+  // 글 등록 성공 모달
+  const handlePostSuccessModal = () => {
+    openModal({
+      title: '글 등록 성공',
+      message: '내가 쓴 글을 확인하러 가 볼까요?',
+      confirmText: '확인하러 가기',
+      cancelText: '홈으로 가기',
+      onConfirm: () => {
+        navigate('/mypage', { replace: true });
+        closeModal();
+      },
+      onCancel: () => {
+        navigate('/home', { replace: true });
+        closeModal();
+      },
+    });
+  };
+
+  // 글 등록 실패 모달
+  const handlePostFailModal = () => {
+    openModal({
+      title: '글 등록 실패',
+      message: '잠시 후 다시 시도해 주세요.',
+      confirmText: '확인',
+      onConfirm: async () => {
+        closeModal();
+        navigate(-1);
+      },
+    });
+  };
 
   // 기록 완료
   const onCompletePost = async () => {
@@ -53,12 +88,14 @@ export default function PostPage() {
         emotion: selectedEmotion,
         comment: comment,
       };
-      console.log('전송할 데이터:', requestData);
 
       const data = await postEmotionRecord(requestData);
       console.log('기록 완료:', data);
+
+      handlePostSuccessModal();
     } catch (error) {
       console.error(error);
+      handlePostFailModal();
     }
   };
 

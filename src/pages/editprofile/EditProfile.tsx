@@ -1,56 +1,182 @@
+import { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import InputField from '@/components/InputField';
 import MusicCard from '@/components/MusicCard';
+import { getMyProfile } from '@/apis/user';
+import PasswordInput from '../signup/components/PasswordInput';
+import PasswordConfirmInput from '../signup/components/PasswordConfirmInput';
+import NicknameInput from '../signup/components/NicknameInput';
+
+type ValidationMessage = {
+  type: 'success' | 'error' | '';
+  message: string;
+};
+
+interface ValidationMessages {
+  currentPassword: ValidationMessage;
+  newPassword: ValidationMessage;
+  passwordConfirm: ValidationMessage;
+  nickname: ValidationMessage;
+}
 
 function EditProfile() {
-  return (
-    <div className="flex flex-col w-full pt-5 pb-10 border-2 border-red-500">
-      <form className="flex flex-col justify-between h-full " onSubmit={(e) => e.preventDefault()}>
-        <div className="flex flex-col gap-5">
-          <div className="flex justify-center w-full">
-            <MusicCard />
-          </div>
-          <div>
-            <InputField
-              type="text"
-              id="nickname"
-              label="닉네임"
-              placeholder="닉네임을 입력해 주세요"
-              isValid={false}
-              errorMessage="닉네임 중복"
-              variant="primary"
-              buttonText="중복확인"
-            />
-            <InputField
-              type="password"
-              id="current-password"
-              label="현재 비밀번호"
-              placeholder="현재 비밀번호"
-              isValid={false}
-              errorMessage="닉네임 중복"
-            />
-            <InputField
-              type="password"
-              id="new-password"
-              label="새 비밀번호"
-              placeholder="새 비밀번호"
-              isValid={false}
-              errorMessage="닉네임 중복"
-            />
-            <InputField
-              type="password"
-              id="confirm-password"
-              label="새 비밀번호 확인"
-              placeholder="새 비밀번호 확인"
-              isValid={false}
-              errorMessage="닉네임 중복"
-            />
-          </div>
-        </div>
+  const [prevProfileMusic, setPrevProfileMusic] = useState<ProfileMusic | null>(null);
+  const [prevNickname, setPrevNickname] = useState<string>('');
+  // const [currentNickname, setCurrentNickname] = useState<string>('');
+  const [currentPassword, setCurrentPassword] = useState<string>('');
 
-        <Button variant="disabled" className="py-3 body-m">
-          저장하기
-        </Button>
+  const [formData1, setFormData1] = useState({
+    profileMusic: {
+      album: null,
+      artist: '',
+      spotifyId: '',
+      title: '',
+    },
+    nickname: '',
+  });
+  const [formData2, setFormData2] = useState({
+    currentPassword: '',
+    newPassword: '',
+    passwordConfirm: '',
+  });
+
+  const [activeTab, setActiveTab] = useState('profile');
+
+  const [validationMessages, setValidationMessages] = useState<ValidationMessages>({
+    currentPassword: { type: '', message: '' },
+    newPassword: { type: '', message: '' },
+    passwordConfirm: { type: '', message: '' },
+    nickname: { type: '', message: '' },
+  });
+
+  const validateCurrentPassword = async () => {
+    //현재 비밀번호 확인 api
+  };
+
+  const handleProfileSubmit = () => {
+    //버튼에서 이전과 달라진게 없으면 disable
+  };
+  const handlePasswordSubmit = () => {
+    // 현재 비밀번호 1자이상/비밀번호, 비밀번호 확인 맞으면 버튼 활성화
+    //제출 시 우선 현재 비밀번호 확인.
+  };
+
+  useEffect(() => {
+    const loadMyProfile = async () => {
+      const data = await getMyProfile();
+      console.log(data);
+      setPrevNickname(data.data.nickname);
+      setPrevProfileMusic(data.data.profileMusic);
+      setFormData1((prev) => ({
+        ...prev,
+        nickname: data.data.nickname,
+        profileMusic: data.data.profileMusic,
+      }));
+    };
+    loadMyProfile();
+  }, []);
+
+  return (
+    <div className="flex flex-col w-full pt-5 pb-10">
+      {/* 탭 메뉴 */}
+      <div className="flex">
+        <button
+          className={`p-3 flex-1 ${activeTab === 'profile' ? 'border-b-2 border-primary-active font-bold' : ''}`}
+          onClick={() => setActiveTab('profile')}
+        >
+          프로필 수정
+        </button>
+        <button
+          className={`p-3 flex-1 ${activeTab === 'password' ? 'border-b-2 border-primary-active font-bold' : ''}`}
+          onClick={() => setActiveTab('password')}
+        >
+          비밀번호 변경
+        </button>
+      </div>
+
+      {/* 폼 */}
+      <form
+        className="flex flex-col justify-between h-full p-5"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {activeTab === 'profile' ? (
+          // 프로필 수정 탭
+          <>
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col items-center w-full">
+                <div className="flex justify-between w-[296px] px-1 my-1 body-r text-gray-80">
+                  <p>테마곡 설정</p>
+                  <button className="border-b border-gray-80 cursor-pointer">삭제</button>
+                </div>
+                <MusicCard
+                  image={formData1.profileMusic.album} // 음악 이미지
+                  title={formData1.profileMusic.title} // 음악 제목
+                  artist={formData1.profileMusic.artist} // 음악 설명
+                  buttonContent="등록" // 버튼 텍스트
+                  isMusicSelect={true} // 음악 선택 상태
+                  buttonType="primary" // 버튼 타입
+                  rightElement="button" // 오른쪽 요소 타입
+                />
+              </div>
+              <NicknameInput
+                value={formData1.nickname}
+                setValue={(nickname) => setFormData1((prev) => ({ ...prev, nickname }))}
+                validation={validationMessages.nickname}
+                setValidation={(validation) =>
+                  setValidationMessages((prev) => ({ ...prev, nickname: validation }))
+                }
+              />
+            </div>
+            <Button variant="disabled" className="py-3 body-m mt-5">
+              저장하기
+            </Button>
+          </>
+        ) : (
+          // 비밀번호 변경 탭
+          <>
+            <div className="flex flex-col gap-5">
+              <InputField
+                type="password"
+                id="current-password"
+                label="현재 비밀번호"
+                placeholder="현재 비밀번호"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                validationMessages={validationMessages.currentPassword}
+              />
+              <PasswordInput
+                id="new-password"
+                label="새 비밀번호"
+                placeholder="새 비밀번호"
+                value={formData2.newPassword}
+                setValue={(password) =>
+                  setFormData2((prev) => ({ ...prev, newPassword: password }))
+                }
+                validation={validationMessages.newPassword}
+                setValidation={(validation) =>
+                  setValidationMessages((prev) => ({ ...prev, newPassword: validation }))
+                }
+              />
+              <PasswordConfirmInput
+                id="confirm-password"
+                label="새 비밀번호 확인"
+                placeholder="새 비밀번호 확인"
+                value={formData2.passwordConfirm}
+                password={formData2.newPassword}
+                setValue={(passwordConfirm) =>
+                  setFormData2((prev) => ({ ...prev, passwordConfirm }))
+                }
+                validation={validationMessages.passwordConfirm}
+                setValidation={(validation) =>
+                  setValidationMessages((prev) => ({ ...prev, passwordConfirm: validation }))
+                }
+              />
+            </div>
+            <Button variant="disabled" className="py-3 body-m mt-5">
+              저장하기
+            </Button>
+          </>
+        )}
       </form>
     </div>
   );

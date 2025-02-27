@@ -11,7 +11,7 @@ import { useLocation } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 interface MusicCardProps {
-  image?: string; // 음악 이미지
+  image?: string | null; // 음악 이미지
   title?: string; // 음악 제목
   artist?: string; // 음악 설명
   buttonContent?: string; // 버튼 텍스트
@@ -68,7 +68,7 @@ export default function MusicCard({
         <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
           <img
             className="object-cover w-full h-full"
-            src={image}
+            src={image ?? defaultImage}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // 무한 루프 방지
@@ -80,7 +80,7 @@ export default function MusicCard({
         <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
           <div className="flex flex-col flex-1 min-w-0">
             <div className="overflow-hidden body-large-m whitespace-nowrap text-ellipsis">
-              {title}
+              {title ?? '테마곡이 비어있어요'}
             </div>
             <div
               className={twMerge(
@@ -88,7 +88,7 @@ export default function MusicCard({
                 artistTextStyle,
               )}
             >
-              {artist}
+              {artist ?? '음악으로 나를 소개해 보세요!'}
             </div>
           </div>
           {rightElement === 'button' && (
@@ -100,7 +100,7 @@ export default function MusicCard({
               {buttonContent}
             </Button>
           )}
-          {isUserPage && rightElement === 'play' && (
+          {title && isUserPage && rightElement === 'play' && (
             <button onClick={handlePlayButton} className="transition hover:brightness-120">
               <img src={isPlaying ? pause : play} alt={`playIcon`} />
             </button>

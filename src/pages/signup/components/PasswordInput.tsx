@@ -11,9 +11,20 @@ interface PasswordInputProps {
   setValue: (val: string) => void;
   validation: ValidationResult;
   setValidation: (validation: ValidationResult) => void;
+  id?: string;
+  label?: string;
+  placeholder?: string;
 }
 
-function PasswordInput({ value, setValue, validation, setValidation }: PasswordInputProps) {
+function PasswordInput({
+  value,
+  setValue,
+  validation,
+  setValidation,
+  id = 'password',
+  label = '비밀번호',
+  placeholder = '비밀번호를 입력해 주세요',
+}: PasswordInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
@@ -37,9 +48,9 @@ function PasswordInput({ value, setValue, validation, setValidation }: PasswordI
   return (
     <InputField
       type="password"
-      id="password"
-      label="비밀번호"
-      placeholder="비밀번호를 입력해 주세요"
+      id={id}
+      label={label}
+      placeholder={placeholder}
       value={value}
       onChange={handleChange}
       validationMessages={validation}

@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 
-import postIcon from '@/assets/icons/post-icon.svg';
 import logo from '@assets/icons/logo.svg';
 interface HeaderProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
@@ -32,14 +31,6 @@ function Header({ showMoreOptions = false, showPostButton = false }: HeaderProps
         </Link>
 
         <div className="flex gap-1">
-          {showPostButton && (
-            <button
-              onClick={() => navigate('/post')}
-              className="w-6 h-6 flex justify-center items-center cursor-pointer"
-            >
-              <img src={postIcon} alt="글작성" />
-            </button>
-          )}
 
           {/* 더보기 메뉴 */}
           {showMoreOptions && (

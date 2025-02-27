@@ -3,33 +3,24 @@ import headset from '@assets/icons/headset-icon.svg';
 import defaultImage from '@assets/images/default.png';
 
 interface MainCardProps {
+  albumImage: string; // 앨범 이미지
   nickname: string; // 닉네임
   emotion: string; // 감정
   title: string; // 노래 제목
   artist: string; // 가수
-  content: string; // 글 내용
-  date: string; // 날짜
+  comment: string; // 글 내용
+  createdAt: string; // 날짜
   isChatting: boolean; // 현재 채팅중인지
 }
 
-// 더미데이터
-const dummyData: MainCardProps = {
-  nickname: '하입뽀이일곱자',
-  emotion: 'EXCITED',
-  title: 'Hype Boy',
-  artist: 'NewJeans',
-  content: '오늘은 날씨가 정말 좋다...',
-  date: '2025.02.15',
-  isChatting: true,
-};
-
 export default function MainCard({
+  albumImage,
   nickname,
   emotion,
   title,
   artist,
-  content,
-  date,
+  comment,
+  createdAt,
   isChatting,
 }: MainCardProps) {
   return (
@@ -51,15 +42,24 @@ export default function MainCard({
         <div className="flex gap-2">
           {/* 앨범커버 */}
           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-            <img className="w-full h-full object-cover" src={defaultImage} alt="기본값" />
+            <img
+              className="w-full h-full object-cover"
+              src={albumImage || defaultImage}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null; // 무한 루프 방지
+                target.src = defaultImage; // 기본 이미지로 변경
+              }}
+              alt="앨범이미지"
+            />
           </div>
           {/* 정보 */}
           <div className="flex flex-col gap-1">
             <p className="body-b text-gray-80 line-clamp-1 break-all">
               {title} - {artist}
             </p>
-            <p className="caption-r text-gray-60 line-clamp-1 break-all">{content}</p>
-            <span className="text-[9px] text-gray-60 font-light">{date}</span>
+            <p className="caption-r text-gray-60 line-clamp-1 break-all">{comment}</p>
+            <span className="text-[9px] text-gray-60 font-light">{createdAt}</span>
           </div>
         </div>
       </div>

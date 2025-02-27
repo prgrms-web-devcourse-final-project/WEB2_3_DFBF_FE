@@ -1,18 +1,19 @@
 // Spotify 음악 정보
 interface RecordSpotifyMusic {
-  spotifyId: number;
-  title: string;
-  artist: string;
   albumImage: string;
+  artist: string;
+  spotifyId: string;
+  title: string;
 }
 
 // 개별 기록 데이터
 interface EmotionRecord {
-  recordId: number;
-  emotion: string;
-  spotifyMusic: RecordSpotifyMusic;
   comment: string;
   createdAt: string;
+  emotion: string;
+  nickName: string;
+  recordId: number;
+  spotifyMusic: RecordSpotifyMusic;
 }
 
 // 전체 데이터 구조

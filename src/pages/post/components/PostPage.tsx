@@ -78,7 +78,7 @@ export default function PostPage() {
           artist={selectedPostMusic?.artistName}
           isMusicSelect={isMusicSelect}
           buttonContent={isMusicSelect ? '변경' : '등록'}
-          buttonType="primary"
+          buttonType={isMusicSelect ? 'secondary' : 'primary'}
           rightElement="button"
         />
 

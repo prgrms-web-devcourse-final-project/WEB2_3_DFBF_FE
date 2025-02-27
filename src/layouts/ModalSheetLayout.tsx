@@ -13,14 +13,14 @@ interface ModalSheetLayoutProps {
 function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
   const wasPlayingRef = useRef(false); // 이전 상태 저장
 
-  const { closeSheet } = useSheetStore();
+  const { closeAllSheets } = useSheetStore();
   const { players, setIsPlaying, setVideoId } = useYouTubeStore();
 
   const handleEditProfile = () => {
     console.log('임시 함수');
   };
   const handleCloseButton = () => {
-    closeSheet();
+    closeAllSheets();
     setIsPlaying('3', false);
     setVideoId('3', null);
   };
@@ -46,7 +46,7 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
     };
   }, []);
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 pb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center pb-4">
       <motion.div
         className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow border border-gray-5 overflow-y-auto"
         initial="hidden"
@@ -58,7 +58,7 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
         <div className="sticky top-0 flex min-h-[60px] h-[60px] items-center px-4 justify-between bg-white ">
           <button
             onClick={handleCloseButton}
-            className="w-6 h-6 flex justify-center items-center cursor-pointer"
+            className="flex items-center justify-center w-6 h-6 cursor-pointer"
           >
             <img src={closeIcon} alt="닫기" />
           </button>
@@ -81,5 +81,5 @@ export default ModalSheetLayout;
 
 // 사용예시
 //   <ModalSheetLayout showMoreOptions> // 더보기 셀렉트 유무
-//     <div className="border-2 border-green-500 w-full h-full">hi</div>
+//     <div className="w-full h-full border-2 border-green-500">hi</div>
 //   </ModalSheetLayout>;

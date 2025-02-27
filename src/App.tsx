@@ -11,10 +11,10 @@ import NotFound from './pages/NotFound';
 import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
 import Post from '@/pages/post/Post';
-import UserProfile from '@/pages/userprofile.tsx/UserProfile';
+import UserProfile from '@/pages/userprofile/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
-import BlockList from './pages/userprofile.tsx/BlockList';
+import BlockList from './pages/userprofile/BlockList';
 import { useEffect } from 'react';
 import { loadYouTubeAPI } from './utils/youtubeApiLoader';
 import { useSpotifyAuth } from './hooks/useSpotifyAuth';
@@ -68,10 +68,10 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/post" element={<Post />} />
             <Route path="/chatroom" element={<ChatRoom />} />
-            <Route path="/mypage" element={<UserProfile />} />
+            <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
             <Route path="/mypage/edit" element={<EditProfile />} />
             <Route path="/mypage/blocklist" element={<BlockList />} />
-            <Route path="/user/:userId" element={<UserProfile />} />
+            <Route path="/user/:userId" element={<UserProfile isMyPage={false} />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Route>

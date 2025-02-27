@@ -1,5 +1,5 @@
 import EmotionBadge from '@/components/EmotionBadge';
-import defaultImage from '@assets/images/default.png';  
+import defaultImage from '@assets/images/default.png';
 
 interface EmotionRecordCardProps {
   emotion: string; // 감정
@@ -7,6 +7,7 @@ interface EmotionRecordCardProps {
   songTitle: string; // 노래 제목
   artistName: string; // 가수
   date: string; // 날짜
+  onClick?: () => void; // 카드 눌렀을 때 실행될 함수
 }
 
 function EmotionRecordCard({
@@ -15,9 +16,13 @@ function EmotionRecordCard({
   songTitle,
   artistName,
   date,
+  onClick,
 }: EmotionRecordCardProps) {
   return (
-    <div className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg cursor-pointer bg-white/80">
+    <div
+      className="px-3 py-[10px] w-[140px] h-[213px] flex flex-col justify-between card-shadow rounded-lg cursor-pointer bg-white/80"
+      onClick={onClick}
+    >
       <div className="flex flex-col gap-[6px]">
         <EmotionBadge size="small" emotion={emotion} />
         <img

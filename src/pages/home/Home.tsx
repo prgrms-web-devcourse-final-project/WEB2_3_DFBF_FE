@@ -13,7 +13,7 @@ function Home() {
     console.log(emotion);
   };
 
-  const { openSheet } = useSheetStore();
+  // const { openSheet } = useSheetStore();
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
   const mockPostData: EmotionRecordResponse = {
@@ -62,16 +62,16 @@ function Home() {
 
   const handleOpenSheet = (recordId: number) => {
     setSelectedRecordId(recordId);
-    openSheet(); // 모달 열기
+    // openSheet(); // 모달 열기
   };
 
   return (
-    <div className="flex flex-col gap-5 mt-5 h-fit w-full">
+    <div className="flex flex-col w-full gap-5 mt-5 h-fit">
       <SearchBar searchText={searchText} setSearchText={setSearchText} />
 
       {/* 감정 필터링 */}
       <div className="flex flex-col items-center gap-5">
-        <h2 className="font-saeeum text-2xl text-gray-60">
+        <h2 className="text-2xl font-saeeum text-gray-60">
           나와 같은 감정을 느끼는 사람을 찾아보세요
         </h2>
         <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />

@@ -52,12 +52,12 @@ export default function PostPage() {
       confirmText: '확인하러 가기',
       cancelText: '홈으로 가기',
       onConfirm: () => {
-        closeModal();
         navigate('/mypage', { replace: true });
+        closeModal();
       },
       onCancel: () => {
-        closeModal();
         navigate('/home', { replace: true });
+        closeModal();
       },
     });
   };
@@ -67,7 +67,8 @@ export default function PostPage() {
     openModal({
       title: '글 등록 실패',
       message: '잠시 후 다시 시도해 주세요.',
-      onConfirm: () => {
+      confirmText: '확인',
+      onConfirm: async () => {
         closeModal();
         navigate(-1);
       },

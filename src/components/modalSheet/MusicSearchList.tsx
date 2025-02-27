@@ -17,13 +17,13 @@ function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: Music
       <div className="flex gap-2 items-center">
         <img src={albumImage} alt="앨범 이미지" className="w-10 h-10 rounded-lg" />
         <div className="flex flex-col">
-          <span className="body-m">{songTitle}</span>
-          <span className="caption-r text-gray-60">{artistName}</span>
+          <span className="body-m line-clamp-1">{songTitle}</span>
+          <span className="caption-r text-gray-60 line-clamp-1">{artistName}</span>
         </div>
       </div>
       <Button
         onClick={() => selectPostMusic({ spotifyId, songTitle, artistName, albumImage })}
-        className="w-[51px] h-[32px]"
+        className="w-[51px] h-[32px] flex-shrink-0"
       >
         선택
       </Button>

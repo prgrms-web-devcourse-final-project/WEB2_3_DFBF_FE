@@ -82,20 +82,32 @@ function MusicSearchSheet() {
   //음악 리스트 렌더링
   const musicListRender = () => {
     if (!spotifyAccessToken) {
-      return <InfoMessage text="Spotify 로그인이 필요합니다." />;
+      return (
+        <div className="h-[calc(100vh-154px)]">
+          <InfoMessage text="Spotify 로그인이 필요합니다." />
+        </div>
+      );
     }
     if (!query) {
-      return <InfoMessage text="지금 생각나는 음악이 있나요?" />;
+      return (
+        <div className="h-[calc(100vh-154px)]">
+          <InfoMessage text="지금 생각나는 음악이 있나요?" />
+        </div>
+      );
     }
 
     if (!data?.pages[0].items.length) {
-      return <InfoMessage text="검색 결과가 없습니다" />;
+      return (
+        <div className="h-[calc(100vh-154px)]">
+          <InfoMessage text="검색 결과가 없습니다." />
+        </div>
+      );
     }
 
     return (
       <div className="flex flex-col divide-y divide-gray-5">
         {data?.pages.map((page, index) => (
-          <div key={index}>
+          <div key={index} className='flex flex-col divide-y divide-gray-5'>
             {page.items.map((music: SpotifyMusic, i: number) => (
               <MusicSearchList
                 key={i}
@@ -113,8 +125,10 @@ function MusicSearchSheet() {
 
   return (
     <ModalSheetLayout>
-      <div className="flex flex-col h-full gap-4 px-3">
-        <SearchBar isSticky searchText={searchText} setSearchText={setSearchText} />
+      <div className="flex flex-col h-auto gap-4 px-3">
+        <div className="sticky top-[60px] bg-white rounded-b-[20px]">
+          <SearchBar isSticky searchText={searchText} setSearchText={setSearchText} />
+        </div>
         {musicListRender()}
         <div ref={loadMoreRef} className="min-h-[10px]"></div>
       </div>

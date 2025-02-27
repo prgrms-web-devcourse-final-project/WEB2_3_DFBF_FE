@@ -17,8 +17,8 @@ function SearchBar({ isSticky = false, searchText, setSearchText }: SearchBarPro
   return (
     <div
       className={twMerge(
-        'w-full min-h-[38px] h-[38px] rounded-[50px] input-shadow flex items-center px-3 gap-2 focus-within:border-[1.5px] focus-within:border-primary-active bg-white',
-        isSticky && 'sticky top-[60px]',
+        'h-[38px] rounded-[50px] input-shadow flex items-center px-3 gap-2 bg-white focus-within:border-[1.5px] focus-within:border-primary-active',
+        isSticky && 'sticky top-[60px] min-h-[38px]',
       )}
     >
       <input

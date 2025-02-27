@@ -21,9 +21,9 @@ interface MusicCardProps {
 }
 
 export default function MusicCard({
-  image = defaultImage,
-  title = '음악을 등록해 주세요',
-  artist = ' 지금 생각나는 음악이 있나요?',
+  image,
+  title,
+  artist,
   isMusicSelect = false,
   buttonContent = '등록',
   buttonType = 'primary',

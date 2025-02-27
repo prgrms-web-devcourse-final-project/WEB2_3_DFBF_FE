@@ -6,6 +6,9 @@ import { getMyProfile } from '@/apis/user';
 import PasswordInput from '../signup/components/PasswordInput';
 import PasswordConfirmInput from '../signup/components/PasswordConfirmInput';
 import NicknameInput from '../signup/components/NicknameInput';
+import { useMusicCardStore } from '@/store/MusicCardStore';
+import { useSheetStore } from '@/store/sheetStore';
+import _ from 'lodash';
 
 type ValidationMessage = {
   type: 'success' | 'error' | '';
@@ -20,18 +23,26 @@ interface ValidationMessages {
 }
 
 function EditProfile() {
+  const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
+  const [isMusicSelect, setIsMusicSelect] = useState(false);
+  const { closeAllSheets } = useSheetStore();
+
+  useEffect(() => {
+    if (selectedPostMusic?.spotifyId) {
+      setIsMusicSelect(true);
+      closeAllSheets();
+      console.log('음악 선택됨:', selectedPostMusic);
+    } else {
+      setIsMusicSelect(false);
+    }
+  }, [selectedPostMusic]);
+
   const [prevProfileMusic, setPrevProfileMusic] = useState<ProfileMusic | null>(null);
   const [prevNickname, setPrevNickname] = useState<string>('');
   // const [currentNickname, setCurrentNickname] = useState<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
 
   const [formData1, setFormData1] = useState({
-    profileMusic: {
-      album: null,
-      artist: '',
-      spotifyId: '',
-      title: '',
-    },
     nickname: '',
   });
   const [formData2, setFormData2] = useState({
@@ -49,13 +60,19 @@ function EditProfile() {
     nickname: { type: '', message: '' },
   });
 
+  //노래 이전과 달라진게 없으면 disable
+  const isProfileMusicSame = _.isEqual(prevProfileMusic, selectedPostMusic);
+  //닉네임 바뀌지 않거나, 바뀌었는데 중복확인이 안되었으면 disable
+  const isNicknameSame = _.isEqual(prevNickname, formData1.nickname);
+  const isNicknameValid = validationMessages.nickname.type === 'success';
+  //disable 조건
+  const isDisable = isProfileMusicSame && (isNicknameSame || (!isNicknameSame && !isNicknameValid));
+
   const validateCurrentPassword = async () => {
     //현재 비밀번호 확인 api
   };
 
-  const handleProfileSubmit = () => {
-    //버튼에서 이전과 달라진게 없으면 disable
-  };
+  const handleProfileSubmit = () => {};
   const handlePasswordSubmit = () => {
     // 현재 비밀번호 1자이상/비밀번호, 비밀번호 확인 맞으면 버튼 활성화
     //제출 시 우선 현재 비밀번호 확인.
@@ -67,13 +84,18 @@ function EditProfile() {
       console.log(data);
       setPrevNickname(data.data.nickname);
       setPrevProfileMusic(data.data.profileMusic);
+
       setFormData1((prev) => ({
         ...prev,
         nickname: data.data.nickname,
-        profileMusic: data.data.profileMusic,
       }));
+      selectPostMusic(data.data.profileMusic);
     };
     loadMyProfile();
+
+    return () => {
+      clearPostMusic();
+    };
   }, []);
 
   return (
@@ -106,15 +128,20 @@ function EditProfile() {
               <div className="flex flex-col items-center w-full">
                 <div className="flex justify-between w-[296px] px-1 my-1 body-r text-gray-80">
                   <p>테마곡 설정</p>
-                  <button className="border-b border-gray-80 cursor-pointer">삭제</button>
+                  <button
+                    onClick={clearPostMusic}
+                    className="border-b border-gray-80 cursor-pointer"
+                  >
+                    삭제
+                  </button>
                 </div>
                 <MusicCard
-                  image={formData1.profileMusic.album} // 음악 이미지
-                  title={formData1.profileMusic.title} // 음악 제목
-                  artist={formData1.profileMusic.artist} // 음악 설명
-                  buttonContent="등록" // 버튼 텍스트
-                  isMusicSelect={true} // 음악 선택 상태
-                  buttonType="primary" // 버튼 타입
+                  image={selectedPostMusic?.albumImage}
+                  title={selectedPostMusic?.songTitle}
+                  artist={selectedPostMusic?.artistName}
+                  isMusicSelect={isMusicSelect}
+                  buttonContent={isMusicSelect ? '변경' : '등록'}
+                  buttonType={isMusicSelect ? 'secondary' : 'primary'}
                   rightElement="button" // 오른쪽 요소 타입
                 />
               </div>
@@ -127,7 +154,7 @@ function EditProfile() {
                 }
               />
             </div>
-            <Button variant="disabled" className="py-3 body-m mt-5">
+            <Button variant={isDisable ? 'disabled' : 'primary'} className="py-3 body-m mt-5">
               저장하기
             </Button>
           </>

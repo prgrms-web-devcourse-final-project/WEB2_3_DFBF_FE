@@ -83,7 +83,7 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       type="text"
       id="emailVerificationConfrim"
       label="인증번호 확인"
-      placeholder="인증번호 4자리를 입력해 주세요"
+      placeholder="인증번호 6자리를 입력해 주세요"
       variant={buttonVariant}
       buttonText="인증확인"
       emailSent={emailSent}

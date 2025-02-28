@@ -85,7 +85,7 @@ export default function MusicCard({
         <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
           <div className="flex flex-col flex-1 min-w-0">
             <div className="overflow-hidden body-large-m whitespace-nowrap text-ellipsis">
-              {(title ?? isPostPage) ? '음악을 등록해 주세요' : '테마곡이 비어있어요'}
+              {title ?? (isPostPage ? '음악을 등록해 주세요' : '테마곡이 비어있어요')}
             </div>
             <div
               className={twMerge(
@@ -93,9 +93,8 @@ export default function MusicCard({
                 artistTextStyle,
               )}
             >
-              {(artist ?? isPostPage)
-                ? '지금 생각나는 음악이 있나요?'
-                : '음악으로 나를 소개해 보세요!'}
+              {artist ??
+                (isPostPage ? '지금 생각나는 음악이 있나요?' : '음악으로 나를 소개해 보세요!')}
             </div>
           </div>
           {rightElement === 'button' && (

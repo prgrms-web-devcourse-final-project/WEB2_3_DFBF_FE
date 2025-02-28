@@ -31,6 +31,7 @@ export default function MusicCard({
 }: MusicCardProps) {
   const location = useLocation();
   const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
+  const isPostPage = location.pathname === '/post';
   //edit 페이지 이면 유튜브 로드 X
   const isUserEditPage = location.pathname === '/mypage/edit';
   // 음악 선택 여부에 따른 텍스트 스타일
@@ -54,9 +55,9 @@ export default function MusicCard({
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    // if (shouldFetchYouTube&&searchedVideoId && isUserPage) {
-    //   setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
-    // }
+    if (shouldFetchYouTube && searchedVideoId && isUserPage) {
+      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
+    }
   }, [searchedVideoId]);
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function MusicCard({
         <div className="flex flex-1 items-center justify-between min-w-0 gap-0.5">
           <div className="flex flex-col flex-1 min-w-0">
             <div className="overflow-hidden body-large-m whitespace-nowrap text-ellipsis">
-              {title ?? '테마곡이 비어있어요'}
+              {(title ?? isPostPage) ? '음악을 등록해 주세요' : '테마곡이 비어있어요'}
             </div>
             <div
               className={twMerge(
@@ -92,7 +93,9 @@ export default function MusicCard({
                 artistTextStyle,
               )}
             >
-              {artist ?? '음악으로 나를 소개해 보세요!'}
+              {(artist ?? isPostPage)
+                ? '지금 생각나는 음악이 있나요?'
+                : '음악으로 나를 소개해 보세요!'}
             </div>
           </div>
           {rightElement === 'button' && (

@@ -16,7 +16,7 @@ export const postEmotionRecord = async (emotionRecord: EmotionRecordRequest) => 
 };
 
 // 유저별 감정 기록 조회
-export const getUserEmotionRecords = async (tag: string, page = 0, size = 10) => {
+export const getUserEmotionRecords = async (tag: string, page: number, size = 10) => {
   const { data } = await axiosInstance.get('/emotion/user', {
     params: { tag, page, size },
   });
@@ -36,7 +36,7 @@ export const deleteEmotionRecord = async (recordId: number) => {
 };
 
 // 메인 페이지 감정 기록 조회
-export const getEmotionRecords = async (page = 0, size = 10) => {
+export const getEmotionRecords = async (page = 1, size = 10) => {
   const { data } = await axiosInstance.get('/emotion', {
     params: { page, size },
   });

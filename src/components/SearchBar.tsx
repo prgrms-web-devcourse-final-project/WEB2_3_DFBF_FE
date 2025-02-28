@@ -1,19 +1,25 @@
 import searchIconDefault from '@assets/icons/search-icon/search-icon-default.svg';
 import searchIconHover from '@assets/icons/search-icon/search-icon-hover.svg';
+import clearIcon from '@assets/icons/search-icon/clear-icon.svg';
 
 import { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-interface SearchBarProps {
+interface SearchBarProps extends React.InputHTMLAttributes<HTMLInputElement> {
   isSticky?: boolean;
   searchText: string;
-  setSearchText: (query: string) => void;
+  setSearchText?: (query: string) => void;
 }
 
 // 검색바
 // isSticky를 props로 줄때 검색바 고정
-function SearchBar({ isSticky = false, searchText, setSearchText }: SearchBarProps) {
+function SearchBar({ isSticky = false, searchText, setSearchText, ...props }: SearchBarProps) {
   const [icon, setIcon] = useState(searchIconDefault); // 아이콘
+
+  // 검색어 비우기
+  const onClearClick = () => {
+    setSearchText?.('');
+  };
   return (
     <div
       className={twMerge(
@@ -26,8 +32,15 @@ function SearchBar({ isSticky = false, searchText, setSearchText }: SearchBarPro
         className="w-full outline-none body-m placeholder:text-gray-400"
         placeholder="오늘의 음악을 검색해 보세요"
         value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
+        onChange={(e) => setSearchText?.(e.target.value)}
+        {...props}
       />
+      {/* 아이콘 */}
+      {searchText && (
+        <button className="cursor-pointer" onClick={onClearClick}>
+          <img src={clearIcon} alt="삭제아이콘" />
+        </button>
+      )}
       <button
         className="cursor-pointer"
         onMouseEnter={() => setIcon(searchIconHover)} // 마우스 오버 시 변경

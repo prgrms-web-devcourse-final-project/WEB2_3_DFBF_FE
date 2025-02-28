@@ -17,7 +17,7 @@ function Home() {
 
   const [searchText, setSearchText] = useState(''); // 검색어
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정 필터
-  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택한 감정 기록
+  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택한 타인 감정 게시글 id -> 게시글 상세 모달 열기
 
   const [emotionRecords, setEmotionRecords] = useState<EmotionRecordResponse | null>(null); // 감정 기록
 
@@ -37,7 +37,7 @@ function Home() {
   useEffect(() => {
     const fetchEmotionRecords = async () => {
       try {
-        const { data } = await getEmotionRecords(0, 10);
+        const { data } = await getEmotionRecords(1, 10);
         setEmotionRecords(data);
         console.log(data);
       } catch (err) {
@@ -50,22 +50,20 @@ function Home() {
 
   // 음악 선택 시 검색창에 표시
   useEffect(() => {
-    // 음악 선택 시 검색창에 표시
     if (selectedPostMusic) {
       closeAllSheets();
       setSearchText(`${selectedPostMusic.artistName} - ${selectedPostMusic.songTitle}`);
-      console.log('음악 선택됨:', selectedPostMusic);
-    } else if (searchText !== '') {
+    } else if (!selectedPostMusic && searchText) {
+      // 음악 선택 해제 시 검색창 초기화
       setSearchText('');
-      console.log('음악 선택 해제됨', selectedPostMusic);
     }
   }, [selectedPostMusic]);
 
   // 검색어가 비어있으면 음악 선택 초기화
   useEffect(() => {
-    if (!searchText) {
+    if (!searchText && selectedPostMusic) {
       clearPostMusic();
-      console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
+      // console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
     }
   }, [searchText]);
 

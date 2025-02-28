@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 
 interface MoreSelectBoxProps {
-  items: { label: string; onClick: () => void }[];
+  items: { label: string; onClick?: () => void }[];
 }
 
 export default function MoreSelectBox({ items }: MoreSelectBoxProps) {

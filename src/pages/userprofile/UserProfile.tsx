@@ -1,19 +1,26 @@
-import { getUserEmotionRecords } from '@/apis/emotionRecord';
+import { deleteEmotionRecord, getUserEmotionRecords } from '@/apis/emotionRecord';
 import { getMyProfile, getUserProfile } from '@/apis/user';
 import EmotionRecordCard from '@/components/EmotionRecordCard';
 import InfoMessage from '@/components/InfoMessage';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
+import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { formatDate } from '@/utils/formatDate';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { useInView } from 'react-intersection-observer';
+import LoadingMini from '@/components/loading/LoadingMini';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { userId } = useParams(); // 유저페이지 경우
-  const { openSheet } = useSheetStore();
+  const { openSheet, closeSheet } = useSheetStore(); // 시트
+  const { openModal, closeModal } = useModalStore(); // 모달
+  const queryClient = useQueryClient(); // useMutation 사용
+
+  const { ref, inView } = useInView();
 
   // 유저 정보 가져오기
   const { data: userData } = useQuery({
@@ -22,21 +29,115 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   });
 
   // 유저 감정 기록 가져오기
-  const { data: emotionRecords } = useQuery({
+  // const { data: emotionRecords } = useQuery({
+  //   queryKey: isMyPage ? ['emotionRecords', userData?.data?.loginId] : ['emotionRecords', userId],
+  //   queryFn: () =>
+  //     isMyPage
+  //       ? getUserEmotionRecords(userData?.data?.loginId)
+  //       : getUserEmotionRecords(userId as string),
+  //   enabled: !!userData, // userData가 존재할 때만 실행
+  // });
+  const {
+    data: emotionRecords,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: isMyPage ? ['emotionRecords', userData?.data?.loginId] : ['emotionRecords', userId],
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       isMyPage
-        ? getUserEmotionRecords(userData?.data?.loginId)
-        : getUserEmotionRecords(userId as string),
+        ? getUserEmotionRecords(userData?.data?.loginId, pageParam)
+        : getUserEmotionRecords(userId as string, pageParam),
+    getNextPageParam: (last) => {
+      console.log('last', last, last.data.currentPage, last.data.totalPages);
+      if (last.data.currentPage < last.data.totalPages) {
+        return last.data.currentPage + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     enabled: !!userData, // userData가 존재할 때만 실행
   });
-  console.log(emotionRecords);
+
+  console.log('감정데이터', emotionRecords);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
   const handleOpenSheet = (recordId: number) => {
     setSelectedRecordId(recordId);
     openSheet('isCardSheetOpen'); // 모달 열기
   };
+
+  // 감정 기록 삭제
+  const { mutate } = useMutation({
+    mutationFn: (recordId: number) => deleteEmotionRecord(recordId),
+    onMutate: async (recordId) => {
+      // 낙관적 업데이트 전에 사용자 목록 쿼리를 취소해 잠재적인 충돌 방지!
+      await queryClient.cancelQueries({
+        queryKey: isMyPage
+          ? ['emotionRecords', userData?.data?.loginId]
+          : ['emotionRecords', userId],
+      });
+      // 캐시된 데이터(사용자 목록) 가져오기!
+      const previousRecords = queryClient.getQueryData<EmotionRecord[]>([
+        'emotionRecords',
+        isMyPage ? userData?.data?.loginId : userId,
+      ]);
+
+      if (previousRecords) {
+        queryClient.setQueryData(
+          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
+          (oldData: any) => ({
+            ...oldData,
+            data: {
+              ...oldData.data,
+              records: oldData.data.records.filter((r: EmotionRecord) => r.recordId !== recordId),
+            },
+          }),
+        );
+      }
+      // 각 콜백의 context로 전달할 데이터 반환!
+      return { previousRecords };
+    },
+    onError: (error, recordId, context) => {
+      if (context?.previousRecords) {
+        queryClient.setQueryData(
+          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
+          context.previousRecords,
+        );
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: isMyPage
+          ? ['emotionRecords', userData?.data?.loginId]
+          : ['emotionRecords', userId],
+      });
+    },
+  });
+
+  // 삭제모달 띄우기
+  const handleDeleteModal = () => {
+    openModal({
+      title: '등록된 글을 삭제할까요?',
+      message: '삭제된 글은 복구할 수 없습니다',
+      onConfirm: () => {
+        if (selectedRecordId !== null) {
+          mutate(selectedRecordId);
+        }
+        closeSheet('isCardSheetOpen'); // 모달시트 끄기
+        closeModal();
+      },
+      onCancel: () => {
+        closeModal();
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView]);
 
   return (
     <>
@@ -52,21 +153,30 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           image={userData?.data.profileMusic?.album}
           rightElement="play"
         />
-        {emotionRecords?.data.records?.length > 0 ? (
+        {emotionRecords?.pages[0].data.records.length > 0 ? (
           //   기본으로 2열이다가 크기가 500px가 넘어가면 3열로 변경
-          <div className="grid grid-cols-2 min-[500px]:grid-cols-3 gap-x-3 gap-y-6 ">
-            {emotionRecords?.data.records.map((record: EmotionRecord) => (
-              <EmotionRecordCard
-                key={record.recordId}
-                emotion={record.emotion}
-                albumImage={record.spotifyMusic.albumImage}
-                songTitle={record.spotifyMusic.title}
-                artistName={record.spotifyMusic.artist}
-                date={formatDate(record.createdAt)}
-                onClick={() => handleOpenSheet(record.recordId)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 min-[500px]:grid-cols-3 gap-x-3 gap-y-6">
+              {emotionRecords?.pages.map((page) =>
+                page.data.records.map((record: EmotionRecord) => (
+                  <EmotionRecordCard
+                    key={record.recordId}
+                    emotion={record.emotion}
+                    albumImage={record.spotifyMusic.albumImage}
+                    songTitle={record.spotifyMusic.title}
+                    artistName={record.spotifyMusic.artist}
+                    date={formatDate(record.createdAt)}
+                    onClick={() => handleOpenSheet(record.recordId)}
+                  />
+                )),
+              )}
+            </div>
+            {hasNextPage && !isFetchingNextPage && (
+              <div className="border border-blue-500" ref={ref}>
+                <LoadingMini />
+              </div>
+            )}
+          </>
         ) : (
           <div className="flex items-center justify-center w-full h-full">
             <InfoMessage text="포스트가 비어있어요" />
@@ -74,7 +184,11 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         )}
       </div>
       {selectedRecordId !== null && (
-        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
+        <CardDetailModal
+          recordId={selectedRecordId}
+          isChatting={true}
+          handleDelete={handleDeleteModal}
+        />
       )}
     </>
   );

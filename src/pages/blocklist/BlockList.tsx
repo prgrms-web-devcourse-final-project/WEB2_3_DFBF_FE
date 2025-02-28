@@ -1,7 +1,6 @@
 import { deleteBlockList, fetchBlockList } from '@/apis/blockList';
 import Button from '@/components/Button';
 import InfoMessage from '@/components/InfoMessage';
-import Loading from '@/components/Loading';
 import { useModalStore } from '@/store/modalStore';
 import { useEffect, useState } from 'react';
 
@@ -81,7 +80,7 @@ export default function BlockList() {
       {blockList.map((data) => (
         <div
           key={data.blockedUserId}
-          className="bg-white/80 w-full flex justify-between items-center p-3 rounded-lg"
+          className="flex items-center justify-between w-full p-3 rounded-lg bg-white/80"
         >
           <div>
             <p className="body-m text-gray-80">{data.nickname}</p>
@@ -96,8 +95,6 @@ export default function BlockList() {
           </Button>
         </div>
       ))}
-
-      <Loading />
     </div>
   );
 }

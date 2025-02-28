@@ -4,6 +4,8 @@ import { useState } from 'react';
 import EmotionFilter from '@/components/EmotionFilter';
 import { useSheetStore } from '@/store/sheetStore';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
+import LoadingMini from '@/components/loading/LoadingMini';
+import Loading from '@/components/loading/Loading';
 
 function Home() {
   const [searchText, setSearchText] = useState('');
@@ -106,6 +108,7 @@ function Home() {
           </div>
         ))}
       </div>
+      {/* <Loading /> */}
     </div>
   );
 }

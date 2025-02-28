@@ -24,7 +24,7 @@ function Home() {
   // 감정 필터링
   const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-    console.log(emotion);
+    console.log(selectedEmotion);
   };
 
   // 유저 상세 페이지 모달 열기
@@ -37,7 +37,12 @@ function Home() {
   useEffect(() => {
     const fetchEmotionRecords = async () => {
       try {
-        const { data } = await getEmotionRecords(1, 10);
+        const { data } = await getEmotionRecords(
+          1,
+          10,
+          selectedPostMusic?.spotifyId,
+          selectedEmotion,
+        );
         setEmotionRecords(data);
         console.log(data);
       } catch (err) {
@@ -46,7 +51,7 @@ function Home() {
     };
 
     fetchEmotionRecords();
-  }, []);
+  }, [selectedEmotion, selectedPostMusic]);
 
   // 음악 선택 시 검색창에 표시
   useEffect(() => {

@@ -31,12 +31,16 @@ export default function MusicCard({
 }: MusicCardProps) {
   const location = useLocation();
   const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
+  //edit 페이지 이면 유튜브 로드 X
+  const isUserEditPage = location.pathname === '/mypage/edit';
   // 음악 선택 여부에 따른 텍스트 스타일
   const artistTextStyle = isMusicSelect ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
 
   const { isMusicSheetOpen, openSheet } = useSheetStore();
 
-  const { data: searchedVideoId } = useSearchYoutubeVideo(`${artist} - ${title} lyrics`);
+  //query
+  const query = title && !isUserEditPage ? `${artist} - ${title} lyrics` : null;
+  const { data: searchedVideoId, isLoading, isError } = useSearchYoutubeVideo(query);
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
 

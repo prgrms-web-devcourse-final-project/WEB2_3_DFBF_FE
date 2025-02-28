@@ -7,7 +7,7 @@ import MusicCard from '@/components/MusicCard';
 import { useSheetStore } from '@/store/sheetStore';
 import { formatDate } from '@/utils/formatDate';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
 
 // 마이페이지 / 유저페이지 동시에 사용
@@ -37,6 +37,10 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     setSelectedRecordId(recordId);
     openSheet('isCardSheetOpen'); // 모달 열기
   };
+
+  useEffect(() => {
+    console.log(userData?.data.profileMusic);
+  }, [userData]);
 
   return (
     <>

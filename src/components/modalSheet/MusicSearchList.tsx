@@ -1,5 +1,6 @@
 import Button from '@/components/Button';
 import { useMusicCardStore } from '@/store/MusicCardStore';
+import { useLocation } from 'react-router';
 
 interface MusicSearchListProps {
   spotifyId: string; // 스포티파이 ID
@@ -9,7 +10,19 @@ interface MusicSearchListProps {
 }
 
 function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: MusicSearchListProps) {
-  const { selectPostMusic } = useMusicCardStore();
+  const { selectPostMusic, selectProfileMusic } = useMusicCardStore();
+  const location = useLocation(); // 현재 URL 가져오기
+
+  // URL에 따라 selectPostMusic 또는 selectProfileMusic을 호출
+  const handleSelectMusic = () => {
+    if (location.pathname.includes('/edit')) {
+      // URL에 "/profile"이 포함되면 selectProfileMusic 호출
+      selectProfileMusic({ spotifyId, title: songTitle, artist: artistName, album: albumImage });
+    } else {
+      // 기본적으로 selectPostMusic 호출
+      selectPostMusic({ spotifyId, songTitle, artistName, albumImage });
+    }
+  };
 
   return (
     <div className="px-3 py-2 flex items-center justify-between bg-white cursor-pointer hover:bg-gray-5">
@@ -20,10 +33,7 @@ function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: Music
           <span className="caption-r text-gray-60 line-clamp-1">{artistName}</span>
         </div>
       </div>
-      <Button
-        onClick={() => selectPostMusic({ spotifyId, songTitle, artistName, albumImage })}
-        className="w-[51px] h-[32px] flex-shrink-0"
-      >
+      <Button onClick={handleSelectMusic} className="w-[51px] h-[32px] flex-shrink-0">
         선택
       </Button>
     </div>

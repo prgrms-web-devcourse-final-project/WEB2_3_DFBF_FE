@@ -1,5 +1,16 @@
 import { axiosInstance } from '@/apis/axios';
 
+interface UserProfileEdit {
+  email: string;
+  loginId: string;
+  password: string;
+  nickName: string;
+  spotifyId: string;
+  title: string;
+  artist: string;
+  albumImage: string;
+}
+
 // 닉네임 중복를 확인하는 함수
 export const getNicknameAvailability = async (nickname: string) => {
   const { data } = await axiosInstance.get('/user/checkNickName', {
@@ -12,6 +23,14 @@ export const getNicknameAvailability = async (nickname: string) => {
 export const getIdAvailability = async (loginId: string) => {
   const { data } = await axiosInstance.get('user/checkLoginId', {
     params: { loginId },
+  });
+  return data;
+};
+
+//현재 비밀번호 확인
+export const checkPassword = async (currentPassword: string) => {
+  const { data } = await axiosInstance.post(`/user/checkPassword`, {
+    password: currentPassword,
   });
   return data;
 };
@@ -46,5 +65,10 @@ export const getUserProfile = async (tag: string) => {
     params: { tag },
   });
 
+  return data;
+};
+//유저 정보 수정
+export const patchEditProfile = async (editInfo: Partial<UserProfileEdit>) => {
+  const { data } = await axiosInstance.patch(`/user`, editInfo);
   return data;
 };

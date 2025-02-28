@@ -2,17 +2,30 @@ import { useEffect, useState } from 'react';
 import Button from '@/components/Button';
 import InputField from '@/components/InputField';
 import MusicCard from '@/components/MusicCard';
-import { getMyProfile } from '@/apis/user';
+import { checkPassword, getMyProfile, patchEditProfile } from '@/apis/user';
 import PasswordInput from '../signup/components/PasswordInput';
 import PasswordConfirmInput from '../signup/components/PasswordConfirmInput';
 import NicknameInput from '../signup/components/NicknameInput';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import { useSheetStore } from '@/store/sheetStore';
 import _ from 'lodash';
+import { useNavigate } from 'react-router';
+import { useModalStore } from '@/store/modalStore';
 
 type ValidationMessage = {
   type: 'success' | 'error' | '';
   message: string;
+};
+
+type ProfileFormType = {
+  // profileMusic: ProfileMusic | null;
+  // nickname: string;
+  password: string;
+  nickName: string;
+  spotifyId: string;
+  title: string;
+  artist: string;
+  albumImage: string;
 };
 
 interface ValidationMessages {
@@ -23,30 +36,31 @@ interface ValidationMessages {
 }
 
 function EditProfile() {
-  const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
+  const navigate = useNavigate();
+
+  const { openModal, closeModal } = useModalStore();
+
+  const { selectedProfileMusic, selectProfileMusic, clearProfileMusic } = useMusicCardStore();
   const [isMusicSelect, setIsMusicSelect] = useState(false);
   const { closeAllSheets } = useSheetStore();
 
   useEffect(() => {
-    if (selectedPostMusic?.spotifyId) {
+    if (selectedProfileMusic?.spotifyId) {
       setIsMusicSelect(true);
       closeAllSheets();
-      console.log('음악 선택됨:', selectedPostMusic);
+      console.log('음악 선택됨:', selectedProfileMusic);
     } else {
       setIsMusicSelect(false);
     }
-  }, [selectedPostMusic]);
+  }, [selectedProfileMusic]);
 
   const [prevProfileMusic, setPrevProfileMusic] = useState<ProfileMusic | null>(null);
   const [prevNickname, setPrevNickname] = useState<string>('');
-  // const [currentNickname, setCurrentNickname] = useState<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
 
-  const [formData1, setFormData1] = useState({
-    nickname: '',
-  });
+  const [nickname, setNickname] = useState('');
+
   const [formData2, setFormData2] = useState({
-    currentPassword: '',
     newPassword: '',
     passwordConfirm: '',
   });
@@ -60,22 +74,113 @@ function EditProfile() {
     nickname: { type: '', message: '' },
   });
 
+  //탭 바꾸면 기존 정보로 초기화
+  useEffect(() => {
+    if (activeTab === 'profile') {
+      setCurrentPassword('');
+      setFormData2({
+        newPassword: '',
+        passwordConfirm: '',
+      });
+      setValidationMessages((prev) => ({
+        ...prev,
+        currentPassword: { type: '', message: '' },
+        newPassword: { type: '', message: '' },
+        passwordConfirm: { type: '', message: '' },
+      }));
+    } else {
+      setNickname(prevNickname);
+      selectProfileMusic(prevProfileMusic);
+    }
+  }, [activeTab]);
+
   //노래 이전과 달라진게 없으면 disable
-  const isProfileMusicSame = _.isEqual(prevProfileMusic, selectedPostMusic);
+  const isProfileMusicSame = _.isEqual(prevProfileMusic, selectedProfileMusic);
   //닉네임 바뀌지 않거나, 바뀌었는데 중복확인이 안되었으면 disable
-  const isNicknameSame = _.isEqual(prevNickname, formData1.nickname);
-  const isNicknameValid = validationMessages.nickname.type === 'success';
+  const isNicknameSame = _.isEqual(prevNickname, nickname);
+  const isNicknameValid = validationMessages.nickname?.type === 'success';
+
   //disable 조건
-  const isDisable = isProfileMusicSame && (isNicknameSame || (!isNicknameSame && !isNicknameValid));
+  const isProfileDisable =
+    isProfileMusicSame && (isNicknameSame || (!isNicknameSame && !isNicknameValid));
+  const isPasswordDisable =
+    !currentPassword.length ||
+    validationMessages.newPassword.type !== 'success' ||
+    validationMessages.passwordConfirm.type !== 'success';
 
   const validateCurrentPassword = async () => {
     //현재 비밀번호 확인 api
+    const data = await checkPassword(currentPassword);
+    console.log(data);
+    if (data.code === 400) {
+      setValidationMessages((prev) => ({
+        ...prev,
+        currentPassword: { type: 'error', message: data.message },
+      }));
+      return false;
+    } else if (data.code === 200) {
+      setValidationMessages((prev) => ({
+        ...prev,
+        currentPassword: { type: 'success', message: '비밀번호가 일치합니다' },
+      }));
+      return true;
+    }
+    return false;
   };
 
-  const handleProfileSubmit = () => {};
-  const handlePasswordSubmit = () => {
+  const handleProfileSubmit = async () => {
+    //업데이트 된 것만 전송
+    const updatedData: Partial<ProfileFormType> = {};
+    if (nickname !== prevNickname) {
+      updatedData.nickName = nickname;
+    }
+    if (selectedProfileMusic !== prevProfileMusic) {
+      updatedData.spotifyId = selectedProfileMusic?.spotifyId;
+      updatedData.title = selectedProfileMusic?.title;
+      updatedData.artist = selectedProfileMusic?.artist;
+      updatedData.albumImage = selectedProfileMusic?.album;
+    }
+    console.log(updatedData);
+
+    const data = await patchEditProfile(updatedData);
+
+    console.log(data);
+
+    if (data.code === 200) {
+      //모달 띄우기
+      openModal({
+        title: '프로필 수정이 완료되었습니다',
+        onConfirm: () => {
+          navigate('/mypage');
+          closeModal();
+        },
+      });
+    }
+  };
+  const handlePasswordSubmit = async () => {
     // 현재 비밀번호 1자이상/비밀번호, 비밀번호 확인 맞으면 버튼 활성화
     //제출 시 우선 현재 비밀번호 확인.
+    const isCurrentPasswordValid = await validateCurrentPassword();
+    if (!isCurrentPasswordValid) {
+      console.log('현재 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    const updatedData: Partial<ProfileFormType> = {};
+    updatedData.password = formData2.newPassword;
+
+    console.log(updatedData);
+
+    const data = await patchEditProfile(updatedData);
+    if (data.code === 200) {
+      //모달 띄우기
+      openModal({
+        title: '비밀번호 수정이 완료되었습니다',
+        onConfirm: () => {
+          navigate('/mypage');
+          closeModal();
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -85,16 +190,14 @@ function EditProfile() {
       setPrevNickname(data.data.nickname);
       setPrevProfileMusic(data.data.profileMusic);
 
-      setFormData1((prev) => ({
-        ...prev,
-        nickname: data.data.nickname,
-      }));
-      selectPostMusic(data.data.profileMusic);
+      setNickname(data.data.nickname);
+
+      selectProfileMusic(data.data.profileMusic);
     };
     loadMyProfile();
 
     return () => {
-      clearPostMusic();
+      clearProfileMusic();
     };
   }, []);
 
@@ -129,16 +232,16 @@ function EditProfile() {
                 <div className="flex justify-between w-[296px] px-1 my-1 body-r text-gray-80">
                   <p>테마곡 설정</p>
                   <button
-                    onClick={clearPostMusic}
+                    onClick={clearProfileMusic}
                     className="border-b border-gray-80 cursor-pointer"
                   >
                     삭제
                   </button>
                 </div>
                 <MusicCard
-                  image={selectedPostMusic?.albumImage}
-                  title={selectedPostMusic?.songTitle}
-                  artist={selectedPostMusic?.artistName}
+                  image={selectedProfileMusic?.album}
+                  title={selectedProfileMusic?.title}
+                  artist={selectedProfileMusic?.artist}
                   isMusicSelect={isMusicSelect}
                   buttonContent={isMusicSelect ? '변경' : '등록'}
                   buttonType={isMusicSelect ? 'secondary' : 'primary'}
@@ -146,15 +249,19 @@ function EditProfile() {
                 />
               </div>
               <NicknameInput
-                value={formData1.nickname}
-                setValue={(nickname) => setFormData1((prev) => ({ ...prev, nickname }))}
+                value={nickname}
+                setValue={(nickname) => setNickname(nickname)}
                 validation={validationMessages.nickname}
                 setValidation={(validation) =>
                   setValidationMessages((prev) => ({ ...prev, nickname: validation }))
                 }
               />
             </div>
-            <Button variant={isDisable ? 'disabled' : 'primary'} className="py-3 body-m mt-5">
+            <Button
+              onClick={handleProfileSubmit}
+              variant={isProfileDisable ? 'disabled' : 'primary'}
+              className="py-3 body-m mt-5"
+            >
               저장하기
             </Button>
           </>
@@ -199,7 +306,11 @@ function EditProfile() {
                 }
               />
             </div>
-            <Button variant="disabled" className="py-3 body-m mt-5">
+            <Button
+              onClick={handlePasswordSubmit}
+              variant={isPasswordDisable ? 'disabled' : 'primary'}
+              className="py-3 body-m mt-5"
+            >
               저장하기
             </Button>
           </>

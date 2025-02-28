@@ -22,11 +22,8 @@ export default function ChatMusicPlayer() {
   const isPlaying = players['2']?.isPlaying || false;
 
   // React Query로 유튜브 비디오 ID 가져오기
-  const {
-    data: searchedVideoId,
-    isLoading,
-    isError,
-  } = useSearchYoutubeVideo(`${musicInfo.artist} - ${musicInfo.title} lyrics`);
+  const query = musicInfo.title ? `${artist} - ${musicInfo.title} lyrics` : null;
+  const { data: searchedVideoId, isLoading, isError } = useSearchYoutubeVideo(query);
 
   const handlePlayButton = () => {
     setIsPlaying('2', (prev) => !prev);

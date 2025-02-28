@@ -1,11 +1,12 @@
 import { useModalStore } from '@/store/modalStore';
 import Button from './Button';
+import { createPortal } from 'react-dom';
 // import { spawn } from 'child_process';
 
 export default function Modal() {
   const { modal, closeModal } = useModalStore();
   if (!modal.isOpen) return null;
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       onClick={closeModal}
@@ -35,7 +36,8 @@ export default function Modal() {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 // 사용 예시

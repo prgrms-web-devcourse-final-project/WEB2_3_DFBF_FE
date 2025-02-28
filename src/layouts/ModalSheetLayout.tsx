@@ -8,17 +8,21 @@ import { useYouTubeStore } from '@/store/youtubeStore';
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
   isOwnPost?: boolean; // 더보기 메뉴를 표시할지 여부
+  handleDelete?: () => void; // 삭제 함수
+  handleEdit?: () => void; // 수정 함수
 }
 
-function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
+function ModalSheetLayout({
+  children,
+  isOwnPost,
+  handleDelete,
+  handleEdit,
+}: ModalSheetLayoutProps) {
   const wasPlayingRef = useRef(false); // 이전 상태 저장
 
   const { closeAllSheets } = useSheetStore();
   const { players, setIsPlaying, setVideoId } = useYouTubeStore();
 
-  const handleEditProfile = () => {
-    console.log('임시 함수');
-  };
   const handleCloseButton = () => {
     closeAllSheets();
     setIsPlaying('3', false);
@@ -45,6 +49,7 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
       }
     };
   }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <motion.div
@@ -65,8 +70,8 @@ function ModalSheetLayout({ children, isOwnPost }: ModalSheetLayoutProps) {
           {isOwnPost && (
             <MoreOptionsSelect
               items={[
-                { label: '수정', onClick: handleEditProfile },
-                { label: '삭제', onClick: handleEditProfile },
+                { label: '수정', onClick: handleEdit },
+                { label: '삭제', onClick: handleDelete },
               ]}
             />
           )}

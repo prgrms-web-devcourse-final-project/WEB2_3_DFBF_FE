@@ -1,19 +1,22 @@
-import { getUserEmotionRecords } from '@/apis/emotionRecord';
+import { deleteEmotionRecord, getUserEmotionRecords } from '@/apis/emotionRecord';
 import { getMyProfile, getUserProfile } from '@/apis/user';
 import EmotionRecordCard from '@/components/EmotionRecordCard';
 import InfoMessage from '@/components/InfoMessage';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
+import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { formatDate } from '@/utils/formatDate';
-import { useQuery } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useParams } from 'react-router';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { userId } = useParams(); // 유저페이지 경우
-  const { openSheet } = useSheetStore();
+  const { openSheet, closeSheet } = useSheetStore();
+  const { openModal, closeModal } = useModalStore(); // 모달
+  const queryClient = useQueryClient(); // mutain사용
 
   // 유저 정보 가져오기
   const { data: userData } = useQuery({
@@ -37,10 +40,71 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     setSelectedRecordId(recordId);
     openSheet('isCardSheetOpen'); // 모달 열기
   };
+  // 감정 기록 삭제
+  const { mutate } = useMutation({
+    mutationFn: (recordId: number) => deleteEmotionRecord(recordId),
+    onMutate: async (recordId) => {
+      // 낙관적 업데이트 전에 사용자 목록 쿼리를 취소해 잠재적인 충돌 방지!
+      await queryClient.cancelQueries({
+        queryKey: isMyPage
+          ? ['emotionRecords', userData?.data?.loginId]
+          : ['emotionRecords', userId],
+      });
+      // 캐시된 데이터(사용자 목록) 가져오기!
+      const previousRecords = queryClient.getQueryData<EmotionRecord[]>([
+        'emotionRecords',
+        isMyPage ? userData?.data?.loginId : userId,
+      ]);
 
-  useEffect(() => {
-    console.log(userData?.data.profileMusic);
-  }, [userData]);
+      if (previousRecords) {
+        queryClient.setQueryData(
+          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
+          (oldData: any) => ({
+            ...oldData,
+            data: {
+              ...oldData.data,
+              records: oldData.data.records.filter((r: EmotionRecord) => r.recordId !== recordId),
+            },
+          }),
+        );
+      }
+      // 각 콜백의 context로 전달할 데이터 반환!
+      return { previousRecords };
+    },
+    onError: (error, recordId, context) => {
+      if (context?.previousRecords) {
+        queryClient.setQueryData(
+          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
+          context.previousRecords,
+        );
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: isMyPage
+          ? ['emotionRecords', userData?.data?.loginId]
+          : ['emotionRecords', userId],
+      });
+    },
+  });
+
+  // 삭제모달 띄우기
+  const handleDeleteModal = () => {
+    openModal({
+      title: '등록된 글을 삭제할까요?',
+      message: '삭제된 글은 복구할 수 없습니다',
+      onConfirm: () => {
+        if (selectedRecordId !== null) {
+          mutate(selectedRecordId);
+        }
+        closeSheet('isCardSheetOpen'); // 모달시트 끄기
+        closeModal();
+      },
+      onCancel: () => {
+        closeModal();
+      },
+    });
+  };
 
   return (
     <>
@@ -78,7 +142,11 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         )}
       </div>
       {selectedRecordId !== null && (
-        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
+        <CardDetailModal
+          recordId={selectedRecordId}
+          isChatting={true}
+          handleDelete={handleDeleteModal}
+        />
       )}
     </>
   );

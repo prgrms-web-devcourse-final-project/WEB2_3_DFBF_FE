@@ -3,7 +3,7 @@ import ellipsisIcon from '@assets/icons/ellipsis-icon.svg';
 import { useEffect, useRef, useState } from 'react';
 
 interface MoreOptionsSelectProps {
-  items: { label: string; onClick: () => void }[];
+  items: { label: string; onClick?: () => void }[];
 }
 
 function MoreOptionsSelect({ items }: MoreOptionsSelectProps) {

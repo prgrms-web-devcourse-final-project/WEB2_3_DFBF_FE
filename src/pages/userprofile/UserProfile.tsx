@@ -66,7 +66,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     setSelectedRecordId(recordId);
     openSheet('isCardSheetOpen'); // 모달 열기
   };
-
   // 감정 기록 삭제
   const { mutate } = useMutation({
     mutationFn: (recordId: number) => deleteEmotionRecord(recordId),

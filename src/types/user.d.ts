@@ -1,7 +1,7 @@
 interface ProfileMusic {
   album: string;
   artist: string;
-  spotifyId: number;
+  spotifyId: string;
   title: string;
 }
 

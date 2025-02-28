@@ -23,3 +23,10 @@ interface EmotionRecordResponse {
   totalPages: number;
   totalElements: number;
 }
+interface MusicCardItem {
+  spotifyId: string;
+  songTitle: string;
+  artistName: string;
+  albumImage: string;
+}
+

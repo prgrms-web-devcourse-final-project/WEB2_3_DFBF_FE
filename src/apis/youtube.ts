@@ -11,10 +11,10 @@ export const searchYoutubeVideo = async (query: string) => {
 };
 
 // React Query
-export const useSearchYoutubeVideo = (query: string) => {
+export const useSearchYoutubeVideo = (query: string|null) => {
   return useQuery({
     queryKey: ['youtubeSearch', query], // 캐싱을 위한 키
-    queryFn: () => searchYoutubeVideo(query), // API 요청 함수
+    queryFn: () => (query ? searchYoutubeVideo(query) : null), // API 요청 함수
     enabled: !!query, // query가 존재할 때만 실행
     staleTime: 1000 * 60 * 10, // 10분 동안 캐싱
   });

@@ -18,7 +18,7 @@ interface EmotionRecord {
 
 // 전체 데이터 구조
 interface EmotionRecordResponse {
-  records: Record[];
+  records: EmotionRecord[];
   currentPage: number;
   totalPages: number;
   totalElements: number;

@@ -8,6 +8,8 @@ import defaultImage from '@assets/images/default.png';
 import { useQuery } from '@tanstack/react-query';
 import { getEmotionRecordById } from '@/apis/emotionRecord';
 import { formatDate } from '@/utils/formatDate';
+import { useEffect } from 'react';
+import { searchYoutubeVideo } from '@/apis/youtube';
 
 interface CardDetailModalProps {
   // emotion: string; // 감정
@@ -44,6 +46,19 @@ function CardDetailModal({
     queryKey: ['emotionRecord', recordId],
     queryFn: () => getEmotionRecordById(recordId),
   });
+
+  useEffect(() => {
+    if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
+
+    const artistName = data.data.spotifyMusic.artist;
+    const songTitle = data.data.spotifyMusic.title;
+
+    const getVideoId = async () => {
+      const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
+      setVideoId('3', id);
+    };
+    getVideoId();
+  }, [data]);
 
   if (!isCardSheetOpen) {
     return null;

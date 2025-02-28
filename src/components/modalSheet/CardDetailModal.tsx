@@ -19,6 +19,8 @@ interface CardDetailModalProps {
   isChatting: boolean; // 현재 채팅중인지 (임시)
   // isOwnPost: boolean; // 본인 글 여부(임시)
   recordId: number; // 감정기록 id
+  handleDelete?: () => void; // 삭제 함수
+  handleEdit?: () => void; // 수정 함수
 }
 
 function CardDetailModal({
@@ -31,6 +33,8 @@ function CardDetailModal({
   isChatting,
   // isOwnPost,
   recordId,
+  handleDelete,
+  handleEdit,
 }: CardDetailModalProps) {
   const { isCardSheetOpen } = useSheetStore();
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
@@ -46,7 +50,7 @@ function CardDetailModal({
   }
 
   return (
-    <ModalSheetLayout isOwnPost={!data?.data?.disable}>
+    <ModalSheetLayout isOwnPost={!data?.data?.disable} handleDelete={handleDelete}>
       <div className="px-[36.5px] flex flex-col items-center gap-4">
         <div className="flex flex-col max-w-[250px] gap-4">
           <div className="flex flex-col items-center gap-1">

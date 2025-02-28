@@ -29,6 +29,12 @@ export const getEmotionRecordById = async (recordId: number) => {
   return data;
 };
 
+// 감정 기록 삭제
+export const deleteEmotionRecord = async (recordId: number) => {
+  const { data } = await axiosInstance.delete(`/emotion/${recordId}`);
+  return data;
+};
+
 // 메인 페이지 감정 기록 조회
 export const getEmotionRecords = async (page = 0, size = 10) => {
   const { data } = await axiosInstance.get('/emotion', {

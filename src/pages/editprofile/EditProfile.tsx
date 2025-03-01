@@ -13,8 +13,8 @@ import { useNavigate } from 'react-router';
 import { useModalStore } from '@/store/modalStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
-import Error from '@/components/loading/Error';
 import { twMerge } from 'tailwind-merge';
+import ErrorShake from '@/components/loading/ErrorShake';
 
 type ValidationMessage = {
   type: 'success' | 'error' | '';
@@ -167,6 +167,8 @@ function EditProfile() {
             navigate('/mypage');
           },
         });
+      } else {
+        throw new Error();
       }
     } catch (error) {
       setIsError(true);
@@ -232,7 +234,7 @@ function EditProfile() {
     } else if (isComplete) {
       return <Complete />;
     } else if (isError) {
-      return <Error />;
+      return <ErrorShake />;
     } else return <span>저장하기</span>;
   };
 

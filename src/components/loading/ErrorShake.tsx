@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function Error() {
+export default function ErrorShake() {
   return (
     <motion.div
       className="text-xl"

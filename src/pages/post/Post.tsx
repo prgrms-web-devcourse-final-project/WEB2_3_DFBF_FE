@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
-import Error from '@/components/loading/Error';
+import ErrorShake from '@/components/loading/ErrorShake';
 
 export default function Post() {
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ export default function Post() {
     } else if (isComplete) {
       return <Complete />;
     } else if (isError) {
-      return <Error />;
+      return <ErrorShake />;
     } else return <span>기록 완료</span>;
   };
 
@@ -158,7 +158,7 @@ export default function Post() {
       </div>
       {/* 버튼 */}
       <Button
-        variant={isCompletePost ? 'primary' : 'disabled'} 
+        variant={isCompletePost ? 'primary' : 'disabled'}
         className={isError ? 'bg-functional-danger' : ''}
         onClick={onCompletePost}
       >

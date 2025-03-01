@@ -1,5 +1,6 @@
 import { getIdAvailability } from '@/apis/user';
 import InputField from '@/components/InputField';
+import SpinLoading from '@/components/loading/SpinLoading';
 import { ID_REGEX } from '@/constants';
 import React, { useEffect, useState } from 'react';
 
@@ -17,6 +18,8 @@ interface IdInputProps {
 }
 
 function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [buttonVariant, setButtonVariant] = useState<ButtonType>('disabled'); // 버튼 상태를 관리하는 state 추가
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -47,6 +50,7 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
   // 아이디 중복을 확인하는 함수
   const handleIdCheck = async () => {
     try {
+      setIsLoading(true);
       const { code } = await getIdAvailability(value);
       if (code === 200) {
         setValidation({ type: 'success', message: '사용 가능한 아이디입니다' });
@@ -55,8 +59,17 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
       }
     } catch (error) {
       setValidation({ type: 'error', message: '예기치 않은 오류가 발생했습니다' });
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else return <span>중복확인</span>;
+  };
+
   return (
     <InputField
       type="text"
@@ -64,7 +77,7 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
       label="아이디"
       placeholder="아이디를 입력해 주세요"
       variant={buttonVariant}
-      buttonText="중복확인"
+      buttonText={renderButtonContent()}
       value={value}
       onChange={handleChange}
       validationMessages={validation}

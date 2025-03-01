@@ -1,5 +1,6 @@
 import { postEmailVerificationCheck, postEmailVerificationRequest } from '@/apis/email';
 import InputAuthCode from '@/components/InputAuthCode';
+import SpinLoading from '@/components/loading/SpinLoading';
 import { MAX_RESEND_COUNT } from '@/constants/email';
 import { useEffect, useState } from 'react';
 
@@ -20,6 +21,8 @@ interface AuthCodeInputProps {
   setValidation: (validation: ValidationResult) => void;
 }
 function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [authCode, setAuthCode] = useState(''); // 인증코드
   const [resendCount, setResendCount] = useState(0); // 재전송 횟수
   const [buttonVariant, setButtonVariant] = useState<ButtonType>('disabled'); // 버튼 상태를 관리하는 state 추가
@@ -41,6 +44,7 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
   // 이메일과 인증코드들 확인하는 함수
   const handleEmailVerificationCheck = async () => {
     try {
+      setIsLoading(true);
       const { code } = await postEmailVerificationCheck(email, authCode);
       if (code === 200) {
         setMessage({ type: 'success', message: '이메일 인증이 완료되었습니다' });
@@ -51,6 +55,8 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       }
     } catch (error) {
       setMessage({ type: 'error', message: '오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,6 +84,13 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       setMessage({ type: 'error', message: '이메일 인증 요청 중 오류가 발생했습니다.' });
     }
   };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else return <span>인증확인</span>;
+  };
+
   return (
     <InputAuthCode
       type="text"
@@ -85,7 +98,7 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       label="인증번호 확인"
       placeholder="인증번호 6자리를 입력해 주세요"
       variant={buttonVariant}
-      buttonText="인증확인"
+      buttonText={renderButtonContent()}
       emailSent={emailSent}
       messages={message}
       value={authCode}

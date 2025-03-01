@@ -42,6 +42,18 @@
       transform: translateX(calc(-1 * var(--move-distance)));
     }
   }
+
+  @keyframes draw {
+    0% {
+      stroke-dasharray: 0, 30;
+      stroke-dashoffset: 30;
+    }
+    100% {
+      stroke-dasharray: 30, 30;
+      stroke-dashoffset: 0;
+    }
+  }
+  
 }
 @layer utilities {
   .bg-background {

@@ -8,6 +8,9 @@ import { postEmotionRecord } from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
 import { useNavigate } from 'react-router';
 import { useMusicCardStore } from '@/store/MusicCardStore';
+import SpinLoading from '@/components/loading/SpinLoading';
+import Complete from '@/components/loading/Complete';
+import Error from '@/components/loading/Error';
 
 export default function Post() {
   const navigate = useNavigate();
@@ -15,6 +18,9 @@ export default function Post() {
   const { selectedPostMusic, clearPostMusic } = useMusicCardStore();
   const { closeAllSheets } = useSheetStore();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [isError, setIsError] = useState(false);
   //음악 선택 상태 확인
   const [isMusicSelect, setIsMusicSelect] = useState(false);
 
@@ -81,6 +87,8 @@ export default function Post() {
     if (!isCompletePost) return;
 
     try {
+      setIsLoading(true);
+
       const requestData = {
         spotifyId: selectedPostMusic?.spotifyId,
         title: selectedPostMusic?.songTitle,
@@ -94,14 +102,32 @@ export default function Post() {
       // TODO: 로딩 추가
       console.log('기록 완료:', data);
 
+      setIsComplete(true);
       handlePostSuccessModal();
     } catch (error) {
       console.error(error);
+      setIsError(true);
       handlePostFailModal();
     } finally {
-      clearPostMusic();
+      setIsLoading(false);
     }
   };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else if (isComplete) {
+      return <Complete />;
+    } else if (isError) {
+      return <Error />;
+    } else return <span>기록 완료</span>;
+  };
+
+  useEffect(() => {
+    return () => {
+      clearPostMusic();
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-between w-full pb-10">
@@ -131,8 +157,12 @@ export default function Post() {
         />
       </div>
       {/* 버튼 */}
-      <Button variant={isCompletePost ? 'primary' : 'disabled'} onClick={onCompletePost}>
-        기록 완료
+      <Button
+        variant={isCompletePost ? 'primary' : 'disabled'} 
+        className={isError ? 'bg-functional-danger' : ''}
+        onClick={onCompletePost}
+      >
+        {renderButtonContent()}
       </Button>
     </div>
   );

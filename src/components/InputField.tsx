@@ -15,7 +15,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   validationMessages?: ValidationMessage; // 띄울 메세지
 }
 interface ButtonProps {
-  buttonText?: string;
+  buttonText?: string | React.ReactNode;
   variant?: 'primary' | 'secondary' | 'disabled';
   onClick?: () => void;
 }

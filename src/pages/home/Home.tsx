@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
 import SearchBar from '@/components/SearchBar';
 import MainCard from '@/components/MainCard';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,8 @@ import { formatDate } from '@/utils/formatDate';
 import MusicSearchSheet from '@/components/modalSheet/MusicSearchSheet';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import InfoMessage from '@/components/InfoMessage';
+import LoadingMini from '@/components/loading/LoadingMini';
+import Loading from '@/components/loading/Loading';
 
 function Home() {
   const { isMusicSheetOpen, openSheet, closeAllSheets } = useSheetStore(); // 모달 시트
@@ -17,14 +20,12 @@ function Home() {
 
   const [searchText, setSearchText] = useState(''); // 검색어
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정 필터
-  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택한 감정 기록
-
-  const [emotionRecords, setEmotionRecords] = useState<EmotionRecordResponse | null>(null); // 감정 기록
+  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택한 타인 감정 게시글 id -> 게시글 상세 모달 열기
 
   // 감정 필터링
   const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-    console.log(emotion);
+    console.log(selectedEmotion);
   };
 
   // 유저 상세 페이지 모달 열기
@@ -34,38 +35,75 @@ function Home() {
   };
 
   // 감정 기록 불러오기
-  useEffect(() => {
-    const fetchEmotionRecords = async () => {
+  const {
+    data: emotionRecords,
+    isLoading, // 첫 페이지 가져오는 중
+    fetchNextPage, // 다음 페이지 가져오기 함수
+    hasNextPage, // 다음 페이지가 있는지 여부
+    isFetchingNextPage, // 다음 페이지 가져오는 중
+  } = useInfiniteQuery({
+    queryKey: ['emotionRecords', selectedPostMusic?.spotifyId, selectedEmotion],
+    queryFn: async ({ pageParam }) => {
+      console.log('pageParam:', pageParam);
       try {
-        const { data } = await getEmotionRecords(0, 10);
-        setEmotionRecords(data);
-        console.log(data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
+        const { data } = await getEmotionRecords(
+          pageParam,
+          10,
+          selectedPostMusic?.spotifyId,
+          selectedEmotion,
+        );
 
-    fetchEmotionRecords();
-  }, []);
+        return data;
+      } catch (error) {
+        console.error('감정 기록 불러오기 에러', error);
+      }
+    },
+    getNextPageParam: (last) => {
+      if (last.currentPage < last.totalPages) {
+        return last.currentPage + 1;
+      }
+
+      // 다음 페이지가 없으면 undefined 반환
+      return undefined;
+    },
+    initialPageParam: 1, // 첫 페이지 번호 초기화!
+  });
+
+  useEffect(() => {
+    // 첫 페이지 로드
+    console.log('페이지 로드', isLoading);
+  }, [isLoading]);
+
+  // 무한 스크롤 감지 요소 추가
+  const { ref, inView } = useInView();
+
+  // 무한 스크롤
+  useEffect(() => {
+    if (inView && !isFetchingNextPage && hasNextPage) {
+      //  로딩 시간 추가
+      setTimeout(() => {
+        fetchNextPage();
+      }, 1000);
+      fetchNextPage();
+    }
+  }, [inView, isFetchingNextPage, hasNextPage]);
 
   // 음악 선택 시 검색창에 표시
   useEffect(() => {
-    // 음악 선택 시 검색창에 표시
     if (selectedPostMusic) {
       closeAllSheets();
       setSearchText(`${selectedPostMusic.artistName} - ${selectedPostMusic.songTitle}`);
-      console.log('음악 선택됨:', selectedPostMusic);
-    } else if (searchText !== '') {
+    } else if (!selectedPostMusic && searchText) {
+      // 음악 선택 해제 시 검색창 초기화
       setSearchText('');
-      console.log('음악 선택 해제됨', selectedPostMusic);
     }
   }, [selectedPostMusic]);
 
   // 검색어가 비어있으면 음악 선택 초기화
   useEffect(() => {
-    if (!searchText) {
+    if (!searchText && selectedPostMusic) {
       clearPostMusic();
-      console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
+      // console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
     }
   }, [searchText]);
 
@@ -85,33 +123,43 @@ function Home() {
         <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
       </div>
       {/* 메인카드 리스트 */}
-      {Array.isArray(emotionRecords?.records) && emotionRecords.records.length > 0 ? (
-        <div className="flex flex-col items-center gap-2.5 pb-5">
-          {emotionRecords?.records.map((record) => (
-            <div className="w-full" key={record.recordId}>
-              <div onClick={() => handleOpenSheet(record.recordId)}>
-                <MainCard
-                  albumImage={record.spotifyMusic.albumImage} // 앨범 이미지
-                  nickname={record.nickName} // 닉네임
-                  emotion={record.emotion} // 감정
-                  title={record.spotifyMusic.title} // 노래 제목
-                  artist={record.spotifyMusic.artist} // 가수
-                  comment={record.comment} // 글 내용
-                  createdAt={formatDate(record.createdAt)} // 날짜
-                  isChatting={true} // 현재 채팅중인지
-                />
-              </div>
-              {selectedRecordId !== null && (
-                <CardDetailModal recordId={selectedRecordId} isChatting={true} />
-              )}
+      {emotionRecords?.pages[0].records.length > 0 ? (
+        <>
+          <div className="flex flex-col items-center gap-2.5 pb-5">
+            {emotionRecords?.pages.map((page) =>
+              page.records.map((record: EmotionRecord) => (
+                <div className="w-full" key={record.recordId}>
+                  <div onClick={() => handleOpenSheet(record.recordId)}>
+                    <MainCard
+                      albumImage={record.spotifyMusic.albumImage} // 앨범 이미지
+                      nickname={record.nickName} // 닉네임
+                      emotion={record.emotion} // 감정
+                      title={record.spotifyMusic.title} // 노래 제목
+                      artist={record.spotifyMusic.artist} // 가수
+                      comment={record.comment} // 글 내용
+                      createdAt={formatDate(record.createdAt)} // 날짜
+                      isChatting={true} // 현재 채팅중인지
+                    />
+                  </div>
+                  {selectedRecordId !== null && (
+                    <CardDetailModal recordId={selectedRecordId} isChatting={true} />
+                  )}
+                </div>
+              )),
+            )}
+          </div>
+          {hasNextPage && !isFetchingNextPage && (
+            <div className="m-auto" ref={ref}>
+              <LoadingMini />
             </div>
-          ))}
-        </div>
+          )}
+        </>
       ) : (
         <div className="flex items-center justify-center w-full h-full mt-[50px]">
           <InfoMessage text="아직 작성된 글이 없어요" />
         </div>
       )}
+      {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}
     </div>
   );

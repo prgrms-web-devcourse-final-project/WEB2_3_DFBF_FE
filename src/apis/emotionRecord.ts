@@ -9,6 +9,13 @@ export interface EmotionRecordRequest {
   comment: string;
 }
 
+interface EmotionRecordsParams {
+  page: number;
+  size: number;
+  spotifyId?: string;
+  emotions?: string;
+}
+
 // 감정 기록 포스팅
 export const postEmotionRecord = async (emotionRecord: EmotionRecordRequest) => {
   const { data } = await axiosInstance.post(`/emotion`, emotionRecord);
@@ -36,9 +43,19 @@ export const deleteEmotionRecord = async (recordId: number) => {
 };
 
 // 메인 페이지 감정 기록 조회
-export const getEmotionRecords = async (page = 1, size = 10) => {
+export const getEmotionRecords = async (
+  page: number,
+  size: number,
+  spotifyId?: string,
+  emotions?: string | null,
+) => {
+  const params: EmotionRecordsParams = { page, size };
+
+  if (spotifyId) params.spotifyId = spotifyId;
+  if (emotions) params.emotions = emotions;
+
   const { data } = await axiosInstance.get('/emotion', {
-    params: { page, size },
+    params,
   });
   return data;
 };

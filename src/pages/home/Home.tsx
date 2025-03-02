@@ -56,6 +56,7 @@ function Home() {
         return data;
       } catch (error) {
         console.error('감정 기록 불러오기 에러', error);
+        return { records: [], currentPage: 1, totalPages: 1 };
       }
     },
     getNextPageParam: (last) => {
@@ -141,9 +142,6 @@ function Home() {
                       isChatting={true} // 현재 채팅중인지
                     />
                   </div>
-                  {selectedRecordId !== null && (
-                    <CardDetailModal recordId={selectedRecordId} isChatting={true} />
-                  )}
                 </div>
               )),
             )}
@@ -158,6 +156,9 @@ function Home() {
         <div className="flex items-center justify-center w-full h-full mt-[50px]">
           <InfoMessage text="아직 작성된 글이 없어요" />
         </div>
+      )}
+      {selectedRecordId !== null && (
+        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
       )}
       {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}

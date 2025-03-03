@@ -3,7 +3,7 @@
 @import '@styles/typography.css';
 @import '@styles/scrollbar.css';
 
-body{
-    overflow: hidden;
-    
+body {
+  overflow-x: hidden;
+  overflow-y: hidden;
 }

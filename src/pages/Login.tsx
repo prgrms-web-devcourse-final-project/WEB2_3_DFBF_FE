@@ -6,8 +6,11 @@ import kakao from '@assets/icons/kakao-icon.svg';
 import Input from '@/components/Input';
 import { useState } from 'react';
 import { useModalStore } from '@/store/modalStore';
+import SpinLoading from '@/components/loading/SpinLoading';
 
 export default function Login() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { openModal, closeModal } = useModalStore();
   const navigate = useNavigate();
 
@@ -55,14 +58,23 @@ export default function Login() {
     }
 
     try {
+      setIsLoading(true);
       const { code, data } = await login(trimmedId, trimmedPassword);
       navigate('/home');
       console.log('로그인 됨', code, data.accessToken);
     } catch (error) {
       handleLoginFailModal('아이디와 비밀번호를 다시 확인해 주세요.'); // 로그인 실패 모달
       console.log('로그인 에러', error);
+    } finally {
+      setIsLoading(false);
     }
     resetInputs();
+  };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else return <span>로그인</span>;
   };
 
   return (
@@ -102,7 +114,7 @@ export default function Login() {
             />
           </div>
         </div>
-        <Button className="focus:outline-primary-active mt-[14px]">로그인</Button>
+        <Button className="focus:outline-primary-active mt-[14px]">{renderButtonContent()}</Button>
       </form>
 
       <div className="flex flex-col gap-3 items-center w-full mt-2.5 ">

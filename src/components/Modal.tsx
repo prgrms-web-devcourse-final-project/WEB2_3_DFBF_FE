@@ -9,7 +9,7 @@ export default function Modal() {
   return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={closeModal}
+      // onClick={closeModal}
     >
       <div
         className="bg-white p-5 mx-5 rounded-lg card-shadow w-[287px] min-h-[148px] flex flex-col justify-between"

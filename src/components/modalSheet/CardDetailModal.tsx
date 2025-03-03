@@ -60,6 +60,19 @@ function CardDetailModal({
     getVideoId();
   }, [data]);
 
+  //sheet open 시 스크롤 제거
+  useEffect(() => {
+    if (isCardSheetOpen) {
+      document.body.style.overflow = 'hidden'; // 스크롤 막기
+    } else {
+      document.body.style.overflow = 'auto'; // 스크롤 복원
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isCardSheetOpen]);
+
   if (!isCardSheetOpen) {
     return null;
   }

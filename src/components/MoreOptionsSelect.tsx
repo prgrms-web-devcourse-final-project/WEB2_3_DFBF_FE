@@ -1,5 +1,6 @@
 import MoreSelectBox from '@/components/MoreSelectBox';
 import ellipsisIcon from '@assets/icons/ellipsis-icon.svg';
+import { AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
 interface MoreOptionsSelectProps {
@@ -32,7 +33,8 @@ function MoreOptionsSelect({ items }: MoreOptionsSelectProps) {
       >
         <img src={ellipsisIcon} alt="더보기" />
       </button>
-      {isSelectOpen && <MoreSelectBox items={items} />}
+      {/* 사라질 때 애니메이션 적용 */}
+      <AnimatePresence>{isSelectOpen && <MoreSelectBox items={items} />}</AnimatePresence>
     </div>
   );
 }

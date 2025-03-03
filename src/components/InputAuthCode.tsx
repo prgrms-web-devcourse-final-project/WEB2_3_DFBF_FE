@@ -19,7 +19,7 @@ interface InputAuthCodeProps extends React.InputHTMLAttributes<HTMLInputElement>
   resendCount: number; // 재전송 횟수
 
   // ✅ 버튼 관련 속성 추가
-  buttonText: string;
+  buttonText: string | React.ReactNode;
   variant: 'primary' | 'secondary' | 'disabled';
   onClick: () => void;
   onButtonClick?: () => void;

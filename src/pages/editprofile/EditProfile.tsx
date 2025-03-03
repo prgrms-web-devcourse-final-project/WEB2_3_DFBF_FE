@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '@/components/Button';
 import InputField from '@/components/InputField';
 import MusicCard from '@/components/MusicCard';
@@ -11,6 +11,10 @@ import { useSheetStore } from '@/store/sheetStore';
 import _ from 'lodash';
 import { useNavigate } from 'react-router';
 import { useModalStore } from '@/store/modalStore';
+import SpinLoading from '@/components/loading/SpinLoading';
+import Complete from '@/components/loading/Complete';
+import { twMerge } from 'tailwind-merge';
+import ErrorShake from '@/components/loading/ErrorShake';
 
 type ValidationMessage = {
   type: 'success' | 'error' | '';
@@ -44,6 +48,10 @@ function EditProfile() {
   const [isMusicSelect, setIsMusicSelect] = useState(false);
   const { closeAllSheets } = useSheetStore();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [isError, setIsError] = useState(false);
+
   useEffect(() => {
     if (selectedProfileMusic?.spotifyId) {
       setIsMusicSelect(true);
@@ -54,8 +62,8 @@ function EditProfile() {
     }
   }, [selectedProfileMusic]);
 
-  const [prevProfileMusic, setPrevProfileMusic] = useState<ProfileMusic | null>(null);
-  const [prevNickname, setPrevNickname] = useState<string>('');
+  const prevProfileMusic = useRef<ProfileMusic | null>(null);
+  const prevNickname = useRef<string>('');
   const [currentPassword, setCurrentPassword] = useState<string>('');
 
   const [nickname, setNickname] = useState('');
@@ -89,15 +97,15 @@ function EditProfile() {
         passwordConfirm: { type: '', message: '' },
       }));
     } else {
-      setNickname(prevNickname);
-      selectProfileMusic(prevProfileMusic);
+      setNickname(prevNickname.current);
+      selectProfileMusic(prevProfileMusic.current);
     }
   }, [activeTab]);
 
   //노래 이전과 달라진게 없으면 disable
-  const isProfileMusicSame = _.isEqual(prevProfileMusic, selectedProfileMusic);
+  const isProfileMusicSame = _.isEqual(prevProfileMusic.current, selectedProfileMusic);
   //닉네임 바뀌지 않거나, 바뀌었는데 중복확인이 안되었으면 disable
-  const isNicknameSame = _.isEqual(prevNickname, nickname);
+  const isNicknameSame = _.isEqual(prevNickname.current, nickname);
   const isNicknameValid = validationMessages.nickname?.type === 'success';
 
   //disable 조건
@@ -129,66 +137,113 @@ function EditProfile() {
   };
 
   const handleProfileSubmit = async () => {
-    //업데이트 된 것만 전송
-    const updatedData: Partial<ProfileFormType> = {};
-    if (nickname !== prevNickname) {
-      updatedData.nickName = nickname;
-    }
-    if (selectedProfileMusic !== prevProfileMusic) {
-      updatedData.spotifyId = selectedProfileMusic?.spotifyId;
-      updatedData.title = selectedProfileMusic?.title;
-      updatedData.artist = selectedProfileMusic?.artist;
-      updatedData.albumImage = selectedProfileMusic?.album;
-    }
-    console.log(updatedData);
+    try {
+      setIsLoading(true);
+      // 업데이트 된 것만 전송
+      const updatedData: Partial<ProfileFormType> = {};
+      if (nickname !== prevNickname.current) {
+        updatedData.nickName = nickname;
+      }
+      if (selectedProfileMusic !== prevProfileMusic.current) {
+        updatedData.spotifyId = selectedProfileMusic?.spotifyId;
+        updatedData.title = selectedProfileMusic?.title;
+        updatedData.artist = selectedProfileMusic?.artist;
+        updatedData.albumImage = selectedProfileMusic?.album;
+      }
 
-    const data = await patchEditProfile(updatedData);
+      console.log('전송 데이터:', updatedData);
 
-    console.log(data);
+      // API 호출
+      const data = await patchEditProfile(updatedData);
+      console.log('응답 데이터:', data);
 
-    if (data.code === 200) {
-      //모달 띄우기
+      if (data.code === 200) {
+        setIsComplete(true);
+        openModal({
+          title: '프로필 수정 완료',
+          message: '프로필이 성공적으로 수정되었습니다!',
+          onConfirm: () => {
+            closeModal();
+            navigate('/mypage');
+          },
+        });
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      setIsError(true);
+      console.error('프로필 수정 오류:', error);
+
+      // 에러 메시지를 모달로 표시
       openModal({
-        title: '프로필 수정이 완료되었습니다',
+        title: '프로필 수정 실패',
+        message: '잠시 후 다시 시도해주세요.',
         onConfirm: () => {
-          navigate('/mypage');
           closeModal();
+          navigate(-1);
         },
       });
+    } finally {
+      setIsLoading(false);
     }
   };
   const handlePasswordSubmit = async () => {
-    // 현재 비밀번호 1자이상/비밀번호, 비밀번호 확인 맞으면 버튼 활성화
-    //제출 시 우선 현재 비밀번호 확인.
-    const isCurrentPasswordValid = await validateCurrentPassword();
-    if (!isCurrentPasswordValid) {
-      console.log('현재 비밀번호가 일치하지 않습니다.');
-      return;
-    }
-    const updatedData: Partial<ProfileFormType> = {};
-    updatedData.password = formData2.newPassword;
+    try {
+      setIsLoading(true);
 
-    console.log(updatedData);
+      // 현재 비밀번호 확인
+      const isCurrentPasswordValid = await validateCurrentPassword();
+      if (!isCurrentPasswordValid) {
+        console.log('현재 비밀번호가 일치하지 않습니다.');
+        return;
+      }
 
-    const data = await patchEditProfile(updatedData);
-    if (data.code === 200) {
-      //모달 띄우기
+      const updatedData: Partial<ProfileFormType> = {
+        password: formData2.newPassword,
+      };
+
+      // API 호출
+      const data = await patchEditProfile(updatedData);
+
+      if (data.code === 200) {
+        openModal({
+          title: '비밀번호 변경이 완료되었습니다',
+          onConfirm: () => {
+            navigate('/mypage');
+            closeModal();
+          },
+        });
+      }
+    } catch (error) {
+      console.error('비밀번호 변경 오류:', error);
       openModal({
-        title: '비밀번호 수정이 완료되었습니다',
+        title: '비밀번호 변경 실패',
+        message: '잠시 후 다시 시도해주세요.',
         onConfirm: () => {
-          navigate('/mypage');
           closeModal();
+          navigate(-1);
         },
       });
+    } finally {
+      setIsLoading(false);
     }
+  };
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else if (isComplete) {
+      return <Complete />;
+    } else if (isError) {
+      return <ErrorShake />;
+    } else return <span>저장하기</span>;
   };
 
   useEffect(() => {
     const loadMyProfile = async () => {
       const data = await getMyProfile();
       console.log(data);
-      setPrevNickname(data.data.nickname);
-      setPrevProfileMusic(data.data.profileMusic);
+      prevNickname.current = data.data.nickname;
+      prevProfileMusic.current = data.data.profileMusic;
 
       setNickname(data.data.nickname);
 
@@ -204,19 +259,26 @@ function EditProfile() {
   return (
     <div className="flex flex-col w-full pt-5 pb-10">
       {/* 탭 메뉴 */}
-      <div className="flex">
+      <div className="relative flex">
         <button
-          className={`p-3 flex-1 ${activeTab === 'profile' ? 'border-b-2 border-primary-active font-bold' : ''}`}
+          className={`p-3 flex-1 ${activeTab === 'profile' ? 'font-bold' : ''}`}
           onClick={() => setActiveTab('profile')}
         >
           프로필 수정
         </button>
         <button
-          className={`p-3 flex-1 ${activeTab === 'password' ? 'border-b-2 border-primary-active font-bold' : ''}`}
+          className={`p-3 flex-1 ${activeTab === 'password' ? 'font-bold' : ''}`}
           onClick={() => setActiveTab('password')}
         >
           비밀번호 변경
         </button>
+        <div
+          className="absolute bottom-0 h-[2px] bg-primary-active transition-all duration-300"
+          style={{
+            width: '50%',
+            left: activeTab === 'profile' ? '0%' : '50%',
+          }}
+        />
       </div>
 
       {/* 폼 */}
@@ -260,9 +322,9 @@ function EditProfile() {
             <Button
               onClick={handleProfileSubmit}
               variant={isProfileDisable ? 'disabled' : 'primary'}
-              className="py-3 body-m mt-5"
+              className={twMerge('py-3 body-m mt-5', isError ? 'bg-functional-danger' : '')}
             >
-              저장하기
+              {renderButtonContent()}
             </Button>
           </>
         ) : (
@@ -309,9 +371,9 @@ function EditProfile() {
             <Button
               onClick={handlePasswordSubmit}
               variant={isPasswordDisable ? 'disabled' : 'primary'}
-              className="py-3 body-m mt-5"
+              className={twMerge('py-3 body-m mt-5', isError ? 'bg-functional-danger' : '')}
             >
-              저장하기
+              {renderButtonContent()}
             </Button>
           </>
         )}

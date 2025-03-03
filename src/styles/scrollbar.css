@@ -14,3 +14,7 @@
 .scroll::-webkit-scrollbar-track {
   background-color: rgba(0, 0, 0, 0); /* 투명 */
 }
+
+.noScroll::-webkit-scrollbar {
+  display: none;
+}

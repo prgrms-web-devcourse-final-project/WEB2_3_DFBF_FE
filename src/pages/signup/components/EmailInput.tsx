@@ -1,5 +1,6 @@
 import { getEmailAvailability, postEmailVerificationRequest } from '@/apis/email';
 import InputField from '@/components/InputField';
+import SpinLoading from '@/components/loading/SpinLoading';
 import { EMAIL_REGEX } from '@/constants';
 import React, { useEffect, useState } from 'react';
 
@@ -17,6 +18,7 @@ interface EmailInputProps {
 }
 
 function EmailInput({ value, setValue, validation, setValidation, onSendEmail }: EmailInputProps) {
+  const [isLoading, setIsLoading] = useState(false);
   // 버튼 상태를 관리하는 state 추가
   const [buttonVariant, setButtonVariant] = useState<'primary' | 'secondary' | 'disabled'>(
     'primary',
@@ -44,6 +46,7 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
   // 이메일 중복을 확인하는 함수
   const handleEmailCheck = async () => {
     try {
+      setIsLoading(true);
       const { code } = await getEmailAvailability(value);
       if (code === 200) {
         handlePostEmailVerificationRequest(); // 사용 가능한 이메일 경우에만 이메일 인증 요청 보내기
@@ -55,6 +58,8 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
       }
     } catch (error) {
       setValidation({ type: 'error', message: '예기치 않은 오류가 발생했습니다' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -77,6 +82,12 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
     }
   };
 
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else return <span>인증요청</span>;
+  };
+
   // value나 validation 상태가 변경될 때마다 버튼 상태 업데이트
   useEffect(() => {
     if (value === '' || validation.type === 'error') {
@@ -95,7 +106,7 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
       label="이메일 인증"
       placeholder="이메일을 입력해 주세요"
       variant={buttonVariant}
-      buttonText="인증요청"
+      buttonText={renderButtonContent()}
       value={value}
       onChange={handleChange}
       validationMessages={validation}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 // import YouTube from 'react-youtube';
 import { useYouTubeStore } from '@/store/youtubeStore';
+import { createPortal } from 'react-dom';
 // import { twMerge } from 'tailwind-merge';
 
 // YouTube Player Props 정의
@@ -67,7 +68,7 @@ const YouTubeAudioPlayer: React.FC<YouTubeAudioPlayerProps> = ({ playerId }) => 
       playerElement.style.top = '0px';
     }
   }, []);
-  return <div id={`player-${playerId}`}></div>;
+  return createPortal(<div id={`player-${playerId}`}></div>, document.body);
 };
 
 export default YouTubeAudioPlayer;

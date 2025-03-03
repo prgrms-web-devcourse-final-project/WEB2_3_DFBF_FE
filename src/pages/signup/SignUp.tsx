@@ -1,5 +1,6 @@
 import { postSignUp } from '@/apis/user';
 import Button from '@/components/Button';
+import SpinLoading from '@/components/loading/SpinLoading';
 import AuthCodeInput from '@/pages/signup/components/AuthCodeInput';
 import EmailInput from '@/pages/signup/components/EmailInput';
 import IdInput from '@/pages/signup/components/IdInput';
@@ -25,6 +26,8 @@ interface ValidationMessages {
 }
 
 function SignUp() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
   // 전송할 폼데이터
   const [formData, setFormData] = useState({
@@ -53,6 +56,7 @@ function SignUp() {
   const handleSumbit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const { code } = await postSignUp(
         formData.nickname,
         formData.id,
@@ -72,7 +76,15 @@ function SignUp() {
       }
     } catch (error) {
       console.log('회원가입 실패');
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return <SpinLoading />;
+    } else return <span>지금 시작하기</span>;
   };
 
   return (
@@ -130,7 +142,7 @@ function SignUp() {
           />
         </div>
         <Button variant={allSuccess ? 'primary' : 'disabled'} className="py-[7px] body-m">
-          지금 시작하기
+          {renderButtonContent()}
         </Button>
       </form>
     </div>

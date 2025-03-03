@@ -82,10 +82,10 @@ function Home() {
   useEffect(() => {
     if (inView && !isFetchingNextPage && hasNextPage) {
       //  로딩 시간 추가
-      setTimeout(() => {
-        fetchNextPage();
-      }, 1000);
-      // fetchNextPage();
+      // setTimeout(() => {
+      //   fetchNextPage();
+      // }, 1000);
+      fetchNextPage();
     }
   }, [inView, isFetchingNextPage, hasNextPage]);
 

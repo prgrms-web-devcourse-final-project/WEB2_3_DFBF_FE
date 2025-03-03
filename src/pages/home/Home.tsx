@@ -80,10 +80,6 @@ function Home() {
   // 무한 스크롤
   useEffect(() => {
     if (inView && !isFetchingNextPage && hasNextPage) {
-      //  로딩 시간 추가
-      setTimeout(() => {
-        fetchNextPage();
-      }, 1000);
       fetchNextPage();
     }
   }, [inView, isFetchingNextPage, hasNextPage]);
@@ -141,9 +137,6 @@ function Home() {
                       isChatting={true} // 현재 채팅중인지
                     />
                   </div>
-                  {selectedRecordId !== null && (
-                    <CardDetailModal recordId={selectedRecordId} isChatting={true} />
-                  )}
                 </div>
               )),
             )}
@@ -158,6 +151,9 @@ function Home() {
         <div className="flex items-center justify-center w-full h-full mt-[50px]">
           <InfoMessage text="아직 작성된 글이 없어요" />
         </div>
+      )}
+      {selectedRecordId !== null && (
+        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
       )}
       {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}

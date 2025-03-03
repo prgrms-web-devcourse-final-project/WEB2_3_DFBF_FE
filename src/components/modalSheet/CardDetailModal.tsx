@@ -121,6 +121,7 @@ function CardDetailModal({
                   isChatting={isChatting}
                   isPlaying={isPlaying}
                   isOwnPost={!data?.data?.disable}
+                  authorId={data?.data?.loginId}
                   onPlayPauseToggle={() => setIsPlaying('3', !isPlaying)}
                 />
               </div>
@@ -138,13 +139,4 @@ export default CardDetailModal;
 
 // 사용예시
 
-//  <CardDetailModal
-//    emotion="HAPPY"
-//    albumImage="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDr6SB_fokX3TJBAFcrIisQ_YGwVVO0F8PCw&s"
-//    songTitle="hypeboy"
-//    artistName="뉴진스"
-//    date="2025.02.15"
-//    authorName="하입보이"
-//    isChatting={false}
-//    isOwnPost={true}
-//  />;
+// <CardDetailModal recordId={selectedRecordId} isChatting={true} />;

@@ -81,10 +81,6 @@ function Home() {
   // 무한 스크롤
   useEffect(() => {
     if (inView && !isFetchingNextPage && hasNextPage) {
-      //  로딩 시간 추가
-      // setTimeout(() => {
-      //   fetchNextPage();
-      // }, 1000);
       fetchNextPage();
     }
   }, [inView, isFetchingNextPage, hasNextPage]);
@@ -159,6 +155,9 @@ function Home() {
           </div>
         )}
       </div>
+      {selectedRecordId !== null && (
+        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
+      )}
       {selectedRecordId !== null && (
         <CardDetailModal recordId={selectedRecordId} isChatting={true} />
       )}

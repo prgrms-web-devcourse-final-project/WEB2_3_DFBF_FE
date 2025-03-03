@@ -139,8 +139,8 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   }, [inView]);
 
   return (
-    <>
-      <div className="flex flex-col items-center w-full gap-4 py-4">
+    <div className="w-full h-[calc(100vh-112px-env(safe-area-inset-bottom,16px))] overflow-y-auto noScroll">
+      <div className="flex flex-col items-center w-full h-full gap-4 py-4">
         <div className="flex flex-col items-center">
           <span className="h3-b">{userData?.data?.nickname}</span>
           <span className="caption-m text-gray-60">@{userData?.data?.loginId}</span>
@@ -155,7 +155,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         {emotionRecords?.pages[0].data.records.length > 0 ? (
           //   기본으로 2열이다가 크기가 500px가 넘어가면 3열로 변경
           <>
-            <div className="grid grid-cols-2 min-[500px]:grid-cols-3 gap-x-3 gap-y-6">
+            <div className="grid grid-cols-2 min-[500px]:grid-cols-3 gap-x-3 gap-y-6 pb-4">
               {emotionRecords?.pages.map((page) =>
                 page.data.records.map((record: EmotionRecord) => (
                   <EmotionRecordCard
@@ -169,12 +169,12 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
                   />
                 )),
               )}
+              {hasNextPage && !isFetchingNextPage && (
+                <div className="border border-blue-500" ref={ref}>
+                  <LoadingMini />
+                </div>
+              )}
             </div>
-            {hasNextPage && !isFetchingNextPage && (
-              <div className="border border-blue-500" ref={ref}>
-                <LoadingMini />
-              </div>
-            )}
           </>
         ) : (
           <div className="flex items-center justify-center w-full h-full">
@@ -189,7 +189,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           handleDelete={handleDeleteModal}
         />
       )}
-    </>
+    </div>
   );
 }
 

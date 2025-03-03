@@ -85,7 +85,7 @@ function Home() {
       setTimeout(() => {
         fetchNextPage();
       }, 1000);
-      fetchNextPage();
+      // fetchNextPage();
     }
   }, [inView, isFetchingNextPage, hasNextPage]);
 
@@ -109,7 +109,7 @@ function Home() {
   }, [searchText]);
 
   return (
-    <div className="flex flex-col w-full gap-5 mt-5 h-fit">
+    <div className="flex flex-col w-full gap-5 mt-5">
       <SearchBar
         searchText={searchText}
         setSearchText={setSearchText}
@@ -124,39 +124,41 @@ function Home() {
         <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
       </div>
       {/* 메인카드 리스트 */}
-      {emotionRecords?.pages[0].records.length > 0 ? (
-        <>
-          <div className="flex flex-col items-center gap-2.5 pb-5">
-            {emotionRecords?.pages.map((page) =>
-              page.records.map((record: EmotionRecord) => (
-                <div className="w-full" key={record.recordId}>
-                  <div onClick={() => handleOpenSheet(record.recordId)}>
-                    <MainCard
-                      albumImage={record.spotifyMusic.albumImage} // 앨범 이미지
-                      nickname={record.nickName} // 닉네임
-                      emotion={record.emotion} // 감정
-                      title={record.spotifyMusic.title} // 노래 제목
-                      artist={record.spotifyMusic.artist} // 가수
-                      comment={record.comment} // 글 내용
-                      createdAt={formatDate(record.createdAt)} // 날짜
-                      isChatting={true} // 현재 채팅중인지
-                    />
+      <div className="h-[calc(100vh-334px-env(safe-area-inset-bottom,16px))] overflow-y-auto">
+        {emotionRecords?.pages[0].records.length > 0 ? (
+          <>
+            <div className="flex flex-col items-center gap-2.5 pb-5 ">
+              {emotionRecords?.pages.map((page) =>
+                page.records.map((record: EmotionRecord) => (
+                  <div className="w-full" key={record.recordId}>
+                    <div onClick={() => handleOpenSheet(record.recordId)}>
+                      <MainCard
+                        albumImage={record.spotifyMusic.albumImage} // 앨범 이미지
+                        nickname={record.nickName} // 닉네임
+                        emotion={record.emotion} // 감정
+                        title={record.spotifyMusic.title} // 노래 제목
+                        artist={record.spotifyMusic.artist} // 가수
+                        comment={record.comment} // 글 내용
+                        createdAt={formatDate(record.createdAt)} // 날짜
+                        isChatting={true} // 현재 채팅중인지
+                      />
+                    </div>
                   </div>
+                )),
+              )}
+              {hasNextPage && !isFetchingNextPage && (
+                <div className="m-auto" ref={ref}>
+                  <LoadingMini />
                 </div>
-              )),
-            )}
-          </div>
-          {hasNextPage && !isFetchingNextPage && (
-            <div className="m-auto" ref={ref}>
-              <LoadingMini />
+              )}
             </div>
-          )}
-        </>
-      ) : (
-        <div className="flex items-center justify-center w-full h-full mt-[50px]">
-          <InfoMessage text="아직 작성된 글이 없어요" />
-        </div>
-      )}
+          </>
+        ) : (
+          <div className="flex items-center justify-center w-full h-full">
+            <InfoMessage text="아직 작성된 글이 없어요" />
+          </div>
+        )}
+      </div>
       {selectedRecordId !== null && (
         <CardDetailModal recordId={selectedRecordId} isChatting={true} />
       )}

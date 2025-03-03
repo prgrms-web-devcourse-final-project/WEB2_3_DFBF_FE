@@ -56,7 +56,7 @@ function Layout() {
       <div
         className={twMerge(
           'pt-[44px] flex-1 flex justify-center w-full px-3',
-          showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
+          // showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
         )}
       >
         <Outlet />

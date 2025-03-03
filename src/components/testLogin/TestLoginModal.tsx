@@ -53,7 +53,7 @@ export default function TestLoginModal() {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <div className="fixed top-0 left-0 z-50">
+    <div className="fixed top-0 left-0 z-9999">
       {isAuthenticated ? (
         <>
           <button

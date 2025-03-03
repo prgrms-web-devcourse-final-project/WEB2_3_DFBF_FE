@@ -4,5 +4,6 @@
 @import '@styles/scrollbar.css';
 
 body{
-    overflow-y: hidden;
+    overflow-x: hidden;
+    
 }

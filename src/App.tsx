@@ -57,9 +57,9 @@ function App() {
       location.pathname === '/mypage/blocklist'
     ) {
       return {
-        initial: { x: '80%' },
+        initial: { x: '100%' },
         animate: { x: 0 },
-        exit: { x: '80%' },
+        exit: { x: '100%' },
         transition: { duration: 0.3 },
         style: { zIndex: 1 },
       };

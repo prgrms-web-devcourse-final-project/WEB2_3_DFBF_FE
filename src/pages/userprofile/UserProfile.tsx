@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
 import LoadingMini from '@/components/loading/LoadingMini';
+import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
@@ -28,15 +29,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     queryFn: () => (isMyPage ? getMyProfile() : getUserProfile(userId as string)),
   });
 
-  // 유저 감정 기록 가져오기
-  // const { data: emotionRecords } = useQuery({
-  //   queryKey: isMyPage ? ['emotionRecords', userData?.data?.loginId] : ['emotionRecords', userId],
-  //   queryFn: () =>
-  //     isMyPage
-  //       ? getUserEmotionRecords(userData?.data?.loginId)
-  //       : getUserEmotionRecords(userId as string),
-  //   enabled: !!userData, // userData가 존재할 때만 실행
-  // });
   const {
     data: emotionRecords,
     fetchNextPage,
@@ -49,7 +41,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         ? getUserEmotionRecords(userData?.data?.loginId, pageParam)
         : getUserEmotionRecords(userId as string, pageParam),
     getNextPageParam: (last) => {
-      console.log('last', last, last.data.currentPage, last.data.totalPages);
       if (last.data.currentPage < last.data.totalPages) {
         return last.data.currentPage + 1;
       }
@@ -57,6 +48,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     },
     initialPageParam: 1,
     enabled: !!userData, // userData가 존재할 때만 실행
+    select: (data) => data.pages as EmotionRecordPages[],
   });
 
   console.log('감정데이터', emotionRecords);
@@ -152,35 +144,13 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           image={userData?.data.profileMusic?.album}
           rightElement="play"
         />
-        {emotionRecords?.pages[0].data.records.length > 0 ? (
-          //   기본으로 2열이다가 크기가 500px가 넘어가면 3열로 변경
-          <>
-            <div className="grid grid-cols-2 min-[500px]:grid-cols-3 gap-x-3 gap-y-6 pb-4">
-              {emotionRecords?.pages.map((page) =>
-                page.data.records.map((record: EmotionRecord) => (
-                  <EmotionRecordCard
-                    key={record.recordId}
-                    emotion={record.emotion}
-                    albumImage={record.spotifyMusic.albumImage}
-                    songTitle={record.spotifyMusic.title}
-                    artistName={record.spotifyMusic.artist}
-                    date={formatDate(record.createdAt)}
-                    onClick={() => handleOpenSheet(record.recordId)}
-                  />
-                )),
-              )}
-              {hasNextPage && !isFetchingNextPage && (
-                <div className="border border-blue-500" ref={ref}>
-                  <LoadingMini />
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-center w-full h-full">
-            <InfoMessage text="포스트가 비어있어요" />
-          </div>
-        )}
+        <EmotionRecordCardList
+          emotionRecords={emotionRecords ?? []}
+          handleOpenSheet={handleOpenSheet}
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          refProp={ref}
+        />
       </div>
       {selectedRecordId !== null && (
         <CardDetailModal

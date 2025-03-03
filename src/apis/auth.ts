@@ -17,7 +17,7 @@ export const login = async (loginId: string, password: string) => {
 };
 
 // 로그아웃
-export const logout = async () => {
+export const postLogout = async () => {
   const { data } = await axiosInstance.post('/auth/logout');
   // useAuthStore.getState().logout(); // 전역 상태 초기화
   // window.location.href = '/'; // 랜딩 페이지로 이동

@@ -23,10 +23,17 @@ interface EmotionRecordResponse {
   totalPages: number;
   totalElements: number;
 }
+
+interface EmotionRecordPages {
+  code: number;
+  data: EmotionRecordResponse;
+  message: string;
+  timestamp: string;
+}
+
 interface MusicCardItem {
   spotifyId: string;
   songTitle: string;
   artistName: string;
   albumImage: string;
 }
-

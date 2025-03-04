@@ -40,6 +40,7 @@ axiosInstance.interceptors.response.use(
         await reissueToken(); // 토큰 재발급 요청
         return axiosInstance(originalRequest); // 원래 요청 다시 시도
       } catch (error) {
+        useAuthStore.getState().logout();
         useAuthStore.persist.clearStorage();
         console.error('AT 토큰 재발급 실패:', error);
 

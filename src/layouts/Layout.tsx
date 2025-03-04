@@ -5,6 +5,7 @@ import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
+import { useRef } from 'react';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -47,16 +48,28 @@ function Layout() {
 
   const hasPostButton = location.pathname === '/home' || location.pathname === '/mypage';
 
+  //헤더 클릭 시 스크롤
+  const scrollContainerRef = useRef<HTMLDivElement>(null); // 스크롤 컨테이너 참조
+
+  const handleScrollToTop = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="relative max-w-[600px] min-w-[320px] w-full min-h-screen mx-auto bg-background flex flex-col">
+    <div
+      ref={scrollContainerRef}
+      className="relative max-w-[600px] min-w-[320px] w-full h-screen mx-auto bg-background flex flex-col overflow-y-auto scroll"
+    >
       {/* 헤더 */}
-      {renderHeader()}
+      <div onClick={handleScrollToTop}>{renderHeader()}</div>
 
       {/* 메인 컨텐츠 영역 */}
       <div
         className={twMerge(
           'pt-[44px] flex-1 flex justify-center w-full px-3',
-          // showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
+          showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
         )}
       >
         <Outlet />

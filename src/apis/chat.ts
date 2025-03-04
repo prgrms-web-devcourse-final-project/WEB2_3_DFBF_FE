@@ -34,13 +34,13 @@ export const cancelChatRequest = async (emotionRecordId: number) => {
 //채팅방 생성
 export const createChatroom = async (emotionRecordId: number) => {
   const { data } = await axiosInstance.post(
-    `/chat/chatroom/create?recordId=${emotionRecordId}`,
+    `/chat/create?recordId=${emotionRecordId}`,
     {},
   );
   return data;
 };
 //채팅방 닫기
 export const closeChatroom = async (chatRoomId: number) => {
-  const { data } = await axiosInstance.post(`/chat/chatroom/close?chatRoomId=${chatRoomId}`, {});
+  const { data } = await axiosInstance.post(`/chat/close?chatRoomId=${chatRoomId}`, {});
   return data;
 };

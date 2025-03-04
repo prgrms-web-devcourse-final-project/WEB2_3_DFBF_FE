@@ -141,7 +141,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   }, [inView]);
 
   return (
-    <div className="w-full h-[calc(100vh-112px-env(safe-area-inset-bottom,16px))] overflow-y-auto noScroll">
+    <div className="w-full">
       <div className="flex flex-col items-center w-full h-full gap-4 py-4">
         <div className="flex flex-col items-center">
           <span className="h3-b">{userData?.data?.nickname}</span>

@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 // import { spawn } from 'child_process';
 
 export default function Modal() {
-  const { modal, closeModal } = useModalStore();
+  const { modal } = useModalStore();
   if (!modal.isOpen) return null;
   return createPortal(
     <div

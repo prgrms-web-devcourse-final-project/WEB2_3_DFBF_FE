@@ -119,8 +119,9 @@ function Home() {
         </h2>
         <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
       </div>
+
       {/* 메인카드 리스트 */}
-      <div className="h-[calc(100vh-334px-env(safe-area-inset-bottom,16px))] overflow-y-auto scroll">
+      <div className='flex-1'>
         {emotionRecords?.pages[0].records.length > 0 ? (
           <>
             <div className="flex flex-col items-center gap-2.5 pb-5 ">

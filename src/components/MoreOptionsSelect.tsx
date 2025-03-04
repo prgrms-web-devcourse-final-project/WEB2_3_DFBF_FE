@@ -29,7 +29,10 @@ function MoreOptionsSelect({ items }: MoreOptionsSelectProps) {
     <div className="relative flex" ref={selectRef}>
       <button
         className="flex justify-center items-center cursor-pointer w-6 h-6"
-        onClick={() => setIsSelectOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsSelectOpen((prev) => !prev);
+        }}
       >
         <img src={ellipsisIcon} alt="더보기" />
       </button>

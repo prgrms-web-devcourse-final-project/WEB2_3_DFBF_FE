@@ -6,14 +6,13 @@ import { useSheetStore } from '@/store/sheetStore';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { cancelChatRequest } from '@/apis/chat';
+import { cancelChatRequest, createChatroom } from '@/apis/chat';
 import { useNavigate } from 'react-router';
 dayjs.extend(duration);
 
 export default function ChatConnectLoadingSheet() {
   const navigate = useNavigate();
-  //zustand로 관리
-  //거절, 취소하거나 홈으로 가기 누르면 false로
+
   const { currentRecord, closeAllSheets, closeSheet } = useSheetStore();
 
   const [timeLeft, setTimeLeft] = useState(60);
@@ -25,6 +24,7 @@ export default function ChatConnectLoadingSheet() {
     navigate('/home');
   };
 
+  //타이머 60초
   useEffect(() => {
     const endTime = new Date().getTime() + 60 * 1000; // 현재 시간 + 60초
 
@@ -50,14 +50,14 @@ export default function ChatConnectLoadingSheet() {
 
   const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
 
-  //채팅 요청 취소
+  //채팅 요청 취소(요청 보낸 사람)
   const cancel = async () => {
-    console.log(currentRecord);
     if (!currentRecord) {
       console.log('record가 존재하지 않습니다');
       return;
     }
     try {
+      console.log(currentRecord);
       await cancelChatRequest(currentRecord.recordId);
       console.log('채팅 취소');
 
@@ -67,7 +67,30 @@ export default function ChatConnectLoadingSheet() {
     }
   };
 
-  const isReceiver = false;
+  //채팅방 생성 (요청 받는 사람 입장에서 생성?)
+  const createChat = async () => {
+    try {
+      const data = await createChatroom(17);
+      console.log(data);
+
+      if (data.code === 200) {
+        navigate('/chatroom');
+        closeAllSheets();
+      }
+      //500 이면 이미 방 있음 => 기존 채팅방으로
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //채팅 요정 거절
+  const refuseRequest = () => {
+    closeSheet('isChatLoadingSheetOpen');
+  };
+
+  //채팅 신청한 사람이 상대가 수락했다는 sse 받으면 closeAllSheet, chatroom으로 이동
+
+  const isReceiver = true;
 
   if (connetFail) {
     return (
@@ -135,8 +158,12 @@ export default function ChatConnectLoadingSheet() {
         {/* 받는 사람일 경우 */}
         {isReceiver && (
           <div className="absolute bottom-10 flex gap-[6px] px-3 w-full">
-            <Button variant="primary">수락하기</Button>
-            <Button variant="secondary">거절하기</Button>
+            <Button onClick={createChat} variant="primary">
+              수락하기
+            </Button>
+            <Button onClick={refuseRequest} variant="secondary">
+              거절하기
+            </Button>
           </div>
         )}
       </div>

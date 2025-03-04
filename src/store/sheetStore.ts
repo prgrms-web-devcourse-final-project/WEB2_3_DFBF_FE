@@ -3,17 +3,29 @@ import { create } from 'zustand';
 interface SheetStore {
   isMusicSheetOpen: boolean;
   isCardSheetOpen: boolean;
+  isChatLoadingSheetOpen: boolean;
   openSheet: (sheetName: string) => void;
   closeSheet: (sheetName: string) => void;
   closeAllSheets: () => void;
+  currentRecord: EmotionRecord | null;
+  setCurrentRecord: (record: EmotionRecord | null) => void;
 }
 
 export const useSheetStore = create<SheetStore>((set) => ({
   isMusicSheetOpen: false,
   isCardSheetOpen: false,
+  isChatLoadingSheetOpen: false,
   openSheet: (sheetName) => set((prevState) => ({ ...prevState, [sheetName]: true })), // 개별 오픈
   closeSheet: (sheetName) => set((prevState) => ({ ...prevState, [sheetName]: false })), // 개별 닫기
-  closeAllSheets: () => set({ isMusicSheetOpen: false, isCardSheetOpen: false }), // 한 번에 닫기
+  closeAllSheets: () =>
+    set((prevState) => ({
+      ...prevState,
+      isChatLoadingSheetOpen: false,
+      isMusicSheetOpen: false,
+      isCardSheetOpen: false,
+    })), // 한 번에 닫기
+  currentRecord: null,
+  setCurrentRecord: (record) => set((prevState) => ({ ...prevState, currentRecord: record })),
 }));
 
 // 사용예시

@@ -26,9 +26,9 @@ function Layout() {
   };
 
   const headerConfig: { [key: string]: React.ReactNode } = {
-    '/home': <Header showPostButton />,
-    '/chat': <Header showPostButton />,
-    '/mypage': <Header showMoreOptions showPostButton />,
+    '/home': <Header />,
+    '/chat': <Header />,
+    '/mypage': <Header showMoreOptions />,
     '/post': <HeaderWithBack text="글 등록" />,
     '/signup': <HeaderWithBack text="회원가입" />,
     '/mypage/blocklist': <HeaderWithBack text="차단 목록" />,

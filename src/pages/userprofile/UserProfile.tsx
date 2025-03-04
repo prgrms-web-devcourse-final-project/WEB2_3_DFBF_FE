@@ -9,12 +9,14 @@ import { useSheetStore } from '@/store/sheetStore';
 import { formatDate } from '@/utils/formatDate';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
 import LoadingMini from '@/components/loading/LoadingMini';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
+  const navigate = useNavigate();
+
   const { userId } = useParams(); // 유저페이지 경우
   const { openSheet, closeSheet } = useSheetStore(); // 시트
   const { openModal, closeModal } = useModalStore(); // 모달
@@ -132,6 +134,14 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     });
   };
 
+  // 수정
+  const handleEdit = () => {
+    if (selectedRecordId) {
+      navigate(`/post/${selectedRecordId}/edit`);
+    }
+    closeSheet('isCardSheetOpen'); // 모달시트 끄기
+  };
+
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -187,6 +197,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           recordId={selectedRecordId}
           isChatting={true}
           handleDelete={handleDeleteModal}
+          handleEdit={handleEdit}
         />
       )}
     </div>

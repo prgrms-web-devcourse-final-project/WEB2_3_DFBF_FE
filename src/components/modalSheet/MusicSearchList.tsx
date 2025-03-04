@@ -1,6 +1,6 @@
 import Button from '@/components/Button';
 import { useMusicCardStore } from '@/store/MusicCardStore';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 
 interface MusicSearchListProps {
   spotifyId: string; // 스포티파이 ID
@@ -12,10 +12,11 @@ interface MusicSearchListProps {
 function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: MusicSearchListProps) {
   const { selectPostMusic, selectProfileMusic } = useMusicCardStore();
   const location = useLocation(); // 현재 URL 가져오기
+  const { postId } = useParams();
 
   // URL에 따라 selectPostMusic 또는 selectProfileMusic을 호출
   const handleSelectMusic = () => {
-    if (location.pathname.includes('/edit')) {
+    if (location.pathname.includes('/edit') && !postId) {
       // URL에 "/profile"이 포함되면 selectProfileMusic 호출
       selectProfileMusic({ spotifyId, title: songTitle, artist: artistName, album: albumImage });
     } else {

@@ -78,7 +78,11 @@ function CardDetailModal({
   }
 
   return (
-    <ModalSheetLayout isOwnPost={!data?.data?.disable} handleDelete={handleDelete}>
+    <ModalSheetLayout
+      isOwnPost={!data?.data?.disable}
+      handleDelete={handleDelete}
+      handleEdit={handleEdit}
+    >
       <div className="px-[36.5px] flex flex-col items-center gap-4">
         <div className="flex flex-col max-w-[250px] gap-4">
           <div className="flex flex-col items-center gap-1">

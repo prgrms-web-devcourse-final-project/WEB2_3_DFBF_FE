@@ -15,7 +15,7 @@ axiosInstance.interceptors.request.use(
     // 토큰이 있으면 요청 헤더에 추가
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('요청 헤더에 Authorization 추가됨:', config.headers);
+      // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
     }
     return config;
   },
@@ -26,31 +26,29 @@ axiosInstance.interceptors.request.use(
 );
 
 // 응답 인터셉터
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     console.log('응답 인터셉터');
-//     // 응답 에러 처리
-//     const originalRequest = error.config; // 실패한 요청 정보 저장
-//     console.log('요청 실패:', originalRequest);
-//     if (!originalRequest) return Promise.reject(error); // 요청 정보 자체가 아예 없을 경우 종료
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // 응답 에러 처리
+    const originalRequest = error.config; // 실패한 요청 정보 저장
 
-//     // AT 토큰 만료 시
-//     if (error.response.status === 403 && !originalRequest._retry) {
-//       originalRequest._retry = true; // 재시도 방지
+    // AT 토큰 만료 시
+    if (error.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true; // 재시도 방지
 
-//       console.log('토큰 만료', originalRequest);
-//       try {
-//         await reissueToken(); // 토큰 재발급 요청
-//         return axiosInstance(originalRequest); // 원래 요청 다시 시도
-//       } catch (error) {
-//         console.error('AT 토큰 재발급 실패:', error);
-//         return Promise.reject(error);
-//       }
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+      try {
+        await reissueToken(); // 토큰 재발급 요청
+        return axiosInstance(originalRequest); // 원래 요청 다시 시도
+      } catch (error) {
+        useAuthStore.persist.clearStorage();
+        console.error('AT 토큰 재발급 실패:', error);
+
+        return Promise.reject(error);
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 // .env에 추가하기
 // VITE_API_URL=http://43.203.98.65:8080

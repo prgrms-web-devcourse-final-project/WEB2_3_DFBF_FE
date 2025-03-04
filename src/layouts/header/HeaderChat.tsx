@@ -57,7 +57,9 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
 
         {/* 나가기 버튼 */}
         <button
-          onClick={() =>
+          onClick={(e) => {
+            e.stopPropagation();
+
             openModal({
               title: '이 대화를 마무리할까요?',
               message: '채팅을 종료하면 다시 복구할 수 없습니다.',
@@ -69,8 +71,8 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
                 console.log('취소');
                 closeModal();
               },
-            })
-          }
+            });
+          }}
           className="cursor-pointer"
         >
           <img src={exitIcon} alt="나가기" />

@@ -12,11 +12,35 @@ export const loadChatMessages = async (roomId: number) => {
   const { data } = await axiosInstance.get(`/chat/messages/${roomId}`);
   return data;
 };
-
 //채팅 요청
-export const requestChat = async (tag: string) => {
-  const { data } = await axiosInstance.post(`/chat/chatroom`, {
-    participantTag: tag,
+export const requestChat = async (emotionRecordId: number) => {
+  const { data } = await axiosInstance.post(`/chat/request`, emotionRecordId, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
+  return data;
+};
+//채팅 요청 취소
+export const cancelChatRequest = async (emotionRecordId: number) => {
+  const { data } = await axiosInstance.delete(`/chat/request`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: JSON.stringify(emotionRecordId),
+  });
+  return data;
+};
+//채팅방 생성
+export const createChatroom = async (emotionRecordId: number) => {
+  const { data } = await axiosInstance.post(
+    `/chat/chatroom/create?recordId=${emotionRecordId}`,
+    {},
+  );
+  return data;
+};
+//채팅방 닫기
+export const closeChatroom = async (chatRoomId: number) => {
+  const { data } = await axiosInstance.post(`/chat/chatroom/close?chatRoomId=${chatRoomId}`, {});
   return data;
 };

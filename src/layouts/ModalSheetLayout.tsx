@@ -33,6 +33,7 @@ function ModalSheetLayout({
   const modalVariants = {
     hidden: { opacity: 0, y: -200 }, // 모달이 화면 밖에 위치하도록
     visible: { opacity: 1, y: 0 }, // 화면 안으로 날아오는 효과
+    exit: { opacity: 0, y: -200 },
   };
 
   useEffect(() => {
@@ -51,14 +52,15 @@ function ModalSheetLayout({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <motion.div
-        className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow border border-gray-5 overflow-y-auto scroll"
-        initial="hidden"
-        animate="visible"
-        variants={modalVariants}
-        transition={{ duration: 0.3 }}
-      >
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={modalVariants}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-[8px] card-shadow border border-gray-5 overflow-y-auto scroll">
         {/* 헤더 */}
         <div className="sticky top-0 flex min-h-[60px] h-[60px] items-center px-4 justify-between bg-white ">
           <button
@@ -77,8 +79,8 @@ function ModalSheetLayout({
           )}
         </div>
         {children}
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 }
 

@@ -25,6 +25,7 @@ import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 import TestLoginModal from '@/components/testLogin/TestLoginModal';
 import { AnimatePresence, motion } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
+import { useSheetStore } from './store/sheetStore';
 
 function App() {
   const location = useLocation();
@@ -32,6 +33,7 @@ function App() {
   // const isAuthenticated = true;
   const { isAuthenticated } = useAuthStore();
   const spotifyAuth = useSpotifyAuth();
+  const { isChatLoadingSheetOpen } = useSheetStore();
   // soundlink 로그인한 경우에만 spotify 로그인 후 토큰 가져오기
   useEffect(() => {
     if (isAuthenticated) {
@@ -54,7 +56,8 @@ function App() {
       location.pathname === '/signup' ||
       location.pathname === '/post' ||
       location.pathname === '/mypage/edit' ||
-      location.pathname === '/mypage/blocklist'
+      location.pathname === '/mypage/blocklist' ||
+      location.pathname.includes('user')
     ) {
       return {
         initial: { x: '100%' },
@@ -128,7 +131,7 @@ function App() {
         <div className="w-full h-full bg-white z-50"></div>
       </div>
       <Modal />
-      <ChatConnectLoadingSheet />
+      {isChatLoadingSheetOpen && <ChatConnectLoadingSheet />}
       <YouTubeAudioPlayer playerId="1" />
       <YouTubeAudioPlayer playerId="2" />
       <YouTubeAudioPlayer playerId="3" />

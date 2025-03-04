@@ -38,7 +38,7 @@ function CardDetailModal({
   handleDelete,
   handleEdit,
 }: CardDetailModalProps) {
-  const { isCardSheetOpen } = useSheetStore();
+  const { isCardSheetOpen, setCurrentRecord } = useSheetStore();
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['3']?.isPlaying || false;
 
@@ -49,6 +49,9 @@ function CardDetailModal({
 
   useEffect(() => {
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
+    console.log(data?.data);
+
+    setCurrentRecord(data.data);
 
     const artistName = data.data.spotifyMusic.artist;
     const songTitle = data.data.spotifyMusic.title;
@@ -58,6 +61,10 @@ function CardDetailModal({
       setVideoId('3', id);
     };
     getVideoId();
+
+    return () => {
+      setCurrentRecord(null);
+    };
   }, [data]);
 
   //sheet open 시 스크롤 제거
@@ -122,6 +129,7 @@ function CardDetailModal({
               </div>
               <div className="flex gap-10">
                 <ChatActionButtons
+                  recordId={recordId}
                   isChatting={isChatting}
                   isPlaying={isPlaying}
                   isOwnPost={!data?.data?.disable}

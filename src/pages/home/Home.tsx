@@ -156,10 +156,7 @@ function Home() {
         )}
       </div>
       {selectedRecordId !== null && (
-        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
-      )}
-      {selectedRecordId !== null && (
-        <CardDetailModal recordId={selectedRecordId} isChatting={true} />
+        <CardDetailModal recordId={selectedRecordId} isChatting={false} />
       )}
       {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}

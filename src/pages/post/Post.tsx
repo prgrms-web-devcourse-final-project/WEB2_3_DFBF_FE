@@ -4,9 +4,9 @@ import MusicCard from '@/components/MusicCard';
 import Comment from '@/pages/post/components/Comment';
 import { useEffect, useState } from 'react';
 import { useSheetStore } from '@/store/sheetStore';
-import { postEmotionRecord } from '@/apis/emotionRecord';
+import { getEmotionRecordById, postEmotionRecord, putEmotionRecord } from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
@@ -14,18 +14,47 @@ import ErrorShake from '@/components/loading/ErrorShake';
 
 export default function Post() {
   const navigate = useNavigate();
+  const { postId } = useParams();
+  const isEditMode = Boolean(postId); // 수정 모드인지 확인
+
   const { openModal, closeModal } = useModalStore();
-  const { selectedPostMusic, clearPostMusic } = useMusicCardStore();
+  const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
   const { closeAllSheets } = useSheetStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isError, setIsError] = useState(false);
-  //음악 선택 상태 확인
-  const [isMusicSelect, setIsMusicSelect] = useState(false);
 
+  const [isMusicSelect, setIsMusicSelect] = useState(false); //음악 선택 상태 확인
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
   const [comment, setComment] = useState<string>(''); // 코멘트
+
+  // 수정모드
+  useEffect(() => {
+    if (isEditMode && postId) {
+      // 수정 데이터 가져오기
+      const getEmotionRecord = async (postId: number) => {
+        const { data } = await getEmotionRecordById(postId);
+        const { comment, emotion, spotifyMusic } = data;
+
+        // 'artist' → 'artistName', 'title' → 'songTitle'
+        const editMusic = {
+          albumImage: spotifyMusic.albumImage,
+          artistName: spotifyMusic.artist, // 변환
+          songTitle: spotifyMusic.title, // 변환
+          spotifyId: spotifyMusic.spotifyId,
+        };
+
+        setSelectedEmotion(emotion);
+        setComment(comment);
+        selectPostMusic(editMusic);
+        console.log('음악 선택됨:', selectedPostMusic);
+        console.log('수정 데이터:', data);
+      };
+
+      getEmotionRecord(Number(postId));
+    }
+  }, []);
 
   // 음악 선택 됨 -> 아티스트 폰트 스타일 변경, 모달 닫기
   useEffect(() => {
@@ -45,16 +74,16 @@ export default function Post() {
 
   // 코멘트 입력 시
   const onChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value.trim());
+    setComment(e.target.value);
   };
 
   // 기록 완료 조건 확인
-  const isCompletePost = selectedPostMusic && selectedEmotion && comment.length > 0;
+  const isCompletePost = selectedPostMusic && selectedEmotion && comment.trim().length > 0;
 
   // 글 등록 성공 모달
   const handlePostSuccessModal = () => {
     openModal({
-      title: '글 등록 성공',
+      title: isEditMode ? '글 수정 성공' : '글 등록 성공',
       message: '내가 쓴 글을 확인하러 가 볼까요?',
       confirmText: '확인하러 가기',
       cancelText: '홈으로 가기',
@@ -72,7 +101,7 @@ export default function Post() {
   // 글 등록 실패 모달
   const handlePostFailModal = () => {
     openModal({
-      title: '글 등록 실패',
+      title: isEditMode ? '글 수정 실패' : '글 등록 실패',
       message: '잠시 후 다시 시도해 주세요.',
       confirmText: '확인',
       onConfirm: async () => {
@@ -98,9 +127,15 @@ export default function Post() {
         comment: comment,
       };
 
-      const data = await postEmotionRecord(requestData);
-      // TODO: 로딩 추가
-      console.log('기록 완료:', data);
+      let data;
+      if (isEditMode) {
+        // 수정 모드
+        data = await putEmotionRecord(Number(postId), requestData);
+      } else {
+        // 새 글 작성
+        data = await postEmotionRecord(requestData);
+      }
+      console.log(isEditMode ? '수정 완료' : '기록 완료:', data);
 
       setIsComplete(true);
       handlePostSuccessModal();
@@ -120,7 +155,7 @@ export default function Post() {
       return <Complete />;
     } else if (isError) {
       return <ErrorShake />;
-    } else return <span>기록 완료</span>;
+    } else return isEditMode ? <span>수정 완료</span> : <span>기록 완료</span>;
   };
 
   useEffect(() => {
@@ -139,6 +174,7 @@ export default function Post() {
         </div>
 
         {/* 음악 검색 */}
+
         <MusicCard
           image={selectedPostMusic?.albumImage}
           title={selectedPostMusic?.songTitle}

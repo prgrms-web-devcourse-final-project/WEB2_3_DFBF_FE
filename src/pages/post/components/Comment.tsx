@@ -25,6 +25,7 @@ export default function Comment({ selectedEmotion, onChangeComment, comment }: C
         <div className="h-24 bg-white drop-shadow rounded-lg body-r overflow-hidden px-2 py-3">
           <textarea
             name="comment"
+            value={comment}
             id="userComment"
             placeholder="지금 떠오르는 생각을 자유롭게 적어보세요"
             className="scroll resize-none w-full h-full m-1 break-words"

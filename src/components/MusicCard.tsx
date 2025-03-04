@@ -7,7 +7,7 @@ import { useSearchYoutubeVideo } from '@/apis/youtube';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
-import { useLocation } from 'react-router';
+import { useLocation, useParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 interface MusicCardProps {
@@ -30,8 +30,9 @@ export default function MusicCard({
   rightElement = 'button',
 }: MusicCardProps) {
   const location = useLocation();
+  const { postId } = useParams();
   const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
-  const isPostPage = location.pathname === '/post';
+  const isPostPage = location.pathname === '/post' || Boolean(postId);
   //edit 페이지 이면 유튜브 로드 X
   const isUserEditPage = location.pathname === '/mypage/edit';
   // 음악 선택 여부에 따른 텍스트 스타일

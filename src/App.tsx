@@ -106,6 +106,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/post" element={<Post />} />
+                <Route path="/post/:postId/edit" element={<Post />} />
                 <Route path="/chatroom" element={<ChatRoom />} />
                 <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
                 <Route path="/mypage/edit" element={<EditProfile />} />

@@ -23,9 +23,9 @@ import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
 // TODO: 테스트용 나중에 지우기
 import TestLoginModal from '@/components/testLogin/TestLoginModal';
-import { AnimatePresence, motion } from 'framer-motion';
-import { twMerge } from 'tailwind-merge';
+
 import { useSheetStore } from './store/sheetStore';
+import AnimatedLayout from '@/layouts/AnimatedLayout';
 
 function App() {
   const location = useLocation();
@@ -50,86 +50,43 @@ function App() {
     }); // 앱이 처음 실행될 때 API 로드
   }, []);
 
-  const getAnimation = () => {
-    // location.pathname 등으로 분기하여 애니메이션 설정 반환
-    if (
-      location.pathname === '/signup' ||
-      location.pathname === '/post' ||
-      location.pathname === '/mypage/edit' ||
-      location.pathname === '/mypage/blocklist' ||
-      location.pathname.includes('user')
-    ) {
-      return {
-        initial: { x: '100%' },
-        animate: { x: 0 },
-        exit: { x: '100%' },
-        transition: { duration: 0.3 },
-        style: { zIndex: 1 },
-      };
-    } else {
-      // 기본 애니메이션 설정
-      return {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0.3 },
-      };
-    }
-  };
-
   return (
     <>
       {/* 테스트용 나중에 지우기 */}
       <TestLoginModal />
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={location.pathname}
-          {...getAnimation()}
-          className={twMerge('absolute left-1/2 -translate-x-1/2 w-full max-w-[600px] z-10')}
-        >
-          <Routes location={location}>
-            <Route path="/" element={<Layout />}>
-              <Route
-                index
-                element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />}
-              />
+      <AnimatedLayout>
+        <Routes location={location}>
+          <Route path="/" element={<Layout />}>
+            <Route
+              index
+              element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />}
+            />
 
-              <Route
-                path="/login"
-                element={isAuthenticated ? <Navigate to="/home" replace /> : <Login />}
-              />
-              <Route
-                path="/signup"
-                element={isAuthenticated ? <Navigate to="/home" replace /> : <SignUp />}
-              />
+            <Route
+              path="/login"
+              element={isAuthenticated ? <Navigate to="/home" replace /> : <Login />}
+            />
+            <Route
+              path="/signup"
+              element={isAuthenticated ? <Navigate to="/home" replace /> : <SignUp />}
+            />
 
-              {/* test용 */}
-              {/* PrivateRoute 적용 */}
-              <Route element={<PrivateRoute />}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/chat" element={<Chat />} />
-                <Route path="/post" element={<Post />} />
-                <Route path="/post/:postId/edit" element={<Post />} />
-                <Route path="/chatroom" element={<ChatRoom />} />
-                <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
-                <Route path="/mypage/edit" element={<EditProfile />} />
-                <Route path="/mypage/blocklist" element={<BlockList />} />
-                <Route path="/user/:userId" element={<UserProfile isMyPage={false} />} />
-              </Route>
-              <Route path="*" element={<NotFound />} />
+            {/* PrivateRoute 적용 */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/home" element={<Home />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/post" element={<Post />} />
+              <Route path="/post/:postId/edit" element={<Post />} />
+              <Route path="/chatroom" element={<ChatRoom />} />
+              <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
+              <Route path="/mypage/edit" element={<EditProfile />} />
+              <Route path="/mypage/blocklist" element={<BlockList />} />
+              <Route path="/user/:userId" element={<UserProfile isMyPage={false} />} />
             </Route>
-          </Routes>
-        </motion.div>
-      </AnimatePresence>
-      {/* 양옆에 배경을 만드는 Grid 컨테이너 */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 grid grid-cols-[1fr_auto_1fr]">
-        {/* 왼쪽 배경 */}
-        <div className="w-full h-full bg-white z-50"></div>
-        {/* 실제 내용이 들어가는 부분 */}
-        <div className="relative w-[600px]"></div>
-        {/* 오른쪽 배경 */}
-        <div className="w-full h-full bg-white z-50"></div>
-      </div>
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </AnimatedLayout>
       <Modal />
       {isChatLoadingSheetOpen && <ChatConnectLoadingSheet />}
       <YouTubeAudioPlayer playerId="1" />

@@ -25,7 +25,6 @@ export const postLogout = async () => {
 
 // 토큰 재발급
 export const reissueToken = async () => {
-  console.log('토큰 재발급 요청');
   const { data } = await axios.post('/api/auth/token', {
     withCredentials: true,
   });

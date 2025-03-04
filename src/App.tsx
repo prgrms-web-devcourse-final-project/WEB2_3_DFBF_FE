@@ -56,7 +56,8 @@ function App() {
       location.pathname === '/signup' ||
       location.pathname === '/post' ||
       location.pathname === '/mypage/edit' ||
-      location.pathname === '/mypage/blocklist'
+      location.pathname === '/mypage/blocklist' ||
+      location.pathname.includes('user')
     ) {
       return {
         initial: { x: '100%' },

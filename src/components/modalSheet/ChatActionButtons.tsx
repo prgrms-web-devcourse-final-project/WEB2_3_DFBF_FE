@@ -31,7 +31,7 @@ function ChatActionButtons({
   const { openSheet, closeAllSheets } = useSheetStore(); // 모달 시트
 
   const handleGoToUserPage = () => {
-    closeAllSheets(); // 모든 시트를 닫아야할지 카드모달시트만 닫으면 될지 고민중
+    // closeAllSheets(); // 모든 시트를 닫아야할지 카드모달시트만 닫으면 될지 고민중
     navigate(`/user/${authorId}`); // 유저 페이지로 이동
   };
 

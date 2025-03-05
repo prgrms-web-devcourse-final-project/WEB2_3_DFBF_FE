@@ -40,3 +40,9 @@ export const reissueToken = async () => {
   }
   return data;
 };
+
+// 카카오 로그인
+export const getKakaoLogin = async (code: string) => {
+  const { data } = await axiosInstance.get('/auth/login/kakao', { params: { code } });
+  return data;
+};

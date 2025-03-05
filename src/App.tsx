@@ -26,6 +26,7 @@ import TestLoginModal from '@/components/testLogin/TestLoginModal';
 
 import { useSheetStore } from './store/sheetStore';
 import AnimatedLayout from '@/layouts/AnimatedLayout';
+import KaKaoRedirection from '@/components/KaKaoRedirection';
 
 function App() {
   const location = useLocation();
@@ -83,6 +84,8 @@ function App() {
               <Route path="/mypage/blocklist" element={<BlockList />} />
               <Route path="/user/:userId" element={<UserProfile isMyPage={false} />} />
             </Route>
+
+            <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

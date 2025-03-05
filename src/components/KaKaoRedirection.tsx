@@ -1,25 +1,32 @@
 import { getKakaoLogin } from '@/apis/auth';
+import Loading from '@/components/loading/Loading';
 import { useAuthStore } from '@/store/authStore';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 function KaKaoRedirection() {
   const navigate = useNavigate();
-  const code = new URL(window.location.href).searchParams.get('code');
-  const { setAccessToken } = useAuthStore;
+  const kakaoCode = new URL(window.location.href).searchParams.get('code');
+  const { setAccessToken } = useAuthStore();
 
   const handleKaKaoLogin = async () => {
     try {
-      const data = await getKakaoLogin(code as string);
-      // 토큰 저장하기
-      navigate('/home');
-    } catch (error) {}
+      const { code, data } = await getKakaoLogin(kakaoCode as string);
+      if (code === 200) {
+        setAccessToken(data.accessToken);
+        navigate('/home');
+      } else {
+        throw new Error('로그인 에러');
+      }
+    } catch (error) {
+      console.error('로그인 에러가 발생했습니다.');
+    }
   };
 
   useEffect(() => {
     handleKaKaoLogin();
   }, []);
-  return <div>KaKaoRedirection</div>;
+  return <Loading />;
 }
 
 export default KaKaoRedirection;

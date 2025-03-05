@@ -2,7 +2,7 @@ import { addBlockList } from '@/apis/blockList';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 import { useModalStore } from '@/store/modalStore';
-import { useSheetStore } from '@/store/sheetStore';
+import { useUserStore } from '@/store/userStore';
 import backIcon from '@assets/icons/back-icon.svg';
 import { useNavigate, useParams } from 'react-router';
 
@@ -17,16 +17,17 @@ function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) 
   const param = useParams();
 
   const { openModal, closeModal } = useModalStore();
-  const { currentRecord } = useSheetStore();
+  const { userData } = useUserStore(); // 차단할 유저 정보
+
   // 임시함수
   const handleBlockUser = async () => {
-    if (!param.userId || !currentRecord) {
+    if (!param.userId) {
       console.log('차단 실패');
       return;
     }
 
     openModal({
-      title: `${currentRecord?.nickName}님을 차단할까요?`,
+      title: `${userData?.nickname}을 차단할까요?`,
       message: '차단된 사용자는 더이상 피드에 나타나지 않습니다',
       onConfirm: async () => {
         if (param.userId) {

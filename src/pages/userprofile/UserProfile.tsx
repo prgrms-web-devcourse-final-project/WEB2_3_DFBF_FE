@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
 import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
+import { useUserStore } from '@/store/userStore';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
@@ -18,6 +19,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { openSheet, closeSheet } = useSheetStore(); // 시트
   const { openModal, closeModal } = useModalStore(); // 모달
   const queryClient = useQueryClient(); // useMutation 사용
+  const { setUserData } = useUserStore(); // 유저 정보 전역 저장
 
   const { ref, inView } = useInView();
 
@@ -26,6 +28,13 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     queryKey: isMyPage ? ['myPage'] : ['userPage'], // 유저페이지 캐싱할때 추가적으로 넣어주자
     queryFn: () => (isMyPage ? getMyProfile() : getUserProfile(userId as string)),
   });
+
+  // 유저 정보 전역 저장
+  useEffect(() => {
+    if (userData?.data) {
+      setUserData(userData.data);
+    }
+  }, [userData, setUserData]);
 
   const {
     data: emotionRecords,

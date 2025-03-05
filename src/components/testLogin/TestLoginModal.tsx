@@ -67,7 +67,7 @@ export default function TestLoginModal() {
           >
             로그아웃
           </button>
-          {/* <button
+          <button
             onClick={handleTokenReissue}
             className="caption-r bg-black/30 text-white px-1 py-1 rounded"
           >
@@ -75,7 +75,7 @@ export default function TestLoginModal() {
           </button>
           <button onClick={test} className="caption-r bg-black/30 text-white px-1 py-1 rounded">
             테스트
-          </button> */}
+          </button>
         </>
       ) : (
         <button

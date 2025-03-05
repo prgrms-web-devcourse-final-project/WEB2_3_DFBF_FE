@@ -26,6 +26,8 @@ export const useModalStore = create<ModalStore>((set) => ({
         isOpen: false,
         title: '',
         message: '',
+        confirmText: '확인',
+        cancelText: '취소',
         onConfirm: undefined,
         onCancel: undefined,
       },

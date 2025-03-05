@@ -48,6 +48,9 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 현재 포커스된 요소의 포커스 제거
+    (document.activeElement as HTMLElement | null)?.blur();
+
     const trimmedId = userId.trim();
     const trimmedPassword = userPassword.trim();
 

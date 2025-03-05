@@ -1,10 +1,8 @@
-import { addBlockList } from '@/apis/blockList';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
+import { useMoreOptions } from '@/hooks/useMoreOptions';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
-import { useModalStore } from '@/store/modalStore';
-import { useUserStore } from '@/store/userStore';
 import backIcon from '@assets/icons/back-icon.svg';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 
 interface HeaderWithBackProps {
   showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
@@ -14,38 +12,7 @@ interface HeaderWithBackProps {
 // 뒤로 가기 있는 헤더
 function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) {
   const navigate = useNavigate();
-  const param = useParams();
-
-  const { openModal, closeModal } = useModalStore();
-  const { userData } = useUserStore(); // 차단할 유저 정보
-
-  // 임시함수
-  const handleBlockUser = async () => {
-    if (!param.userId) {
-      console.log('차단 실패');
-      return;
-    }
-
-    openModal({
-      title: `${userData?.nickname}을 차단할까요?`,
-      message: '차단된 사용자는 더이상 피드에 나타나지 않습니다',
-      onConfirm: async () => {
-        if (param.userId) {
-          try {
-            const data = await addBlockList(param.userId);
-            closeModal();
-            console.log(data);
-          } catch (error) {
-            console.log(error);
-          }
-        }
-      },
-      onCancel: () => {
-        closeModal();
-      },
-    });
-  };
-
+  const moreOptionsItems = useMoreOptions();
   return (
     <HedaerLayout>
       <div className="flex items-center justify-between w-full">
@@ -64,9 +31,7 @@ function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) 
         </div>
 
         {/* 더보기 메뉴 */}
-        {showMoreOptions && (
-          <MoreOptionsSelect items={[{ label: '차단', onClick: handleBlockUser }]} />
-        )}
+        {showMoreOptions && <MoreOptionsSelect items={moreOptionsItems} />}
       </div>
     </HedaerLayout>
   );

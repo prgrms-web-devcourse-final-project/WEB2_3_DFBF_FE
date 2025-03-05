@@ -7,6 +7,7 @@ import pauseIcon from '@assets/icons/pause-icon-gray.svg';
 import { useNavigate } from 'react-router';
 import { useSheetStore } from '@/store/sheetStore';
 import { requestChat } from '@/apis/chat';
+import { useModalStore } from '@/store/modalStore';
 
 interface ChatActionButtonsProps {
   recordId: number;
@@ -29,6 +30,7 @@ function ChatActionButtons({
   const navigate = useNavigate();
 
   const { openSheet } = useSheetStore(); // 모달 시트
+  const { openModal, closeModal } = useModalStore();
 
   const handleGoToUserPage = () => {
     // closeAllSheets(); // 모든 시트를 닫아야할지 카드모달시트만 닫으면 될지 고민중
@@ -36,6 +38,7 @@ function ChatActionButtons({
   };
 
   //채팅 요청
+  //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
   const request = async () => {
     if (!recordId) {
       console.log('recordId가 존재하지 않습니다.');
@@ -46,9 +49,16 @@ function ChatActionButtons({
       console.log(data);
       if (data.code === 200) {
         console.log('채팅 요청 성공');
-  
+
         openSheet('isChatLoadingSheetOpen');
       } else {
+        console.log('채팅 요청 실패');
+        openModal({
+          title: '잠시 후 다시 시도해 주세요',
+          onConfirm: () => {
+            closeModal();
+          },
+        });
       }
     } catch (error) {
       console.log(error);

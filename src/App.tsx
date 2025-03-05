@@ -29,15 +29,13 @@ import AnimatedLayout from '@/layouts/AnimatedLayout';
 
 function App() {
   const location = useLocation();
-  // 실제 로그인 여부를 체크하는 함수 (임시로 false, 실제 인증 로직 적용 필요)
-  // const isAuthenticated = true;
+
   const { isAuthenticated } = useAuthStore();
   const spotifyAuth = useSpotifyAuth();
   const { isChatLoadingSheetOpen } = useSheetStore();
   // soundlink 로그인한 경우에만 spotify 로그인 후 토큰 가져오기
   useEffect(() => {
     if (isAuthenticated) {
-      // isAuthenticated가 true일 때만 필요한 동작 실행
       console.log('Spotify Auth Initialized:', spotifyAuth);
     }
   }, [isAuthenticated]);

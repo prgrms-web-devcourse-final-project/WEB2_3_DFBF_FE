@@ -42,7 +42,7 @@ export default function MusicCard({
 
   //query
   const query = title && !isUserEditPage ? `${artist} - ${title} lyrics` : null;
-  const { data: searchedVideoId, isLoading, isError } = useSearchYoutubeVideo(query);
+  const { data: searchedVideoId } = useSearchYoutubeVideo(query);
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
 

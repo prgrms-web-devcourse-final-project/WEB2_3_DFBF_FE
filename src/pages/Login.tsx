@@ -48,6 +48,9 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // 현재 포커스된 요소의 포커스 제거
+    (document.activeElement as HTMLElement | null)?.blur();
+
     const trimmedId = userId.trim();
     const trimmedPassword = userPassword.trim();
 
@@ -69,6 +72,13 @@ export default function Login() {
       setIsLoading(false);
     }
     resetInputs();
+  };
+
+  const handleKakaoLogin = () => {
+    const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const link = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
+    window.location.href = link;
   };
 
   const renderButtonContent = () => {
@@ -119,7 +129,10 @@ export default function Login() {
 
       <div className="flex flex-col gap-3 items-center w-full mt-2.5 ">
         {/* 소셜 로그인 */}
-        <Button className="bg-[#FEE500] text-gray-80 gap-1.5 hover:bg-[#fded63]">
+        <Button
+          className="bg-[#FEE500] text-gray-80 gap-1.5 hover:bg-[#fded63]"
+          onClick={handleKakaoLogin}
+        >
           <img className="w-4" src={kakao} alt="카카오 아이콘" />
           <span className="text-black/85">카카오로 시작하기</span>
         </Button>

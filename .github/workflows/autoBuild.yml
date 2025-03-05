@@ -1,0 +1,35 @@
+name: React CI with Vite
+
+on:
+  push:
+    branches: [ "dev" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # 원하는 Node.js 버전으로 변경
+      
+      - name: Build and Run Docker on Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            # Pull latest code from dev branch
+            cd /home/ubuntu/react
+            git pull origin dev
+            
+            # Install dependencies
+            npm install
+            
+            # Build React app using Vite
+            npm run build

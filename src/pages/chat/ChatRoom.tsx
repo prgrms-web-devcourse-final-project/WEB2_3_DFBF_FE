@@ -240,6 +240,11 @@ export default function ChatRoom({}: ChatRoomProps) {
           </Button>
         </div>
       </div>
+
+      {/* 빌드용 빌드후 삭제 해주세요! */}
+      <button onClick={connect}></button>
+      <button onClick={disconnect}></button>
+      <button onClick={sendMessage}></button>
     </div>
   );
 }

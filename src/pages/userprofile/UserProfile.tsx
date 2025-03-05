@@ -1,18 +1,15 @@
 import { deleteEmotionRecord, getUserEmotionRecords } from '@/apis/emotionRecord';
 import { getMyProfile, getUserProfile } from '@/apis/user';
-import EmotionRecordCard from '@/components/EmotionRecordCard';
-import InfoMessage from '@/components/InfoMessage';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
-import { formatDate } from '@/utils/formatDate';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
-import LoadingMini from '@/components/loading/LoadingMini';
 import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
+import { useUserStore } from '@/store/userStore';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
@@ -22,6 +19,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { openSheet, closeSheet } = useSheetStore(); // 시트
   const { openModal, closeModal } = useModalStore(); // 모달
   const queryClient = useQueryClient(); // useMutation 사용
+  const { setUserData } = useUserStore(); // 유저 정보 전역 저장
 
   const { ref, inView } = useInView();
 
@@ -30,6 +28,13 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     queryKey: isMyPage ? ['myPage'] : ['userPage'], // 유저페이지 캐싱할때 추가적으로 넣어주자
     queryFn: () => (isMyPage ? getMyProfile() : getUserProfile(userId as string)),
   });
+
+  // 유저 정보 전역 저장
+  useEffect(() => {
+    if (userData?.data) {
+      setUserData(userData.data);
+    }
+  }, [userData, setUserData]);
 
   const {
     data: emotionRecords,
@@ -91,7 +96,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
       // 각 콜백의 context로 전달할 데이터 반환!
       return { previousRecords };
     },
-    onError: (error, recordId, context) => {
+    onError: (_, __, context) => {
       if (context?.previousRecords) {
         queryClient.setQueryData(
           ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],

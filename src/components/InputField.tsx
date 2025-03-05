@@ -3,7 +3,7 @@ import Input from '@/components/Input';
 import { twMerge } from 'tailwind-merge';
 
 type ValidationMessage = {
-  type: 'success' | 'error' | '';
+  success: boolean;
   message: string;
 };
 //id, label 필수
@@ -12,7 +12,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   className?: string;
   isValid?: boolean;
-  validationMessages?: ValidationMessage; // 띄울 메세지
+  validationMessage?: ValidationMessage; // 띄울 메세지
 }
 interface ButtonProps {
   buttonText?: string | React.ReactNode;
@@ -27,7 +27,7 @@ export default function InputField({
   buttonText,
   variant,
   onClick,
-  validationMessages,
+  validationMessage,
   ...props
 }: InputFieldProps & ButtonProps) {
   return (
@@ -49,16 +49,14 @@ export default function InputField({
         )}
       </div>
       <div className="flex items-center h-5">
-        {validationMessages?.message && (
+        {validationMessage?.message && (
           <p
             className={twMerge(
               'text-functional-danger text-[9px]/[18px] ml-[5px]',
-              validationMessages?.type === 'error'
-                ? 'text-functional-danger'
-                : 'text-functional-success',
+              validationMessage?.success ? 'text-functional-success' : 'text-functional-danger',
             )}
           >
-            {validationMessages?.message}
+            {validationMessage?.message}
           </p>
         )}
       </div>

@@ -4,13 +4,19 @@ import MusicCard from '@/components/MusicCard';
 import Comment from '@/pages/post/components/Comment';
 import { useEffect, useState } from 'react';
 import { useSheetStore } from '@/store/sheetStore';
-import { getEmotionRecordById, postEmotionRecord, putEmotionRecord } from '@/apis/emotionRecord';
+import {
+  getEmotionRecordById,
+  getSpotifyVideoId,
+  postEmotionRecord,
+  putEmotionRecord,
+} from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
 import { useNavigate, useParams } from 'react-router';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
+import { searchYoutubeVideo } from '@/apis/youtube';
 
 export default function Post() {
   const navigate = useNavigate();
@@ -111,15 +117,46 @@ export default function Post() {
     });
   };
 
+  // spotifyId로 videoId 조회
+  const fetchSpotifyVideoId = async (spotifyId: string, artist: string, title: string) => {
+    console.log('videoId 조회 시작 스포티파이아이디:', spotifyId);
+
+    try {
+      const data = await getSpotifyVideoId(spotifyId); // 서버에 videoId 조회
+      console.log('videoId 조회 결과:', data);
+
+      // 서버에 videoId 가 있으면
+      if (data.code === 200 && data.data) return data.videoId;
+      // 서버에 videoId 가 없으면
+      else {
+        // youtube 검색
+        const videoId = await searchYoutubeVideo(`${artist} - ${title} lyrics`);
+        console.log('유튜브 videoId:', videoId);
+        return videoId;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   // 기록 완료
   const onCompletePost = async () => {
     if (!isCompletePost) return;
+
+    // 음악 선택 시 videoId 조회
+    const videoId = await fetchSpotifyVideoId(
+      selectedPostMusic?.spotifyId,
+      selectedPostMusic?.artistName,
+      selectedPostMusic?.songTitle,
+    );
+    console.log('videoId:', videoId);
 
     try {
       setIsLoading(true);
 
       const requestData = {
         spotifyId: selectedPostMusic?.spotifyId,
+        videoId: videoId,
         title: selectedPostMusic?.songTitle,
         artist: selectedPostMusic?.artistName,
         albumImage: selectedPostMusic?.albumImage,
@@ -136,6 +173,7 @@ export default function Post() {
         data = await postEmotionRecord(requestData);
       }
       console.log(isEditMode ? '수정 완료' : '기록 완료:', data);
+      console.log('요청 데이터:', requestData);
 
       setIsComplete(true);
       handlePostSuccessModal();

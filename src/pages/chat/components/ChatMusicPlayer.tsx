@@ -2,28 +2,49 @@ import React, { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play.svg';
 import pause from '@assets/icons/pause.svg';
-import { useSearchYoutubeVideo } from '@/apis/youtube';
 import { useYouTubeStore } from '@/store/youtubeStore';
+import { useSheetStore } from '@/store/sheetStore';
+import { useQuery } from '@tanstack/react-query';
+import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
 
 export default function ChatMusicPlayer() {
   const [moveDistance, setMoveDistance] = useState(0);
   const titleRef = useRef<HTMLParagraphElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // 음악 정보
-  const musicInfo = {
-    spotify_id: 33,
-    title: '라일락',
-    artist: '아이유',
-    album_image: 'https://img2.sbs.co.kr/img/seditor/VD/2021/03/31/SR81617163961686-640-0.jpg',
-  };
+  const { currentRecord } = useSheetStore();
+
+  const { data } = useQuery({
+    queryKey: ['emotionRecord', currentRecord?.recordId],
+    queryFn: () => getEmotionRecordById(currentRecord?.recordId!),
+  });
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['2']?.isPlaying || false;
 
-  // React Query로 유튜브 비디오 ID 가져오기
-  const query = musicInfo.title ? `${musicInfo.artist} - ${musicInfo.title} lyrics` : null;
-  const { data: searchedVideoId, isLoading, isError } = useSearchYoutubeVideo(query);
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    const getVideoId = async () => {
+      if (!data?.data?.spotifyMusic) return;
+
+      try {
+        setIsLoading(true);
+        const currentMusicId = data.data.spotifyMusic.spotifyId;
+        const res = await getSpotifyVideoId(currentMusicId);
+        const savedVideoId = res.data.videoId;
+        setCurrentVideoId(savedVideoId);
+      } catch (error) {
+        setIsError(true);
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getVideoId();
+  }, []);
 
   const handlePlayButton = () => {
     setIsPlaying('2', (prev) => !prev);
@@ -31,10 +52,10 @@ export default function ChatMusicPlayer() {
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (searchedVideoId) {
-      setVideoId('2', searchedVideoId); // YouTube store의 videoId를 업데이트
+    if (currentVideoId) {
+      setVideoId('2', currentVideoId); // YouTube store의 videoId를 업데이트
     }
-  }, [searchedVideoId]);
+  }, [currentVideoId]);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
   useEffect(() => {
@@ -47,7 +68,7 @@ export default function ChatMusicPlayer() {
         setMoveDistance(titleWidth > containerWidth ? titleWidth - containerWidth : 0);
       }, 50); // 약간의 지연을 줘서 렌더링 이후 측정
     }
-  }, [musicInfo]);
+  }, [data]);
 
   useEffect(() => {
     return () => {
@@ -96,7 +117,7 @@ export default function ChatMusicPlayer() {
     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
         <img
-          src={musicInfo.album_image}
+          src={data?.data?.spotifyMusic.albumImage}
           alt="album"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -120,11 +141,11 @@ export default function ChatMusicPlayer() {
                 } as React.CSSProperties
               }
             >
-              {musicInfo.title}
+              {data?.data?.spotifyMusic.title}
             </p>
           </div>
           <p className="inline-block whitespace-nowrap caption-r text-gray-60">
-            {musicInfo.artist}
+            {data?.data?.spotifyMusic.artist}
           </p>
         </div>
       </div>

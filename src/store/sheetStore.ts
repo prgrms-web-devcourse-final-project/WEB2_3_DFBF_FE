@@ -7,8 +7,8 @@ interface SheetStore {
   openSheet: (sheetName: string) => void;
   closeSheet: (sheetName: string) => void;
   closeAllSheets: () => void;
-  currentRecord: EmotionRecord | null;
-  setCurrentRecord: (record: EmotionRecord | null) => void;
+  currentRecord: Partial<EmotionRecord> | null;
+  setCurrentRecord: (record: Partial<EmotionRecord> | null) => void;
 }
 
 export const useSheetStore = create<SheetStore>((set) => ({

@@ -7,8 +7,9 @@ interface SheetStore {
   openSheet: (sheetName: string) => void;
   closeSheet: (sheetName: string) => void;
   closeAllSheets: () => void;
-  currentRecord: EmotionRecord | null;
-  setCurrentRecord: (record: EmotionRecord | null) => void;
+  //임시
+  currentRecord: Partial<EmotionRecord> | null;
+  setCurrentRecord: (record: Partial<EmotionRecord> | null) => void;
 }
 
 export const useSheetStore = create<SheetStore>((set) => ({
@@ -34,5 +35,5 @@ export const useSheetStore = create<SheetStore>((set) => ({
 // 노래 검색 모달시트 띄우기
 // openSheet('isMusicSheetOpen')
 
-// 둘다 창 지우기
+// 모든 창 지우기
 // closeAllSheets()

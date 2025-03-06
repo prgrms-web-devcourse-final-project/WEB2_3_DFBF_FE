@@ -6,38 +6,18 @@ import { useSheetStore } from '@/store/sheetStore';
 import { useYouTubeStore } from '@/store/youtubeStore';
 import defaultImage from '@assets/images/default.png';
 import { useQuery } from '@tanstack/react-query';
-import { getEmotionRecordById } from '@/apis/emotionRecord';
+import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
 import { formatDate } from '@/utils/formatDate';
-import { useEffect } from 'react';
-import { searchYoutubeVideo } from '@/apis/youtube';
+import { useEffect, useState } from 'react';
 
 interface CardDetailModalProps {
-  // emotion: string; // 감정
-  // albumImage: string; // 앨범이미지
-  // songTitle: string; // 노래 제목
-  // artistName: string; // 가수
-  // date: string; // 날짜
-  // authorName: string; // 글작성자
   isChatting: boolean; // 현재 채팅중인지 (임시)
-  // isOwnPost: boolean; // 본인 글 여부(임시)
   recordId: number; // 감정기록 id
   handleDelete?: () => void; // 삭제 함수
   handleEdit?: () => void; // 수정 함수
 }
 
-function CardDetailModal({
-  // emotion,
-  // albumImage,
-  // songTitle,
-  // artistName,
-  // date,
-  // authorName,
-  isChatting,
-  // isOwnPost,
-  recordId,
-  handleDelete,
-  handleEdit,
-}: CardDetailModalProps) {
+function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: CardDetailModalProps) {
   const { isCardSheetOpen, setCurrentRecord } = useSheetStore();
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['3']?.isPlaying || false;
@@ -47,38 +27,54 @@ function CardDetailModal({
     queryFn: () => getEmotionRecordById(recordId),
   });
 
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getVideoId = async () => {
+      if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
+
+      try {
+        const currentMusicId = data.data.spotifyMusic.spotifyId;
+        const res = await getSpotifyVideoId(currentMusicId);
+        const savedVideoId = res.data.videoId;
+        setCurrentVideoId(savedVideoId);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getVideoId();
+  }, []);
+
+  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
+  useEffect(() => {
+    if (currentVideoId) {
+      setVideoId('2', currentVideoId); // YouTube store의 videoId를 업데이트
+    }
+  }, [currentVideoId]);
+
   useEffect(() => {
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
     console.log(data?.data);
 
     setCurrentRecord(data.data);
 
-    const artistName = data.data.spotifyMusic.artist;
-    const songTitle = data.data.spotifyMusic.title;
-
-    const getVideoId = async () => {
-      const id = await searchYoutubeVideo(`${artistName} - ${songTitle} lyrics`);
-      setVideoId('3', id);
-    };
-    getVideoId();
-
     return () => {
       setCurrentRecord(null);
     };
   }, [data]);
 
-  //sheet open 시 스크롤 제거
-  useEffect(() => {
-    if (isCardSheetOpen) {
-      document.body.style.overflow = 'hidden'; // 스크롤 막기
-    } else {
-      document.body.style.overflow = 'auto'; // 스크롤 복원
-    }
+  // //sheet open 시 스크롤 제거
+  // useEffect(() => {
+  //   if (isCardSheetOpen) {
+  //     document.body.style.overflow = 'hidden'; // 스크롤 막기
+  //   } else {
+  //     document.body.style.overflow = 'auto'; // 스크롤 복원
+  //   }
 
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isCardSheetOpen]);
+  //   return () => {
+  //     document.body.style.overflow = 'auto';
+  //   };
+  // }, [isCardSheetOpen]);
 
   if (!isCardSheetOpen) {
     return null;

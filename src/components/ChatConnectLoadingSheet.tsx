@@ -13,7 +13,7 @@ dayjs.extend(duration);
 export default function ChatConnectLoadingSheet() {
   const navigate = useNavigate();
 
-  const { currentRecord, closeAllSheets, closeSheet } = useSheetStore();
+  const { currentRecord, setCurrentRecord, closeAllSheets, closeSheet } = useSheetStore();
 
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -50,9 +50,11 @@ export default function ChatConnectLoadingSheet() {
 
   const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
 
+  const isReceiver = true;
+
   //채팅 요청 취소(요청 보낸 사람)
   const cancel = async () => {
-    if (!currentRecord) {
+    if (!currentRecord?.recordId) {
       console.log('record가 존재하지 않습니다');
       return;
     }
@@ -68,29 +70,36 @@ export default function ChatConnectLoadingSheet() {
   };
 
   //채팅방 생성 (요청 받는 사람 입장에서 생성?)
+  //sse로 받은 recordId로 채팅방 생성
+  //sse로 받은 상대 정보로 '보내는 사람' 바꾸기
+  //생성 시 currentRecord 에 id 저장
   const createChat = async () => {
     try {
-      const data = await createChatroom(17);
+      const data = await createChatroom(10);
       console.log(data);
+      const chatRoomId = data.data.chatRoomId;
 
       if (data.code === 200) {
-        navigate('/chatroom');
+        //임시
+        setCurrentRecord({ recordId: 10 });
+        //
+        navigate(`/chatroom/10`);
         closeAllSheets();
       }
-      //500 이면 이미 방 있음 => 기존 채팅방으로
+      //409 이면 이미 채팅방 있음 => 기존 채팅방으로
     } catch (error) {
       console.log(error);
     }
   };
 
   //채팅 요정 거절
+  //거절 하면 거절한 사람은 바로 시트 닫기.
+  //요청 거절당한 사람은 connectFail = true
   const refuseRequest = () => {
     closeSheet('isChatLoadingSheetOpen');
   };
 
-  //채팅 신청한 사람이 상대가 수락했다는 sse 받으면 closeAllSheet, chatroom으로 이동
-
-  const isReceiver = true;
+  //채팅 신청한 사람은 상대가 수락했다는 sse 받으면 closeAllSheet, chatroom으로 이동
 
   if (connetFail) {
     return (

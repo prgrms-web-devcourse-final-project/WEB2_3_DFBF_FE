@@ -304,6 +304,7 @@ function EditProfile() {
                   image={selectedProfileMusic?.album}
                   title={selectedProfileMusic?.title}
                   artist={selectedProfileMusic?.artist}
+                  spotifyId={selectedProfileMusic?.spotifyId}
                   isMusicSelect={isMusicSelect}
                   buttonContent={isMusicSelect ? '변경' : '등록'}
                   buttonType={isMusicSelect ? 'secondary' : 'primary'}

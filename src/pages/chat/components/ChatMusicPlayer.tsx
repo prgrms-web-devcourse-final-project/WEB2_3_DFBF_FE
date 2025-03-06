@@ -12,8 +12,8 @@ export default function ChatMusicPlayer() {
   const titleRef = useRef<HTMLParagraphElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  //임시
   const { currentRecord } = useSheetStore();
-
   const { data } = useQuery({
     queryKey: ['emotionRecord', currentRecord?.recordId],
     queryFn: () => getEmotionRecordById(currentRecord?.recordId!),

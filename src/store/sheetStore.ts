@@ -7,6 +7,7 @@ interface SheetStore {
   openSheet: (sheetName: string) => void;
   closeSheet: (sheetName: string) => void;
   closeAllSheets: () => void;
+  //임시
   currentRecord: Partial<EmotionRecord> | null;
   setCurrentRecord: (record: Partial<EmotionRecord> | null) => void;
 }

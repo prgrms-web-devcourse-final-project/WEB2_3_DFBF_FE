@@ -80,6 +80,7 @@ export default function ChatConnectLoadingSheet() {
       const chatRoomId = data.data.chatRoomId;
 
       if (data.code === 200) {
+        //임시
         setCurrentRecord({ recordId: 10 });
         //
         navigate(`/chatroom/10`);

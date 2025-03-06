@@ -157,6 +157,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           title={userData?.data.profileMusic?.title}
           artist={userData?.data.profileMusic?.artist}
           image={userData?.data.profileMusic?.album}
+          spotifyId={userData?.data.profileMusic?.spotifyId}
           rightElement="play"
         />
         <EmotionRecordCardList

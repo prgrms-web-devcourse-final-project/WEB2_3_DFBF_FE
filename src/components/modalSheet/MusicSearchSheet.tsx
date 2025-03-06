@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import defaultImage from '@assets/images/default.png';
 import axios from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import LoadingMini from '../loading/LoadingMini';
 
 function MusicSearchSheet() {
   const [searchText, setSearchText] = useState('');
@@ -31,8 +32,8 @@ function MusicSearchSheet() {
 
   const {
     data, // 가져온 데이터
-    // isLoading, // 첫 페이지 로딩 중
-    // isFetchingNextPage, // 다음 페이지 로딩 중
+    isLoading, // 첫 페이지 로딩 중
+    isFetchingNextPage, // 다음 페이지 로딩 중
     hasNextPage, // 다음 페이지 여부
     fetchNextPage, // 다음 페이지 요청 함수
   } = useInfiniteQuery({
@@ -95,6 +96,13 @@ function MusicSearchSheet() {
         </div>
       );
     }
+    if (isLoading) {
+      return (
+        <div className="flex justify-center mt-5">
+          <LoadingMini />
+        </div>
+      );
+    }
 
     if (!data?.pages[0].items.length) {
       return (
@@ -107,7 +115,7 @@ function MusicSearchSheet() {
     return (
       <div className="flex flex-col divide-y divide-gray-5">
         {data?.pages.map((page, index) => (
-          <div key={index} className='flex flex-col divide-y divide-gray-5'>
+          <div key={index} className="flex flex-col divide-y divide-gray-5">
             {page.items.map((music: SpotifyMusic, i: number) => (
               <MusicSearchList
                 key={i}
@@ -119,6 +127,11 @@ function MusicSearchSheet() {
             ))}
           </div>
         ))}
+        {isFetchingNextPage && (
+          <div className="flex justify-center mt-5">
+            <LoadingMini />
+          </div>
+        )}
       </div>
     );
   };

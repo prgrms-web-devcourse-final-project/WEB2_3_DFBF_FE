@@ -19,6 +19,7 @@ interface IdInputProps {
 
 function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
 
   const [buttonVariant, setButtonVariant] = useState<ButtonType>('disabled'); // 버튼 상태를 관리하는 state 추가
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +52,18 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
   const handleIdCheck = async () => {
     try {
       setIsLoading(true);
+
+      // 0.1초 뒤에 showLoading 활성화
+      const loadingTimeout = setTimeout(() => {
+        setShowLoading(true);
+      }, 100);
+
       const { code } = await getIdAvailability(value);
+
+      clearTimeout(loadingTimeout); // 불필요한 타이머 제거
+      setIsLoading(false);
+      setShowLoading(false); // 로딩 UI 숨기기
+
       if (code === 200) {
         setValidation({ type: 'success', message: '사용 가능한 아이디입니다' });
       } else if (code === 409) {
@@ -65,7 +77,7 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
   };
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>중복확인</span>;
   };
@@ -82,6 +94,7 @@ function IdInput({ value, setValue, validation, setValidation }: IdInputProps) {
       onChange={handleChange}
       validationMessages={validation}
       onClick={handleIdCheck}
+      disabled={isLoading ? true : false}
     />
   );
 }

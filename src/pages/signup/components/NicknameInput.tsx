@@ -18,6 +18,7 @@ interface NicknameInputProps {
 
 function NicknameInput({ value, setValue, validation, setValidation }: NicknameInputProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -50,7 +51,18 @@ function NicknameInput({ value, setValue, validation, setValidation }: NicknameI
   const handleNicknameCheck = async () => {
     try {
       setIsLoading(true);
+
+      // 0.1초 뒤에 showLoading 활성화
+      const loadingTimeout = setTimeout(() => {
+        setShowLoading(true);
+      }, 100);
+
       const { code } = await getNicknameAvailability(value);
+
+      clearTimeout(loadingTimeout); // 불필요한 타이머 제거
+      setIsLoading(false);
+      setShowLoading(false); // 로딩 UI 숨기기
+
       if (code === 200) {
         setValidation({ type: 'success', message: '사용 가능한 닉네임입니다' });
       } else if (code === 409) {
@@ -64,7 +76,7 @@ function NicknameInput({ value, setValue, validation, setValidation }: NicknameI
   };
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>중복확인</span>;
   };
@@ -81,6 +93,7 @@ function NicknameInput({ value, setValue, validation, setValidation }: NicknameI
       onChange={handleChange}
       validationMessages={validation}
       onClick={handleNicknameCheck}
+      disabled={isLoading ? true : false}
     />
   );
 }

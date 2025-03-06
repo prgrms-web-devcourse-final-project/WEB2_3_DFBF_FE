@@ -19,6 +19,7 @@ interface EmailInputProps {
 
 function EmailInput({ value, setValue, validation, setValidation, onSendEmail }: EmailInputProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
   // 버튼 상태를 관리하는 state 추가
   const [buttonVariant, setButtonVariant] = useState<'primary' | 'secondary' | 'disabled'>(
     'primary',
@@ -47,7 +48,18 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
   const handleEmailCheck = async () => {
     try {
       setIsLoading(true);
+
+      // 0.1초 뒤에 showLoading 활성화
+      const loadingTimeout = setTimeout(() => {
+        setShowLoading(true);
+      }, 100);
+
       const { code } = await getEmailAvailability(value);
+
+      clearTimeout(loadingTimeout); // 불필요한 타이머 제거
+      setIsLoading(false);
+      setShowLoading(false); // 로딩 UI 숨기기
+
       if (code === 200) {
         handlePostEmailVerificationRequest(); // 사용 가능한 이메일 경우에만 이메일 인증 요청 보내기
       } else if (code === 409) {
@@ -83,7 +95,7 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
   };
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>인증요청</span>;
   };
@@ -111,6 +123,7 @@ function EmailInput({ value, setValue, validation, setValidation, onSendEmail }:
       onChange={handleChange}
       validationMessages={validation}
       onClick={handleEmailCheck}
+      disabled={isLoading ? true : false}
     />
   );
 }

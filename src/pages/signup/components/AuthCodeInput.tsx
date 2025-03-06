@@ -22,6 +22,7 @@ interface AuthCodeInputProps {
 }
 function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
 
   const [authCode, setAuthCode] = useState(''); // 인증코드
   const [resendCount, setResendCount] = useState(0); // 재전송 횟수
@@ -45,7 +46,18 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
   const handleEmailVerificationCheck = async () => {
     try {
       setIsLoading(true);
+
+      // 0.1초 뒤에 showLoading 활성화
+      const loadingTimeout = setTimeout(() => {
+        setShowLoading(true);
+      }, 100);
+
       const { code } = await postEmailVerificationCheck(email, authCode);
+
+      clearTimeout(loadingTimeout); // 불필요한 타이머 제거
+      setIsLoading(false);
+      setShowLoading(false); // 로딩 UI 숨기기
+
       if (code === 200) {
         setMessage({ type: 'success', message: '이메일 인증이 완료되었습니다' });
         setButtonVariant('disabled');
@@ -86,7 +98,7 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
   };
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>인증확인</span>;
   };
@@ -107,6 +119,7 @@ function AuthCodeInput({ emailSent, email, setValidation }: AuthCodeInputProps) 
       onTimeout={onTimeout}
       onResendEmail={handlePostEmailVerificationRequest} // 재전송 요청
       resendCount={resendCount}
+      disabled={isLoading ? true : false}
     />
   );
 }

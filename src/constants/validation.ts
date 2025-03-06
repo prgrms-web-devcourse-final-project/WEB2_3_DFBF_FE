@@ -6,3 +6,5 @@ export const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!
 export const NICKNAME_REGEX = /^[A-Za-z가-힣0-9]{2,7}$/; // 영문 + 한글 + 숫자만 허용 2~7자 가능
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 이메일
+
+export const AUTHCODE_REGEX = /^[a-zA-Z0-9]{6}$/; // 인증코드

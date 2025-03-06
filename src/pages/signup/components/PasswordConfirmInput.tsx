@@ -10,7 +10,7 @@ interface PasswordConfirmInputProps {
 function PasswordConfirmInput({ setValidity, password }: PasswordConfirmInputProps) {
   // 유효성 검사
   const handleValidation = (value: string) => {
-    if (value === password && PASSWORD_REGEX.test(text)) {
+    if (value === password && PASSWORD_REGEX.test(value)) {
       return { success: true, message: '비밀번호가 일치합니다' };
     } else {
       return { success: false, message: '비밀번호가 일치하지 않습니다' };

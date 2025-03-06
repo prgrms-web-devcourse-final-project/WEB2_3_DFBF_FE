@@ -2,7 +2,7 @@ import InputField from '@/components/InputField';
 import SpinLoading from '@/components/loading/SpinLoading';
 import { ID_REGEX } from '@/constants';
 import { useIdAvailability } from '@/hooks/useIdAvailability';
-import { useValidationWithDupCheck } from '@/hooks/useValidationWithDupCheck';
+import { useValidationWithButton } from '@/hooks/useValidationWithButton';
 
 interface IdInputProps {
   setValue: (val: string) => void;
@@ -20,7 +20,7 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
   };
   // 중복확인 훅
   const { text, validationMessage, setValidationMessage, buttonVariant, handleChange } =
-    useValidationWithDupCheck(validity, setValidity, handleValidation, ID_REGEX);
+    useValidationWithButton(validity, setValidity, handleValidation, ID_REGEX);
 
   const { mutate, isPending } = useIdAvailability(
     text,

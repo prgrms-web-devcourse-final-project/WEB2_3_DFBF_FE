@@ -3,16 +3,12 @@ import CountdownTimer from '@/components/CountdownTimer';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
-type ValidationMessage = {
-  type: 'success' | 'error' | 'default';
-  message: string;
-};
-
 interface InputAuthCodeProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
   className?: string;
-  messages: ValidationMessage; // 띄울 메시지
+  isValid: boolean;
+  validationMessage: string; // 띄울 메세지
   emailSent: boolean;
   onTimeout?: () => void; // 시간이 만료되었을 때 실행할 함수
   onResendEmail?: () => void; // 재전송 함수
@@ -20,7 +16,7 @@ interface InputAuthCodeProps extends React.InputHTMLAttributes<HTMLInputElement>
 
   // ✅ 버튼 관련 속성 추가
   buttonText: string | React.ReactNode;
-  variant: 'primary' | 'secondary' | 'disabled';
+  variant: 'primary' | 'disabled';
   onClick: () => void;
   onButtonClick?: () => void;
 }
@@ -32,20 +28,23 @@ function InputAuthCode({
   buttonText,
   variant,
   onClick,
-  messages,
+  isValid,
+  disabled,
+  value,
+  validationMessage,
   emailSent,
   resendCount,
   onTimeout,
   onResendEmail,
   ...props
 }: InputAuthCodeProps) {
-  const colorMap = {
-    success: 'text-functional-success',
-    error: 'text-functional-danger',
-    default: 'text-gray-60',
+  // 메세지 색 선택 로직
+  const getMessageColor = (value: string, isValid: boolean) => {
+    if (!value) return 'text-gray-60';
+    return isValid ? 'text-functional-success' : 'text-functional-danger';
   };
 
-  const messageColor = colorMap[messages.type];
+  const messageColor = getMessageColor(value as string, isValid);
 
   return (
     <div className="flex flex-col w-full">
@@ -54,10 +53,15 @@ function InputAuthCode({
       </label>
       <div className="flex gap-2">
         <div className="w-full h-[38px] rounded-lg input-shadow outline-0 px-3 caption-m placeholder:text-gray-50 focus-within:ring-1 focus-within:ring-primary-active bg-white flex items-center">
-          <input id={id} type="text" className="w-full " {...props} />
-          {emailSent && messages?.type !== 'success' && (
-            <CountdownTimer key={resendCount} onTimeout={onTimeout} />
-          )}
+          <input
+            id={id}
+            type="text"
+            className="w-full "
+            value={value}
+            disabled={disabled}
+            {...props}
+          />
+          {emailSent && !isValid && <CountdownTimer key={resendCount} onTimeout={onTimeout} />}
         </div>
         {buttonText && (
           <Button
@@ -76,11 +80,11 @@ function InputAuthCode({
             <p
               className={twMerge('text-functional-danger text-[9px]/[18px] ml-[5px]', messageColor)}
             >
-              {messages?.message}
+              {validationMessage}
             </p>
-            {messages.type !== 'success' && (
+            {value === '' && (
               <div className="flex gap-1 items-center text-gray-60 text-[9px]">
-                <button className="underline cursor-pointer" onClick={onResendEmail}>
+                <button className="underline cursor-pointer" onClick={onResendEmail} type="button">
                   재전송
                 </button>
                 <span>({resendCount}/3)</span>

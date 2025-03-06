@@ -12,7 +12,7 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 interface ButtonProps {
   buttonText?: string | React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'disabled';
+  variant?: 'primary' | 'disabled';
   onClick?: () => void;
 }
 

@@ -2,7 +2,7 @@ import InputField from '@/components/InputField';
 import SpinLoading from '@/components/loading/SpinLoading';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useNicknameAvailability } from '@/hooks/useNicknameAvailability';
-import { useValidationWithDupCheck } from '@/hooks/useValidationWithDupCheck';
+import { useValidationWithButton } from '@/hooks/useValidationWithButton';
 
 interface NicknameInputProps {
   setValue: (val: string) => void;
@@ -28,7 +28,7 @@ function NicknameInput({ setValue, validity, setValidity }: NicknameInputProps) 
   };
 
   const { text, validationMessage, setValidationMessage, buttonVariant, handleChange } =
-    useValidationWithDupCheck(validity, setValidity, handleValidation, NICKNAME_REGEX);
+    useValidationWithButton(validity, setValidity, handleValidation, NICKNAME_REGEX);
   // 닉네임 중복을 확인하는 함수
   const { mutate, isPending } = useNicknameAvailability(
     text,

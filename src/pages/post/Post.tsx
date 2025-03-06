@@ -119,8 +119,6 @@ export default function Post() {
 
   // spotifyId로 videoId 조회
   const fetchSpotifyVideoId = async (spotifyId: string, artist: string, title: string) => {
-    console.log('videoId 조회 시작 스포티파이아이디:', spotifyId);
-
     try {
       const data = await getSpotifyVideoId(spotifyId); // 서버에 videoId 조회
       console.log('videoId 조회 결과:', data);
@@ -149,7 +147,6 @@ export default function Post() {
       selectedPostMusic?.artistName,
       selectedPostMusic?.songTitle,
     );
-    console.log('videoId:', videoId);
 
     try {
       setIsLoading(true);

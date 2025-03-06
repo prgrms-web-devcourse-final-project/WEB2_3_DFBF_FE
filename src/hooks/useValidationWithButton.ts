@@ -1,0 +1,46 @@
+import { useEffect, useState } from 'react';
+
+// 유효성 검사와 버튼 상태를 함께 관리하는 훅
+export const useValidationWithButton = (
+  validity: boolean, // 유효성
+  setValidity: (val: boolean) => void, // 유효성 변경 함수
+  handleValidationMessage: (val: string) => { success: boolean; message: string }, // 유효성 메시지 관리하는 함수
+  REGEX: RegExp, // 정규표현식
+  initialMessage?: string, // 선택적 초기 메시지
+) => {
+  const [text, setText] = useState('');
+  const [validationMessage, setValidationMessage] = useState({
+    success: false,
+    message: initialMessage ?? '',
+  });
+  const [buttonVariant, setButtonVariant] = useState<'primary' | 'disabled'>('disabled');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+    const validationResult = handleValidationMessage(e.target.value);
+    setValidationMessage(validationResult);
+  };
+
+  useEffect(() => {
+    // 유효성이 true가 되었을때, text를 변경하면 다시 validity을 false로 만든다.
+    if (validity) {
+      setValidity(false);
+    }
+    // 정규 표현식에 따라서 버튼 달리하기
+    if (REGEX.test(text)) {
+      setButtonVariant('primary');
+    } else {
+      setButtonVariant('disabled');
+    }
+  }, [text]);
+
+  return {
+    text,
+    setText,
+    validationMessage,
+    setValidationMessage,
+    buttonVariant,
+    handleChange,
+    setButtonVariant,
+  };
+};

@@ -7,6 +7,7 @@ export const useValidation = (
   const [validationMessage, setValidationMessage] = useState({ success: false, message: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(text);
     setText(e.target.value);
     const validationResult = handleValidation(e.target.value);
     setValidationMessage(validationResult);

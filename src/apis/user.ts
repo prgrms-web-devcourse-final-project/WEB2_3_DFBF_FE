@@ -72,3 +72,15 @@ export const patchEditProfile = async (editInfo: Partial<UserProfileEdit>) => {
   const { data } = await axiosInstance.patch(`/user`, editInfo);
   return data;
 };
+
+// 회원 정보 조회
+export const getUserInfo = async () => {
+  const { data } = await axiosInstance.get('/user');
+  return data;
+};
+
+// 회원 탈퇴
+export const deleteAccount = async () => {
+  const { data } = await axiosInstance.delete('/user');
+  return data;
+};

@@ -33,7 +33,7 @@ function Layout() {
     '/post': <HeaderWithBack text="글 등록" />,
     '/signup': <HeaderWithBack text="회원가입" />,
     '/mypage/blocklist': <HeaderWithBack text="차단 목록" />,
-    '/mypage/edit': <HeaderWithBack text="내 정보 수정" />,
+    '/mypage/edit': <HeaderWithBack text="내 정보 수정" showMoreOptions />,
   };
 
   const renderHeader = () => {

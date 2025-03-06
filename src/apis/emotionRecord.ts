@@ -22,6 +22,14 @@ export const postEmotionRecord = async (emotionRecord: EmotionRecordRequest) => 
   return data;
 };
 
+// spotifyId로 videoId 조회
+export const getSpotifyVideoId = async (spotifyId: string) => {
+  const { data } = await axiosInstance.get(`/emotion/spotify-video`, {
+    params: { spotifyId },
+  });
+  return data;
+};
+
 // 감정 기록 수정
 export const putEmotionRecord = async (recordId: number, emotionRecord: EmotionRecordRequest) => {
   const { data } = await axiosInstance.put(`/emotion/${recordId}`, emotionRecord);

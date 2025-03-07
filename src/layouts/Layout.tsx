@@ -6,6 +6,7 @@ import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
 import { useRef } from 'react';
+import MyErrorBoundary from '@/components/ErrorBoundary';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -72,7 +73,9 @@ function Layout() {
           showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
         )}
       >
-        <Outlet />
+        <MyErrorBoundary>
+          <Outlet />
+        </MyErrorBoundary>
       </div>
 
       {/* 하단 네비게이션 */}

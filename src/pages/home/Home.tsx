@@ -121,7 +121,7 @@ function Home() {
       </div>
 
       {/* 메인카드 리스트 */}
-      <div className='flex-1'>
+      <div className="flex-1">
         {emotionRecords?.pages[0].records.length > 0 ? (
           <>
             <div className="flex flex-col items-center gap-2.5 pb-5 ">

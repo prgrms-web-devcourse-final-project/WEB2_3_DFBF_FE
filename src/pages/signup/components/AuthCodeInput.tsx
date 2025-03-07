@@ -1,8 +1,6 @@
 import InputAuthCode from '@/components/InputAuthCode';
 import SpinLoading from '@/components/loading/SpinLoading';
 import { AUTHCODE_REGEX } from '@/constants';
-import { MAX_RESEND_COUNT } from '@/constants/email';
-import { useEmailVerification } from '@/hooks/useEmailVerification';
 import { useEmailVerificationCheck } from '@/hooks/useEmailVerificationCheck';
 import { useResendEmailVerification } from '@/hooks/useResendEmailVerification';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
@@ -43,7 +41,7 @@ function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCode
   });
 
   // 재전송 훅
-  const { resendEmailVerification, isPending } = useResendEmailVerification(
+  const { resendEmailVerification } = useResendEmailVerification(
     email,
     setValidationMessage,
     setButtonVariant,

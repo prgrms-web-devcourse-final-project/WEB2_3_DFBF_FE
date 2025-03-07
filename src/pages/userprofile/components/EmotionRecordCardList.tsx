@@ -18,7 +18,6 @@ function EmotionRecordCardList({
   isFetchingNextPage,
   refProp,
 }: EmotionRecordCardListProps) {
-  console.log(emotionRecords);
   if (!emotionRecords?.[0]?.data?.records?.length) {
     return (
       <div className="flex items-center justify-center w-full h-full">

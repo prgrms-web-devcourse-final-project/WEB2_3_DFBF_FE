@@ -20,7 +20,12 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
   };
   // 중복확인 훅
   const { text, validationMessage, setValidationMessage, buttonVariant, handleChange } =
-    useValidationWithButton(validity, setValidity, handleValidation, ID_REGEX);
+    useValidationWithButton({
+      validity,
+      setValidity,
+      handleValidationMessage: handleValidation,
+      REGEX: ID_REGEX,
+    });
 
   const { mutate, isPending } = useIdAvailability(
     text,

@@ -29,7 +29,12 @@ function EmailInput({ setValue, validity, setValidity, authcodeValidity }: Email
     buttonVariant,
     handleChange,
     setButtonVariant,
-  } = useValidationWithButton(validity, setValidity, handleValidation, EMAIL_REGEX);
+  } = useValidationWithButton({
+    validity,
+    setValidity,
+    handleValidationMessage: handleValidation,
+    REGEX: EMAIL_REGEX,
+  });
 
   const { emailCheck, isChecking } = useEmailCheck(
     text,

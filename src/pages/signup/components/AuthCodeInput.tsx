@@ -34,13 +34,13 @@ function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCode
     buttonVariant,
     handleChange,
     setButtonVariant,
-  } = useValidationWithButton(
+  } = useValidationWithButton({
     validity,
     setValidity,
-    handleValidation,
-    AUTHCODE_REGEX,
-    '인증번호가 오지 않았나요?',
-  );
+    handleValidationMessage: handleValidation,
+    REGEX: AUTHCODE_REGEX,
+    initialMessage: '인증번호가 오지 않았나요?',
+  });
 
   // 재전송 훅
   const { resendEmailVerification, isPending } = useResendEmailVerification(

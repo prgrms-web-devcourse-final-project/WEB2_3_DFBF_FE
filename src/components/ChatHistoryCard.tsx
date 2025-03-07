@@ -8,7 +8,7 @@ interface ChatHistoryCardProps {
 
 export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
   const getTimeAgo = () => {
-    const createdAt = new Date(item.created_at).getTime();
+    const createdAt = new Date(item.createdAt).getTime();
     const today = new Date().getTime();
     const diffTime = today - createdAt;
     //1분 60*1000 1시간 60*60*1000  1일 60*60*24*1000 1주 60*60*24*7*1000  1달 60*60*24*7*30*1000
@@ -43,7 +43,7 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
       <div className="flex mt-1 mb-3">
         <img
           className="w-[40px] h-[40px] mr-2"
-          src={item.album_image ?? defaultImage}
+          src={item.albumImage ?? defaultImage}
           alt="앨범이미지"
         />
         <div>

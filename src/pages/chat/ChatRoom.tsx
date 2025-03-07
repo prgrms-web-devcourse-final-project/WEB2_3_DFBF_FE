@@ -1,58 +1,63 @@
 import sendIcon from '@/assets/icons/send-icon.svg';
 import ChatMusicPlayer from './components/ChatMusicPlayer';
 import Button from '@/components/Button';
-import { Client } from '@stomp/stompjs';
+import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useEffect, useRef, useState } from 'react';
 import { MAX_CHAT_MESSAGE_LENGTH } from '@/constants';
+import { loadChatHistory } from '@/apis/chat';
+import { useAuthStore } from '@/store/authStore';
+// import { getUserInfo } from '@/apis/user';
+import { useScrollStore } from '@/store/scrollStore';
 
 interface ChatRoomProps {}
 
+//메시지 타입
+interface ChatMessage {
+  // fromUserId?: string;
+  message: string;
+  chatRoomId: number;
+  createdAt?: string;
+  isMyMessage?: boolean;
+}
+// interface ChatUser {
+//   nickName: string;
+//   email: string;
+//   loginId: string;
+//   createdAt: string;
+// }
+
 export default function ChatRoom({}: ChatRoomProps) {
-  const data = {
-    sender: {
-      nickname: '집가고싶다',
-      profilePicture: 'sender_profile_picture_url',
-    },
-    receiver: {
-      nickname: '어디가코딩해',
-      profilePicture: 'receiver1_profile_picture_url',
-    },
-    messageList: [
-      {
-        messageId: 1001,
-        type: 0,
-        message: '제발 집좀 보내주세요 ㅠㅠ 111111111111223231',
-        sentAt: '2025-02-13 06:03',
-      },
-      {
-        messageId: 1002,
-        type: 1,
-        message: '안돼. 1111111111111111112222222222',
-        sentAt: '2025-02-13 06:04',
-      },
-      {
-        messageId: 1003,
-        type: 0,
-        message: '하..1111111111111111111232323',
-        sentAt: '2025-02-13 06:04',
-      },
-      {
-        messageId: 1004,
-        type: 0,
-        message: '하하호호111111111111111111111123233',
-        sentAt: '2025-02-13 06:04',
-      },
-    ],
-  };
+  const [chatRoomId, setChatRoomId] = useState<number | null>(7);
+  // const [myUserData, setMyUserData] = useState<ChatUser | null>(null);
 
   const [stompClient, setStompClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const { scrollContainerRefCurrent } = useScrollStore();
+
+  // 최신 메시지로 스크롤
+  useEffect(() => {
+    if (scrollContainerRefCurrent) {
+      console.log(scrollContainerRefCurrent);
+      scrollContainerRefCurrent.scrollTop = scrollContainerRefCurrent.scrollHeight;
+    }
+  }, [messages, scrollContainerRefCurrent]);
+
   const MAX_LINES = 8;
+
+  // //내 정보 가져오기
+  // useEffect(() => {
+  //   const getChatUser = async () => {
+  //     const data = await getUserInfo();
+  //     console.log(data);
+  //     setMyUserData(data.data);
+  //   };
+  //   getChatUser();
+  // }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageInput(e.target.value);
@@ -64,6 +69,7 @@ export default function ChatRoom({}: ChatRoomProps) {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         // 제출하는 로직을 여기에 작성
+        sendMessage();
         console.log('폼 제출!');
       }
     } else {
@@ -94,60 +100,117 @@ export default function ChatRoom({}: ChatRoomProps) {
     adjustHeight(); // 텍스트가 변경될 때마다 높이를 조정
   }, [messageInput]);
 
+  //웹소켓 연결
   const connect = () => {
-    const socket = new SockJS('ws://~~/chat');
+    const token = useAuthStore.getState().accessToken;
+    const socket = new SockJS(import.meta.env.VITE_CHAT_API_URL + `/ws-chat?token=${token}`);
     const client = new Client({
       webSocketFactory: () => socket,
-      onConnect: (frame) => {
-        console.log('[연결됨]', frame);
-        addMessage('WebSocket 연결 성공!');
-
-        // 과거 채팅 메시지 불러오기
-        fetch('ws://~~/chat')
-          .then((res) => res.json())
-          .then((messages) => {
-            messages.forEach((msg: any) => addMessage(`[기록] ${msg.message}`));
-          });
-
-        // 실시간 채팅 메시지 구독
-        client.subscribe('/topic/public', (message) => {
-          addMessage(`[받음] ${message.body}`);
-        });
+      debug: (str) => console.log(str),
+      onConnect: () => {
+        console.log('웹소켓 연결 성공!');
+        fetchChatHistory();
+        subscribeToMessages(client);
       },
-      onDisconnect: () => {
-        console.log('[연결 해제]');
-        addMessage('WebSocket 연결이 해제되었습니다.');
+      onStompError: (frame) => {
+        console.error('STOMP 오류:', frame);
       },
     });
+
     client.activate();
     setStompClient(client);
   };
+  // 채팅 내역 불러오기
+  const fetchChatHistory = async () => {
+    try {
+      if (!chatRoomId) {
+        console.log('chatRoomId가 없습니다');
+        return;
+      }
+      const response = await loadChatHistory(chatRoomId);
+      console.log('history', response);
+      if (response.status === 204) {
+        console.warn('No chat history found (204 No Content)');
+        return;
+      }
+      setMessages(response);
+    } catch (error) {
+      console.error('Error fetching chat history:', error);
+    }
+  };
+
+  // STOMP 구독 설정
+  const subscribeToMessages = (client: Client) => {
+    if (!client.connected) return;
+
+    // 1:1 메시지 받기
+    const privateChat: StompSubscription = client.subscribe(
+      `/queue/chat-${chatRoomId}`,
+      (message) => {
+        const chat: ChatMessage = JSON.parse(message.body);
+        setMessages((prev) => [...prev, chat]);
+      },
+    );
+
+    // 나쁜 말 필터링 메시지 받기
+    const badWordFilter: StompSubscription = client.subscribe('/topic/badword', (message) => {
+      if (!chatRoomId) return;
+      setMessages((prev) => [...prev, { chatRoomId, message: `[나쁜 말 감지] ${message.body}` }]);
+    });
+
+    return [privateChat, badWordFilter];
+  };
+
   // 웹소켓 연결 해제
   const disconnect = () => {
     if (stompClient) {
       stompClient.deactivate();
       setStompClient(null);
-      setMessages([]); // 연결 해제 시 채팅 초기화
+      setMessages([]);
+      console.log('웹소켓 연결 해제');
     }
   };
 
   // 메시지 전송
   const sendMessage = () => {
-    if (messageInput.trim() && stompClient?.connected) {
+    if (messageInput.trim() === '') {
+      console.warn('메시지가 비어있습니다.');
+      return;
+    }
+
+    if (stompClient && stompClient.connected) {
+      console.log('메시지 전송:', messageInput); // 메시지 전송 전에 로그 확인
+      const AccessToken = useAuthStore.getState().accessToken;
+
       stompClient.publish({
         destination: '/app/sendMessage',
-        body: JSON.stringify({ userId: 1, message: messageInput }),
+        body: JSON.stringify({
+          chatRoomId,
+          message: messageInput,
+        }),
+        headers: {
+          Authorization: `Bearer ${AccessToken}`,
+        },
       });
 
-      addMessage(`[보냄] ${messageInput}`);
-      setMessageInput(''); // 입력창 초기화
+      setMessageInput(''); // 메시지 전송 후 입력란 초기화
+    } else {
+      console.error('웹소켓이 연결되지 않았습니다.');
     }
   };
 
-  // 채팅 메시지 추가
-  const addMessage = (msg: string) => {
-    setMessages((prev) => [...prev, msg]);
-  };
+  //채팅방 입장 시 connect
+  //나갈 때 disconnect
+  useEffect(() => {
+    connect();
+
+    return () => {
+      disconnect();
+    };
+  }, []);
+
+  //상대가 나갈 시 '대화가 종료되었습니다' 메세지 추가
+  //입력 창, 버튼 비활성화
 
   useEffect(() => {
     console.log(messages);
@@ -167,47 +230,32 @@ export default function ChatRoom({}: ChatRoomProps) {
 
       {/* 채팅 메시지 영역 */}
       <div className="mt-[100px] flex flex-col px-4">
-        {data.messageList.map((msg, index) => {
-          const isMyMessage = msg.type === 0;
-          const prevMsg = data.messageList[index - 1];
-          const isSameSender = prevMsg && prevMsg.type === msg.type;
+        {Array.isArray(messages) &&
+          messages.map((msg, index) => {
+            const isMyMessage = msg.isMyMessage;
+            const prevMsg = messages[index - 1];
+            const isSameSender = prevMsg && prevMsg.isMyMessage === msg.isMyMessage;
 
-          return (
-            <div
-              key={msg.messageId}
-              className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`px-4 py-2 rounded-lg max-w-[75%] break-words ${
-                  isMyMessage ? 'bg-primary-normal text-white' : 'bg-white text-gray-80'
-                } ${isSameSender ? 'mt-1' : 'mt-4'}`}
-              >
-                {msg.message}
+            return (
+              <div key={index} className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`px-4 py-2 rounded-lg max-w-[75%] break-words ${
+                    isMyMessage ? 'bg-primary-normal text-white' : 'bg-white text-gray-80'
+                  } ${isSameSender ? 'mt-1' : 'mt-4'}`}
+                >
+                  {msg.message}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
 
         {/* 마지막 메시지의 시간 표시 */}
-        <p className="text-gray-500 text-xs text-center mt-2">{data.messageList.at(-1)?.sentAt}</p>
-
-        {/* <div>
-          {messages.map((message) => (
-            <div>123</div>
-          ))}
-        </div> */}
+        <p className="text-gray-500 text-xs text-center mt-2">{messages.at(-1)?.createdAt}</p>
       </div>
 
       <div>
-        <Button>채팅 연결</Button>
-        <Button>채팅 연결 해제</Button>
-        <input
-          type="text"
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          className="bg-white"
-        />
-        <Button>전송</Button>
+        <Button onClick={connect}>채팅 연결</Button>
+        <Button onClick={disconnect}>채팅 연결 해제</Button>
       </div>
 
       <div className="bottom-padding-nav px-3 pt-[5px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
@@ -228,23 +276,15 @@ export default function ChatRoom({}: ChatRoomProps) {
             onKeyDown={handleKeyDown}
             maxLength={MAX_CHAT_MESSAGE_LENGTH}
             rows={1} // 시작 시 1줄로 설정
-            className="flex-1 border min-h-[32px] border-primary-hover rounded-2xl py-[6px] px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50 resize-none"
+            className="flex-1 border min-h-[32px] border-primary-hover rounded-2xl py-[6px] px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50 resize-none overflow-y-hidden"
             placeholder="메시지 입력"
             onInput={adjustHeight}
-            style={{
-              overflowY: 'hidden', // 세로 스크롤을 숨김
-            }}
           />
-          <Button className="w-[32px] h-[32px] rounded-full">
+          <Button onClick={sendMessage} className="w-[32px] h-[32px] rounded-full">
             <img src={sendIcon} alt="send" />
           </Button>
         </div>
       </div>
-
-      {/* 빌드용 빌드후 삭제 해주세요! */}
-      <button onClick={connect}></button>
-      <button onClick={disconnect}></button>
-      <button onClick={sendMessage}></button>
     </div>
   );
 }

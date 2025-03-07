@@ -11,6 +11,27 @@ export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // RT 자동 포함
 });
+export const axiosChatInstance = axios.create({
+  baseURL: '/chatapi',
+});
+
+// 요청 인터셉터
+axiosChatInstance.interceptors.request.use(
+  async (config) => {
+    // 토큰 가져오기
+    const token = useAuthStore.getState().accessToken;
+    // 토큰이 있으면 요청 헤더에 추가
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
+    }
+    return config;
+  },
+  (error) => {
+    console.log('요청 인터셉터 에러', error);
+    Promise.reject(error);
+  },
+);
 
 // 요청 인터셉터
 axiosInstance.interceptors.request.use(

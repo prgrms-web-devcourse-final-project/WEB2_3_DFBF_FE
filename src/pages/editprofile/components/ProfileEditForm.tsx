@@ -122,7 +122,6 @@ function ProfileEditForm() {
   useEffect(() => {
     const loadMyProfile = async () => {
       const data = await getMyProfile();
-      console.log(data);
       prevNickname.current = data.data.nickname; // 이전 닉네임 저장하기
       prevProfileMusic.current = data.data.profileMusic; // 이전 음악 저장하기
 

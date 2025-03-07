@@ -27,6 +27,14 @@ jobs:
             # Pull latest code from dev branch
             cd /home/ubuntu/react
             git pull origin dev
+
+            # Create .env file
+            echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+            echo "VITE_SPOTIFY_CLIENT_ID=${{ secrets.VITE_SPOTIFY_CLIENT_ID }}" >> .env
+            echo "VITE_SPOTIFY_REDIRECT_URI=${{ secrets.VITE_SPOTIFY_REDIRECT_URI }}" >> .env
+            echo "VITE_SPOTIFY_CLIENT_SECRET=${{ secrets.VITE_SPOTIFY_CLIENT_SECRET }}" >> .env
+            echo "VITE_KAKAO_CLIENT_ID=${{ secrets.VITE_KAKAO_CLIENT_ID }}" >> .env
+            echo "VITE_KAKAO_REDIRECT_URI=${{ secrets.VITE_KAKAO_REDIRECT_URI }}" >> .env
             
             # Install dependencies
             npm install

@@ -1,3 +1,4 @@
+export const MIN_NICKNAME_LENGTH = 2; //닉네임 최소 길이
 export const MAX_NICKNAME_LENGTH = 7; //닉네임 최대 길이
 
 export const MIN_ID_LENGTH = 5; //아이디 최소 길이

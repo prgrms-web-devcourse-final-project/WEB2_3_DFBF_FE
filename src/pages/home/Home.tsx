@@ -44,7 +44,7 @@ function Home() {
   } = useInfiniteQuery({
     queryKey: ['emotionRecords', selectedPostMusic?.spotifyId, selectedEmotion],
     queryFn: async ({ pageParam }) => {
-      console.log('pageParam:', pageParam);
+      // console.log('pageParam:', pageParam);
       try {
         const { data } = await getEmotionRecords(
           pageParam,
@@ -72,7 +72,7 @@ function Home() {
 
   useEffect(() => {
     // 첫 페이지 로드
-    console.log('페이지 로드', isLoading);
+    // console.log('페이지 로드', isLoading);
   }, [isLoading]);
 
   // 무한 스크롤 감지 요소 추가
@@ -121,7 +121,7 @@ function Home() {
       </div>
 
       {/* 메인카드 리스트 */}
-      <div className='flex-1'>
+      <div className="flex-1">
         {emotionRecords?.pages[0].records.length > 0 ? (
           <>
             <div className="flex flex-col items-center gap-2.5 pb-5 ">

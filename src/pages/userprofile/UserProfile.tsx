@@ -58,7 +58,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     select: (data) => data.pages as EmotionRecordPages[],
   });
 
-  console.log('감정데이터', emotionRecords);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
   const handleOpenSheet = (recordId: number) => {

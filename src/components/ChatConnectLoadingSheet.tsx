@@ -78,7 +78,7 @@ export default function ChatConnectLoadingSheet() {
       //1 = recordId
       const data = await createChatroom(1);
       console.log(data);
-      const chatRoomId = data.data.chatRoomId;
+      // const chatRoomId = data.data.chatRoomId; 배포할때 잠시 주석처리하겠습니다
 
       //200
       //409 이면 이미 채팅방 있음 => 기존 채팅방으로

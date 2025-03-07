@@ -2,8 +2,13 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 import { reissueToken } from '@/apis/auth';
 
+const API_BASE_URL =
+  import.meta.env.MODE === 'development'
+    ? '/api' // ✅ 개발 환경에서는 프록시를 사용
+    : import.meta.env.VITE_API_URL + '/api'; // ✅ 배포 환경에서는 직접 API 호출
+
 export const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   withCredentials: true, // RT 자동 포함
 });
 export const axiosChatInstance = axios.create({
@@ -71,14 +76,3 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-// .env에 추가하기
-// VITE_API_URL=http://43.203.98.65:8080
-
-// 사용예시
-//  const login = async () => {
-//    const data = await axiosInstance.post('/user/login', {
-//      loginId: 'test1234',
-//      password: 'test1234!',
-//    });
-//  };

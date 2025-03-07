@@ -54,14 +54,15 @@ export default function MusicCard({
       try {
         const currentMusicId = spotifyId;
         const res = await getSpotifyVideoId(currentMusicId);
-        const savedVideoId = res.data.videoId;
+        const savedVideoId = res.data;
+        console.log(savedVideoId)
         setCurrentVideoId(savedVideoId);
       } catch (error) {
         console.log(error);
       }
     };
     getVideoId();
-  }, []);
+  }, [spotifyId]);
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
 

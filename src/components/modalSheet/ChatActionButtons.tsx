@@ -52,6 +52,7 @@ function ChatActionButtons({
       console.log('채팅 요청 성공');
       openSheet('isChatLoadingSheetOpen');
       //409면 데이터로 chatroomid 추가로 옴
+      //리시버 false
     } catch (error) {
       console.log(error);
       openModal({

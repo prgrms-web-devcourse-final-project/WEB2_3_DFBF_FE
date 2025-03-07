@@ -72,13 +72,12 @@ export default function ChatConnectLoadingSheet() {
   //채팅방 생성 (요청 받는 사람 입장에서 생성?)
   //sse로 받은 recordId로 채팅방 생성
   //sse로 받은 상대 정보로 '보내는 사람' 바꾸기
-  //생성 시 currentRecord 에 id 저장
   const createChat = async () => {
     try {
       //1 = recordId
       const data = await createChatroom(1);
       console.log(data);
-      // const chatRoomId = data.data.chatRoomId; 배포할때 잠시 주석처리하겠습니다
+      const chatRoomId = data.data.chatRoomId;
 
       //200
       //409 이면 이미 채팅방 있음 => 기존 채팅방으로

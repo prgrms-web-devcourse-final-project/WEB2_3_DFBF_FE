@@ -74,8 +74,10 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
                 }
                 console.log('확인');
                 console.log(chatRoomId);
-                const data = await closeChatroom(Number(10));
+                const data = await closeChatroom(Number(chatRoomId));
                 console.log(data);
+                //+ 웹소켓 연결 끊기
+                //+ 로딩
 
                 navigate('/home');
                 closeModal();

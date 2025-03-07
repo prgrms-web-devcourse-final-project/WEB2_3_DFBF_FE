@@ -9,6 +9,7 @@ export default function Chat({}) {
   useEffect(() => {
     const getChatList = async () => {
       const { data } = await loadChatList();
+      console.log(data);
       setChatList(data);
     };
     getChatList();
@@ -24,7 +25,7 @@ export default function Chat({}) {
   return (
     <div className="w-full mt-[12px] mb-[58px] flex flex-col gap-4">
       {chatList.map((item) => (
-        <ChatHistoryCard item={item} key={item.chatroom_id} />
+        <ChatHistoryCard item={item} key={item.chatRoomId} />
       ))}
     </div>
   );

@@ -47,21 +47,19 @@ function ChatActionButtons({
     try {
       const data = await requestChat(recordId);
       console.log(data);
-      if (data.code === 200) {
-        console.log('채팅 요청 성공');
 
-        openSheet('isChatLoadingSheetOpen');
-      } else {
-        console.log('채팅 요청 실패');
-        openModal({
-          title: '잠시 후 다시 시도해 주세요',
-          onConfirm: () => {
-            closeModal();
-          },
-        });
-      }
+      //200
+      console.log('채팅 요청 성공');
+      openSheet('isChatLoadingSheetOpen');
+      //409면 데이터로 chatroomid 추가로 옴
     } catch (error) {
       console.log(error);
+      openModal({
+        title: '잠시 후 다시 시도해 주세요',
+        onConfirm: () => {
+          closeModal();
+        },
+      });
     }
   };
 

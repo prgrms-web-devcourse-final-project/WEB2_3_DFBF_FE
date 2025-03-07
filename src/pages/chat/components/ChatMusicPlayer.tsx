@@ -3,7 +3,6 @@ import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play.svg';
 import pause from '@assets/icons/pause.svg';
 import { useYouTubeStore } from '@/store/youtubeStore';
-import { useSheetStore } from '@/store/sheetStore';
 import { useQuery } from '@tanstack/react-query';
 import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
 
@@ -13,10 +12,11 @@ export default function ChatMusicPlayer() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   //임시
-  const { currentRecord } = useSheetStore();
+  const recordId = 7;
+  //sse로 전달받은 recordId
   const { data } = useQuery({
-    queryKey: ['emotionRecord', currentRecord?.recordId],
-    queryFn: () => getEmotionRecordById(currentRecord?.recordId!),
+    queryKey: ['emotionRecord', recordId],
+    queryFn: () => getEmotionRecordById(recordId),
   });
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
@@ -25,16 +25,17 @@ export default function ChatMusicPlayer() {
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  //저장되어있는 videoId 가져오기
   useEffect(() => {
     const getVideoId = async () => {
+      console.log(data);
       if (!data?.data?.spotifyMusic) return;
 
       try {
         setIsLoading(true);
         const currentMusicId = data.data.spotifyMusic.spotifyId;
         const res = await getSpotifyVideoId(currentMusicId);
-        const savedVideoId = res.data.videoId;
+        const savedVideoId = res.data;
         setCurrentVideoId(savedVideoId);
       } catch (error) {
         setIsError(true);
@@ -44,7 +45,7 @@ export default function ChatMusicPlayer() {
       }
     };
     getVideoId();
-  }, []);
+  }, [data]);
 
   const handlePlayButton = () => {
     setIsPlaying('2', (prev) => !prev);

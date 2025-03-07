@@ -1,11 +1,11 @@
 interface ChatHistory {
-  chatroom_id: number;
-  nickname: string;
-  emotion: string;
-  spotify_id: number;
+  chatRoomId: number;
+  // nickname: string;
+  // emotion: string;
+  spotifyId: number;
   title: string;
   artist: string;
-  album_image: string | null;
-  created_at: string; // 또는 Date
+  albumImage: string | null;
+  createdAt: string; // 또는 Date
   comment: string;
 }

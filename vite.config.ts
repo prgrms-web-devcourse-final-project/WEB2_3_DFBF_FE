@@ -10,10 +10,10 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
-      //sockjs : global is not defined 문제
-  define: {
-    global: 'window', // global을 window로 설정
-  },
+    //sockjs : global is not defined 문제
+    define: {
+      global: 'window', // global을 window로 설정
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -85,6 +85,11 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_URL,
           changeOrigin: true, // 백엔드 서버 주소로 변경
+        },
+        '/chatapi': {
+          target: env.VITE_CHAT_API_URL,
+          changeOrigin: true, // 백엔드 서버 주소로 변경
+          rewrite: (path) => path.replace(/^\/chatapi/, '/api'),
         },
       },
     },

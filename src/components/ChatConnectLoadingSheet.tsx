@@ -13,7 +13,7 @@ dayjs.extend(duration);
 export default function ChatConnectLoadingSheet() {
   const navigate = useNavigate();
 
-  const { currentRecord, setCurrentRecord, closeAllSheets, closeSheet } = useSheetStore();
+  const { currentRecord, closeAllSheets, closeSheet } = useSheetStore();
 
   const [timeLeft, setTimeLeft] = useState(60);
 
@@ -75,18 +75,15 @@ export default function ChatConnectLoadingSheet() {
   //생성 시 currentRecord 에 id 저장
   const createChat = async () => {
     try {
-      const data = await createChatroom(10);
+      //1 = recordId
+      const data = await createChatroom(1);
       console.log(data);
       const chatRoomId = data.data.chatRoomId;
 
-      if (data.code === 200) {
-        //임시
-        setCurrentRecord({ recordId: 10 });
-        //
-        navigate(`/chatroom/10`);
-        closeAllSheets();
-      }
+      //200
       //409 이면 이미 채팅방 있음 => 기존 채팅방으로
+      navigate(`/chatroom/${chatRoomId}`);
+      closeAllSheets();
     } catch (error) {
       console.log(error);
     }
@@ -100,6 +97,7 @@ export default function ChatConnectLoadingSheet() {
   };
 
   //채팅 신청한 사람은 상대가 수락했다는 sse 받으면 closeAllSheet, chatroom으로 이동
+  //sse로 채팅방 번호 받기
 
   if (connetFail) {
     return (

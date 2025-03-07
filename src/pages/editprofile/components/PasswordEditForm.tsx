@@ -73,6 +73,7 @@ function PasswordEditForm() {
       const data = await patchEditProfile(updatedData);
 
       if (data.code === 200) {
+        setIsComplete(true);
         openModal({
           title: '비밀번호 변경이 완료되었습니다',
           onConfirm: () => {
@@ -82,6 +83,7 @@ function PasswordEditForm() {
         });
       }
     } catch (error) {
+      setIsError(true);
       console.error('비밀번호 변경 오류:', error);
       openModal({
         title: '비밀번호 변경 실패',

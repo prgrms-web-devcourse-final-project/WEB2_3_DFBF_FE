@@ -77,7 +77,7 @@ export default function ChatConnectLoadingSheet() {
     try {
       const data = await createChatroom(10);
       console.log(data);
-      const chatRoomId = data.data.chatRoomId;
+      // const chatRoomId = data.data.chatRoomId; 배포할때 잠시 주석처리하겠습니다
 
       if (data.code === 200) {
         //임시

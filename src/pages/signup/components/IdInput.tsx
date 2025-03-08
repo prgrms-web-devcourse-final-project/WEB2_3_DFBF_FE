@@ -3,6 +3,7 @@ import SpinLoading from '@/components/loading/SpinLoading';
 import { ID_REGEX } from '@/constants';
 import { useIdAvailability } from '@/hooks/useIdAvailability';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
+import { useEffect, useState } from 'react';
 
 interface IdInputProps {
   setValue: (val: string) => void;
@@ -11,6 +12,8 @@ interface IdInputProps {
 }
 
 function IdInput({ setValue, validity, setValidity }: IdInputProps) {
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
+
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (!ID_REGEX.test(value)) {
@@ -34,8 +37,19 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
     setValidationMessage,
   );
 
-  const renderButtonContent = () => {
+  // 0.1초 후 로딩 UI 표시
+  useEffect(() => {
+    let loadingTimeout: NodeJS.Timeout;
     if (isPending) {
+      loadingTimeout = setTimeout(() => setShowLoading(true), 100);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(loadingTimeout);
+  }, [isPending]);
+
+  const renderButtonContent = () => {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>중복확인</span>;
   };

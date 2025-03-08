@@ -15,6 +15,8 @@ interface AuthCodeInputProps {
 function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCodeInputProps) {
   const [resendCount, setResendCount] = useState(0); // 재전송 횟수
   // 유효성 검사
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
+
   const handleValidation = (value: string) => {
     if (value == '') {
       return { success: false, message: '인증번호가 오지 않았나요?' };
@@ -63,8 +65,19 @@ function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCode
     });
   };
 
-  const renderButtonContent = () => {
+  // 0.1초 후 로딩 UI 표시
+  useEffect(() => {
+    let loadingTimeout: NodeJS.Timeout;
     if (isLoading) {
+      loadingTimeout = setTimeout(() => setShowLoading(true), 100);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(loadingTimeout);
+  }, [isLoading]);
+
+  const renderButtonContent = () => {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>인증확인</span>;
   };

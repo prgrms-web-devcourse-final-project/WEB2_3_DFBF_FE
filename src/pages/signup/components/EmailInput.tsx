@@ -3,6 +3,7 @@ import SpinLoading from '@/components/loading/SpinLoading';
 import { EMAIL_REGEX } from '@/constants';
 import { useEmailCheck } from '@/hooks/useEmailCheck';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
+import { useEffect, useState } from 'react';
 
 interface EmailInputProps {
   setValue: (val: string) => void;
@@ -12,6 +13,7 @@ interface EmailInputProps {
 }
 
 function EmailInput({ setValue, validity, setValidity, authcodeValidity }: EmailInputProps) {
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (!EMAIL_REGEX.test(value)) {
@@ -44,8 +46,19 @@ function EmailInput({ setValue, validity, setValidity, authcodeValidity }: Email
     setButtonVariant,
   );
 
-  const renderButtonContent = () => {
+  // 0.1초 후 로딩 UI 표시
+  useEffect(() => {
+    let loadingTimeout: NodeJS.Timeout;
     if (isChecking) {
+      loadingTimeout = setTimeout(() => setShowLoading(true), 100);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(loadingTimeout);
+  }, [isChecking]);
+
+  const renderButtonContent = () => {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>인증요청</span>;
   };

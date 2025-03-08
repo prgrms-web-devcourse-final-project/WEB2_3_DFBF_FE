@@ -1,7 +1,7 @@
 interface ChatHistory {
   chatRoomId: number;
-  // nickname: string;
-  // emotion: string;
+  nickname: string;
+  emotion: string;
   spotifyId: number;
   title: string;
   artist: string;

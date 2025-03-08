@@ -5,6 +5,7 @@ import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
+import MyErrorBoundary from '@/components/ErrorBoundary';
 import { useEffect, useRef } from 'react';
 import { useScrollStore } from '@/store/scrollStore';
 
@@ -77,7 +78,9 @@ function Layout() {
           showNav && 'pb-[62px] ', // 하단 네비게이션 숨길때만 padding주기
         )}
       >
-        <Outlet />
+        <MyErrorBoundary>
+          <Outlet />
+        </MyErrorBoundary>
       </div>
 
       {/* 하단 네비게이션 */}

@@ -16,7 +16,7 @@ import { twMerge } from 'tailwind-merge';
 type ProfileFormType = {
   password: string;
   nickName: string;
-  spotifyId: string;
+  spotifyId: string | -1;
   title: string;
   artist: string;
   albumImage: string;
@@ -52,11 +52,19 @@ function ProfileEditForm() {
       if (nickname !== prevNickname.current) {
         updatedData.nickName = nickname;
       }
+      // 현재 프로필 뮤직이랑 이전 프로필 뮤직이 다를때만 업데이트
       if (selectedProfileMusic !== prevProfileMusic.current) {
-        updatedData.spotifyId = selectedProfileMusic?.spotifyId;
-        updatedData.title = selectedProfileMusic?.title;
-        updatedData.artist = selectedProfileMusic?.artist;
-        updatedData.albumImage = selectedProfileMusic?.album;
+        // 프로필 뮤직이 선택되어있을 경우
+        if (selectedProfileMusic) {
+          updatedData.spotifyId = selectedProfileMusic.spotifyId;
+          updatedData.title = selectedProfileMusic.title;
+          updatedData.artist = selectedProfileMusic.artist;
+          updatedData.albumImage = selectedProfileMusic.album;
+        }
+        // 프로필 뮤직이 선택되지않아서 삭제하는 로직
+        else {
+          updatedData.spotifyId = -1;
+        }
       }
 
       console.log('전송 데이터:', updatedData);
@@ -121,12 +129,14 @@ function ProfileEditForm() {
 
   useEffect(() => {
     const loadMyProfile = async () => {
-      const data = await getMyProfile();
-      prevNickname.current = data.data.nickname; // 이전 닉네임 저장하기
-      prevProfileMusic.current = data.data.profileMusic; // 이전 음악 저장하기
+      const { data } = await getMyProfile();
+      const { nickname, profileMusic } = data;
 
-      setNickname(data.data.nickname);
-      selectProfileMusic(data.data.profileMusic);
+      prevNickname.current = nickname; // 이전 닉네임 저장
+      prevProfileMusic.current = profileMusic?.spotifyId ? profileMusic : null; // 이전 음악저장
+
+      setNickname(nickname);
+      selectProfileMusic(prevProfileMusic.current);
     };
     loadMyProfile();
 

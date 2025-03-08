@@ -120,6 +120,7 @@ export default function MusicCard({
           </div>
           {rightElement === 'button' && (
             <Button
+              type="button"
               onClick={() => openSheet('isMusicSheetOpen')}
               variant={buttonType}
               className="w-[51px] h-[32px] flex-shrink-0"

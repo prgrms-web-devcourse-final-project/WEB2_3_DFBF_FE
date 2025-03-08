@@ -5,7 +5,7 @@ interface UserProfileEdit {
   loginId: string;
   password: string;
   nickName: string;
-  spotifyId: string;
+  spotifyId: string | -1;
   title: string;
   artist: string;
   albumImage: string;

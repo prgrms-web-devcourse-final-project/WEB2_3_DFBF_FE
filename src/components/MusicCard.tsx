@@ -2,18 +2,19 @@ import Button from '@/components/Button';
 import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play-circle.svg';
 import pause from '@assets/icons/pause-circle.svg';
-import { useEffect } from 'react';
-import { useSearchYoutubeVideo } from '@/apis/youtube';
+import { useEffect, useState } from 'react';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
 import { useLocation, useParams } from 'react-router';
 import { twMerge } from 'tailwind-merge';
+import { getSpotifyVideoId } from '@/apis/emotionRecord';
 
 interface MusicCardProps {
   image?: string | null; // 음악 이미지
   title?: string; // 음악 제목
   artist?: string; // 음악 설명
+  spotifyId?: string;
   buttonContent?: string; // 버튼 텍스트
   isMusicSelect?: boolean; // 음악 선택 상태
   buttonType?: 'primary' | 'secondary'; // 버튼 타입
@@ -24,6 +25,7 @@ export default function MusicCard({
   image,
   title,
   artist,
+  spotifyId,
   isMusicSelect = false,
   buttonContent = '등록',
   buttonType = 'primary',
@@ -41,8 +43,26 @@ export default function MusicCard({
   const { isMusicSheetOpen, openSheet } = useSheetStore();
 
   //query
-  const query = title && !isUserEditPage ? `${artist} - ${title} lyrics` : null;
-  const { data: searchedVideoId } = useSearchYoutubeVideo(query);
+  // const query = title && !isUserEditPage ? `${artist} - ${title} lyrics` : null;
+  // const { data: searchedVideoId } = useSearchYoutubeVideo(query);
+  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getVideoId = async () => {
+      if (!spotifyId) return;
+
+      try {
+        const currentMusicId = spotifyId;
+        const res = await getSpotifyVideoId(currentMusicId);
+        const savedVideoId = res.data;
+        console.log(savedVideoId)
+        setCurrentVideoId(savedVideoId);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getVideoId();
+  }, [spotifyId]);
 
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
 
@@ -56,10 +76,10 @@ export default function MusicCard({
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (shouldFetchYouTube && searchedVideoId && isUserPage) {
-      setVideoId('1', searchedVideoId); // YouTube store의 videoId를 업데이트
+    if (shouldFetchYouTube && currentVideoId && isUserPage && !isUserEditPage) {
+      setVideoId('1', currentVideoId); // YouTube store의 videoId를 업데이트
     }
-  }, [searchedVideoId]);
+  }, [currentVideoId]);
 
   useEffect(() => {
     return () => {

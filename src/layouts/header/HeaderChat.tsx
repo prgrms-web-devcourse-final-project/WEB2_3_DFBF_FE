@@ -3,6 +3,8 @@ import exitIcon from '@assets/icons/exit-icon.svg';
 import { twMerge } from 'tailwind-merge';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 import { useModalStore } from '@/store/modalStore';
+import { useNavigate, useParams } from 'react-router';
+import { closeChatroom } from '@/apis/chat';
 
 interface HeaderChatProps {
   showLogo?: boolean; // 로고 표시 여부
@@ -10,6 +12,8 @@ interface HeaderChatProps {
 }
 
 function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps) {
+  const navigate = useNavigate();
+  const { chatRoomId } = useParams();
   // 로고와 닉네임이 모두 숨겨진 경우 `justify-end`, 아니면 `justify-between`
   const headerClass = showLogo || showNickname ? 'justify-between' : 'justify-end';
   //채팅 기록 데이터 zustand
@@ -62,9 +66,20 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
 
             openModal({
               title: '이 대화를 마무리할까요?',
-              message: '채팅을 종료하면 다시 복구할 수 없습니다.',
+              message: '채팅을 종료하면 다시 복구할 수 없습니다',
               onConfirm: async () => {
+                if (!chatRoomId) {
+                  console.log('chatroomid가 없습니다.');
+                  return;
+                }
                 console.log('확인');
+                console.log(chatRoomId);
+                const data = await closeChatroom(Number(chatRoomId));
+                console.log(data);
+                //+ 웹소켓 연결 끊기
+                //+ 로딩
+
+                navigate('/home');
                 closeModal();
               },
               onCancel: () => {

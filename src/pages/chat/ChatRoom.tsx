@@ -28,7 +28,8 @@ interface ChatMessage {
 // }
 
 export default function ChatRoom({}: ChatRoomProps) {
-  const [chatRoomId, setChatRoomId] = useState<number | null>(7);
+  // const [chatRoomId, setChatRoomId] = useState<number | null>(7);
+  const chatRoomId = 7;
   // const [myUserData, setMyUserData] = useState<ChatUser | null>(null);
 
   const [stompClient, setStompClient] = useState<Client | null>(null);

@@ -10,6 +10,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
 import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
 import { useUserStore } from '@/store/userStore';
+import Loading from '@/components/loading/Loading';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
@@ -24,7 +25,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { ref, inView } = useInView();
 
   // 유저 정보 가져오기
-  const { data: userData } = useQuery({
+  const { data: userData, isLoading: isUserLoading } = useQuery({
     queryKey: isMyPage ? ['myPage'] : ['userPage'], // 유저페이지 캐싱할때 추가적으로 넣어주자
     queryFn: () => (isMyPage ? getMyProfile() : getUserProfile(userId as string)),
   });
@@ -38,6 +39,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
 
   const {
     data: emotionRecords,
+    isLoading: isEmotionLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -144,8 +146,8 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     }
   }, [inView]);
 
-  return (  
-    <div className="w-full">
+  return (
+    <>
       <div className="flex flex-col items-center w-full h-full gap-4 py-4">
         <div className="flex flex-col items-center">
           <span className="h3-b">{userData?.data?.nickname}</span>
@@ -175,7 +177,8 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           handleEdit={handleEdit}
         />
       )}
-    </div>
+      {(isUserLoading || isEmotionLoading) && <Loading />}
+    </>
   );
 }
 

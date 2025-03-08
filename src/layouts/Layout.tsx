@@ -5,8 +5,9 @@ import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
-import { useRef } from 'react';
 import MyErrorBoundary from '@/components/ErrorBoundary';
+import { useEffect, useRef } from 'react';
+import { useScrollStore } from '@/store/scrollStore';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -50,7 +51,11 @@ function Layout() {
   const hasPostButton = location.pathname === '/home' || location.pathname === '/mypage';
 
   //헤더 클릭 시 스크롤
-  const scrollContainerRef = useRef<HTMLDivElement>(null); // 스크롤 컨테이너 참조
+  const { setScrollContainerRefCurrent } = useScrollStore();
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 참조
+  useEffect(() => {
+    if (scrollContainerRef.current) setScrollContainerRefCurrent(scrollContainerRef.current);
+  }, [scrollContainerRef]);
 
   const handleScrollToTop = () => {
     if (scrollContainerRef.current) {

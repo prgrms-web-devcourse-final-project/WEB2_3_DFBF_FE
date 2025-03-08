@@ -30,51 +30,40 @@ function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: Car
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
+
+    setCurrentRecord(data.data);
+
     const getVideoId = async () => {
       if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
-
+      //videoId 없으면 검색
       try {
         const currentMusicId = data.data.spotifyMusic.spotifyId;
         const res = await getSpotifyVideoId(currentMusicId);
-        const savedVideoId = res.data.videoId;
+        const savedVideoId = res.data;
         setCurrentVideoId(savedVideoId);
       } catch (error) {
         console.log(error);
       }
     };
-    getVideoId();
-  }, []);
 
-  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
-  useEffect(() => {
-    if (currentVideoId) {
-      setVideoId('2', currentVideoId); // YouTube store의 videoId를 업데이트
+    if (data.data.spotifyMusic.videoId) {
+      setCurrentVideoId(data.data.spotifyMusic.videoId);
+    } else {
+      getVideoId();
     }
-  }, [currentVideoId]);
-
-  useEffect(() => {
-    if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
-    console.log(data?.data);
-
-    setCurrentRecord(data.data);
 
     return () => {
       setCurrentRecord(null);
     };
   }, [data]);
 
-  // //sheet open 시 스크롤 제거
-  // useEffect(() => {
-  //   if (isCardSheetOpen) {
-  //     document.body.style.overflow = 'hidden'; // 스크롤 막기
-  //   } else {
-  //     document.body.style.overflow = 'auto'; // 스크롤 복원
-  //   }
-
-  //   return () => {
-  //     document.body.style.overflow = 'auto';
-  //   };
-  // }, [isCardSheetOpen]);
+  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
+  useEffect(() => {
+    if (currentVideoId) {
+      setVideoId('3', currentVideoId); // YouTube store의 videoId를 업데이트
+    }
+  }, [currentVideoId]);
 
   if (!isCardSheetOpen) {
     return null;

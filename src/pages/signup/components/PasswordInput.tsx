@@ -3,11 +3,18 @@ import { PASSWORD_REGEX } from '@/constants';
 import { useValidation } from '@/hooks/useValidation';
 
 interface PasswordInputProps {
+  label?: string;
+  placeholder?: string;
   setValue: (val: string) => void;
   setValidity: (val: boolean) => void;
 }
 
-function PasswordInput({ setValue, setValidity }: PasswordInputProps) {
+function PasswordInput({
+  label = '비밀번호',
+  placeholder = '비밀번호를 입력해 주세요',
+  setValue,
+  setValidity,
+}: PasswordInputProps) {
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (PASSWORD_REGEX.test(value)) {
@@ -36,8 +43,8 @@ function PasswordInput({ setValue, setValidity }: PasswordInputProps) {
     <InputField
       type="password"
       id="password"
-      label="비밀번호"
-      placeholder="비밀번호를 입력해 주세요"
+      label={label}
+      placeholder={placeholder}
       value={text}
       onChange={handleChange}
       onBlur={handleBlur}

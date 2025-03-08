@@ -1,8 +1,6 @@
 import InputAuthCode from '@/components/InputAuthCode';
 import SpinLoading from '@/components/loading/SpinLoading';
 import { AUTHCODE_REGEX } from '@/constants';
-import { MAX_RESEND_COUNT } from '@/constants/email';
-import { useEmailVerification } from '@/hooks/useEmailVerification';
 import { useEmailVerificationCheck } from '@/hooks/useEmailVerificationCheck';
 import { useResendEmailVerification } from '@/hooks/useResendEmailVerification';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
@@ -34,16 +32,16 @@ function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCode
     buttonVariant,
     handleChange,
     setButtonVariant,
-  } = useValidationWithButton(
+  } = useValidationWithButton({
     validity,
     setValidity,
-    handleValidation,
-    AUTHCODE_REGEX,
-    '인증번호가 오지 않았나요?',
-  );
+    handleValidationMessage: handleValidation,
+    REGEX: AUTHCODE_REGEX,
+    initialMessage: '인증번호가 오지 않았나요?',
+  });
 
   // 재전송 훅
-  const { resendEmailVerification, isPending } = useResendEmailVerification(
+  const { resendEmailVerification } = useResendEmailVerification(
     email,
     setValidationMessage,
     setButtonVariant,

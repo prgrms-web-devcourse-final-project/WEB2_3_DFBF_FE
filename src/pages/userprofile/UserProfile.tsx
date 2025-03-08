@@ -58,7 +58,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     select: (data) => data.pages as EmotionRecordPages[],
   });
 
-  console.log('감정데이터', emotionRecords);
   const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택된 항목 관리
 
   const handleOpenSheet = (recordId: number) => {
@@ -145,7 +144,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     }
   }, [inView]);
 
-  return (
+  return (  
     <div className="w-full">
       <div className="flex flex-col items-center w-full h-full gap-4 py-4">
         <div className="flex flex-col items-center">
@@ -154,10 +153,10 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
         </div>
 
         <MusicCard
-          title={userData?.data.profileMusic?.title}
-          artist={userData?.data.profileMusic?.artist}
-          image={userData?.data.profileMusic?.album}
-          spotifyId={userData?.data.profileMusic?.spotifyId}
+          title={userData?.data?.profileMusic?.title}
+          artist={userData?.data?.profileMusic?.artist}
+          image={userData?.data?.profileMusic?.album}
+          spotifyId={userData?.data?.profileMusic?.spotifyId}
           rightElement="play"
         />
         <EmotionRecordCardList

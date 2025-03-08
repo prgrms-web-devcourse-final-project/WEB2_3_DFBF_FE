@@ -5,12 +5,13 @@ import { useNicknameAvailability } from '@/hooks/useNicknameAvailability';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
 
 interface NicknameInputProps {
+  initialValue?: string; // 초기값
   setValue: (val: string) => void;
   validity: boolean;
   setValidity: (val: boolean) => void;
 }
 
-function NicknameInput({ setValue, validity, setValidity }: NicknameInputProps) {
+function NicknameInput({ initialValue, setValue, validity, setValidity }: NicknameInputProps) {
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (value.length < MIN_NICKNAME_LENGTH || value.length > MAX_NICKNAME_LENGTH) {
@@ -26,9 +27,14 @@ function NicknameInput({ setValue, validity, setValidity }: NicknameInputProps) 
 
     return { success: false, message: '' };
   };
-
   const { text, validationMessage, setValidationMessage, buttonVariant, handleChange } =
-    useValidationWithButton(validity, setValidity, handleValidation, NICKNAME_REGEX);
+    useValidationWithButton({
+      validity,
+      setValidity,
+      handleValidationMessage: handleValidation,
+      REGEX: NICKNAME_REGEX,
+      initialText: initialValue,
+    });
   // 닉네임 중복을 확인하는 함수
   const { mutate, isPending } = useNicknameAvailability(
     text,

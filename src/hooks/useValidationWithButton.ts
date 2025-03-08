@@ -1,17 +1,27 @@
 import { useEffect, useState } from 'react';
 
+interface useValidationWithButtonProps {
+  validity: boolean; // 유효성
+  setValidity: (val: boolean) => void; // 유효성 변경 함수
+  handleValidationMessage: (val: string) => { success: boolean; message: string }; // 유효성 메시지 관리하는 함수
+  REGEX: RegExp; // 정규표현식
+  initialMessage?: string; // 선택적 초기 메시지
+  initialText?: string; // 기본값 설정
+}
+
 // 유효성 검사와 버튼 상태를 함께 관리하는 훅
-export const useValidationWithButton = (
-  validity: boolean, // 유효성
-  setValidity: (val: boolean) => void, // 유효성 변경 함수
-  handleValidationMessage: (val: string) => { success: boolean; message: string }, // 유효성 메시지 관리하는 함수
-  REGEX: RegExp, // 정규표현식
-  initialMessage?: string, // 선택적 초기 메시지
-) => {
-  const [text, setText] = useState('');
+export const useValidationWithButton = ({
+  validity,
+  setValidity,
+  handleValidationMessage,
+  REGEX,
+  initialMessage = '', // 기본값 설정
+  initialText = '', // 기본값 설정
+}: useValidationWithButtonProps) => {
+  const [text, setText] = useState(initialText);
   const [validationMessage, setValidationMessage] = useState({
     success: false,
-    message: initialMessage ?? '',
+    message: initialMessage,
   });
   const [buttonVariant, setButtonVariant] = useState<'primary' | 'disabled'>('disabled');
 
@@ -33,6 +43,11 @@ export const useValidationWithButton = (
       setButtonVariant('disabled');
     }
   }, [text]);
+
+  // 초기값 로직 수정
+  useEffect(() => {
+    setText(initialText);
+  }, [initialText]);
 
   return {
     text,

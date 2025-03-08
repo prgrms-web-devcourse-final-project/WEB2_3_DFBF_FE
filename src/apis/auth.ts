@@ -2,6 +2,11 @@ import axios from 'axios';
 import { axiosInstance } from './axios';
 import { useAuthStore } from '@/store/authStore';
 
+const API_BASE_URL =
+  import.meta.env.MODE === 'development'
+    ? '/api/auth/token' // ✅ 개발 환경에서는 프록시를 사용
+    : import.meta.env.VITE_API_URL + '/api/auth/token'; // ✅ 배포 환경에서는 직접 API 호출
+
 // 로그인
 export const login = async (loginId: string, password: string) => {
   const { data } = await axiosInstance.post('/auth/login', {
@@ -25,7 +30,7 @@ export const postLogout = async () => {
 
 // 토큰 재발급
 export const reissueToken = async () => {
-  const { data } = await axios.post('/api/auth/token', {
+  const { data } = await axios.post(`${API_BASE_URL}`, {
     withCredentials: true,
   });
 

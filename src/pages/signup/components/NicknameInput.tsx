@@ -3,6 +3,7 @@ import SpinLoading from '@/components/loading/SpinLoading';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useNicknameAvailability } from '@/hooks/useNicknameAvailability';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
+import { useEffect, useState } from 'react';
 
 interface NicknameInputProps {
   initialValue?: string; // 초기값
@@ -12,6 +13,7 @@ interface NicknameInputProps {
 }
 
 function NicknameInput({ initialValue, setValue, validity, setValidity }: NicknameInputProps) {
+  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (value.length < MIN_NICKNAME_LENGTH || value.length > MAX_NICKNAME_LENGTH) {
@@ -43,8 +45,19 @@ function NicknameInput({ initialValue, setValue, validity, setValidity }: Nickna
     setValidationMessage,
   );
 
-  const renderButtonContent = () => {
+  // 0.1초 후 로딩 UI 표시
+  useEffect(() => {
+    let loadingTimeout: NodeJS.Timeout;
     if (isPending) {
+      loadingTimeout = setTimeout(() => setShowLoading(true), 100);
+    } else {
+      setShowLoading(false);
+    }
+    return () => clearTimeout(loadingTimeout);
+  }, [isPending]);
+
+  const renderButtonContent = () => {
+    if (showLoading) {
       return <SpinLoading />;
     } else return <span>중복확인</span>;
   };

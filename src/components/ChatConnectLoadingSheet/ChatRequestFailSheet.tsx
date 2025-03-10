@@ -6,9 +6,10 @@ import { useSheetStore } from '@/store/sheetStore';
 
 function ChatRequestFailSheet() {
   const navigate = useNavigate();
-  const { currentRecord, closeAllSheets, closeSheet } = useSheetStore();
+  const { currentRecord, closeSheet } = useSheetStore();
   const handleClickToHome = () => {
-    closeAllSheets();
+    closeSheet('isRequestSendingSheetOpen');
+    closeSheet('isRequestReceivingSheetOpen');
     navigate('/home');
   };
   return (

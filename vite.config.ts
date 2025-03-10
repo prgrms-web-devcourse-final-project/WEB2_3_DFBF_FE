@@ -89,7 +89,7 @@ export default defineConfig(({ mode }) => {
         '/chatapi': {
           target: env.VITE_CHAT_API_URL,
           changeOrigin: true, // 백엔드 서버 주소로 변경
-          rewrite: (path) => path.replace(/^\/chatapi/, '/api'),
+          rewrite: (path) => path.replace(/^\/chatapi/, '/'),
         },
       },
     },

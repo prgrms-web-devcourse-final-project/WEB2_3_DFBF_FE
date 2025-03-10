@@ -5,31 +5,31 @@ import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useEffect, useRef, useState } from 'react';
 import { MAX_CHAT_MESSAGE_LENGTH } from '@/constants';
-import { loadChatHistory } from '@/apis/chat';
+import { loadChatHistoryDev } from '@/apis/chat';
 import { useAuthStore } from '@/store/authStore';
-// import { getUserInfo } from '@/apis/user';
 import { useScrollStore } from '@/store/scrollStore';
+
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+import 'dayjs/locale/ko';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface ChatRoomProps {}
 
 //메시지 타입
 interface ChatMessage {
-  // fromUserId?: string;
-  message: string;
+  fromUserId?: string;
   chatRoomId: number;
+  message: string;
   createdAt?: string;
   isMyMessage?: boolean;
 }
-// interface ChatUser {
-//   nickName: string;
-//   email: string;
-//   loginId: string;
-//   createdAt: string;
-// }
 
 export default function ChatRoom({}: ChatRoomProps) {
   // const [chatRoomId, setChatRoomId] = useState<number | null>(7);
-  const chatRoomId = 7;
+  const chatRoomId = 1;
   // const [myUserData, setMyUserData] = useState<ChatUser | null>(null);
 
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -49,16 +49,6 @@ export default function ChatRoom({}: ChatRoomProps) {
   }, [messages, scrollContainerRefCurrent]);
 
   const MAX_LINES = 8;
-
-  // //내 정보 가져오기
-  // useEffect(() => {
-  //   const getChatUser = async () => {
-  //     const data = await getUserInfo();
-  //     console.log(data);
-  //     setMyUserData(data.data);
-  //   };
-  //   getChatUser();
-  // }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageInput(e.target.value);
@@ -128,13 +118,14 @@ export default function ChatRoom({}: ChatRoomProps) {
         console.log('chatRoomId가 없습니다');
         return;
       }
-      const response = await loadChatHistory(chatRoomId);
+      //배포 시 변경
+      const response = await loadChatHistoryDev(chatRoomId);
       console.log('history', response);
       if (response.status === 204) {
         console.warn('No chat history found (204 No Content)');
         return;
       }
-      setMessages(response);
+      setMessages(response.data);
     } catch (error) {
       console.error('Error fetching chat history:', error);
     }
@@ -200,6 +191,16 @@ export default function ChatRoom({}: ChatRoomProps) {
     }
   };
 
+  // 10분 연장 요청
+  // const handleExtendSession = () => {
+  //   if (stompClient) {
+  //     stompClient.publish({
+  //       destination: '/app/extendSession',
+  //       body: JSON.stringify({}), // 빈 JSON 객체 전달
+  //     });
+  //   }
+  // };
+
   //채팅방 입장 시 connect
   //나갈 때 disconnect
   useEffect(() => {
@@ -251,13 +252,20 @@ export default function ChatRoom({}: ChatRoomProps) {
           })}
 
         {/* 마지막 메시지의 시간 표시 */}
-        <p className="text-gray-500 text-xs text-center mt-2">{messages.at(-1)?.createdAt}</p>
+        {!!messages.length && (
+          <p className="text-gray-500 text-xs text-center mt-2">
+            {dayjs(messages.at(-1)?.createdAt)
+              .tz('Asia/Seoul')
+              .locale('ko')
+              .format('YYYY년 M월 D일 dddd')}
+          </p>
+        )}
       </div>
 
-      <div>
+      {/* <div>
         <Button onClick={connect}>채팅 연결</Button>
         <Button onClick={disconnect}>채팅 연결 해제</Button>
-      </div>
+      </div> */}
 
       <div className="bottom-padding-nav px-3 pt-[5px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
         <div className="flex justify-between mb-2 caption-b">

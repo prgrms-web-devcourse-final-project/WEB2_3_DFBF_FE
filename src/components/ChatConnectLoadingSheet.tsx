@@ -72,10 +72,11 @@ export default function ChatConnectLoadingSheet() {
   //채팅방 생성 (요청 받는 사람 입장에서 생성?)
   //sse로 받은 recordId로 채팅방 생성
   //sse로 받은 상대 정보로 '보내는 사람' 바꾸기
+  //sse로 받은 requsetNickname(tag가 아니라 닉네임)
   const createChat = async () => {
     try {
       //1 = recordId
-      const data = await createChatroom(1);
+      const data = await createChatroom(1, '루루');
       console.log(data);
       const chatRoomId = data.data.chatRoomId;
 

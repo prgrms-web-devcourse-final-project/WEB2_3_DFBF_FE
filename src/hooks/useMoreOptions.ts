@@ -38,14 +38,30 @@ export const useMoreOptions = () => {
     }
 
     openModal({
-      title: `${userData?.nickname}을 차단할까요?`,
+      title: [
+        { text: `${userData?.nickname}`, className: 'text-primary-normal' },
+        { text: ' 님을 차단할까요?' },
+      ],
       message: '차단된 사용자는 더이상 피드에 나타나지 않습니다',
       onConfirm: async () => {
         if (param.userId) {
           try {
             const data = await addBlockList(param.userId);
-            closeModal();
             console.log(data);
+            //이미 차단 한 유저일 경우
+            if (data.code === 400) {
+              closeModal();
+              openModal({
+                title: `이미 차단한 유저입니다`,
+                onConfirm: () => {
+                  closeModal();
+                },
+              });
+            } else {
+              //차단 후 홈으로 이동
+              navigate('/home');
+              closeModal();
+            }
           } catch (error) {
             console.log(error);
           }

@@ -1,22 +1,17 @@
-import { deleteEmotionRecord, getUserEmotionRecords } from '@/apis/emotionRecord';
+import { getUserEmotionRecords } from '@/apis/emotionRecord';
 import { getMyProfile, getUserProfile } from '@/apis/user';
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
 import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
 import { useUserStore } from '@/store/userStore';
 import Loading from '@/components/loading/Loading';
+import { useDeleteEmotionRecord } from '@/hooks/useDeleteEmotionRecord';
 
 // 마이페이지 / 유저페이지 동시에 사용
 function UserProfile({ isMyPage }: { isMyPage: boolean }) {
@@ -25,7 +20,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
   const { userId } = useParams(); // 유저페이지 경우
   const { openSheet, closeSheet } = useSheetStore(); // 시트
   const { openModal, closeModal } = useModalStore(); // 모달
-  const queryClient = useQueryClient(); // useMutation 사용
   const { setUserData } = useUserStore(); // 유저 정보 전역 저장
 
   const { ref, inView } = useInView();
@@ -43,6 +37,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     }
   }, [userData, setUserData]);
 
+  // 감정 기록 데이터 불러오기
   const {
     data: emotionRecords,
     isLoading: isEmotionLoading,
@@ -72,58 +67,9 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
     setSelectedRecordId(recordId);
     openSheet('isCardSheetOpen'); // 모달 열기
   };
-  // 감정 기록 삭제
-  const { mutate } = useMutation({
-    mutationFn: (recordId: number) => deleteEmotionRecord(recordId),
-    onMutate: async (recordId) => {
-      // 낙관적 업데이트 전에 사용자 목록 쿼리를 취소해 잠재적인 충돌 방지!
-      await queryClient.cancelQueries({
-        queryKey: isMyPage
-          ? ['emotionRecords', userData?.data?.loginId]
-          : ['emotionRecords', userId],
-      });
-      // 캐시된 데이터(사용자 목록) 가져오기!
-      const previousRecords = queryClient.getQueryData<InfiniteData<EmotionRecordPages>>([
-        'emotionRecords',
-        isMyPage ? userData?.data?.loginId : userId,
-      ]);
 
-      if (previousRecords) {
-        queryClient.setQueryData(
-          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
-          (oldData: InfiniteData<EmotionRecordPages>) => {
-            return {
-              ...oldData,
-              pages: oldData.pages.map((page: EmotionRecordPages) => ({
-                ...page,
-                data: {
-                  ...page.data,
-                  records: page.data.records.filter((r: EmotionRecord) => r.recordId !== recordId),
-                },
-              })),
-            };
-          },
-        );
-      }
-      // 각 콜백의 context로 전달할 데이터 반환!
-      return { previousRecords };
-    },
-    onError: (_, __, context) => {
-      if (context?.previousRecords) {
-        queryClient.setQueryData(
-          ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
-          context.previousRecords,
-        );
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: isMyPage
-          ? ['emotionRecords', userData?.data?.loginId]
-          : ['emotionRecords', userId],
-      });
-    },
-  });
+  // 감정 기록 삭제
+  const { mutate } = useDeleteEmotionRecord(isMyPage ? userData?.data?.loginId : userId);
 
   // 삭제모달 띄우기
   const handleDeleteModal = () => {

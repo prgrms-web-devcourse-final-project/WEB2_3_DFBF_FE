@@ -45,14 +45,14 @@ function ChatActionButtons({
       return;
     }
     try {
-      const data = await requestChat(recordId);
-      console.log(data);
+      const { code } = await requestChat(recordId);
 
       //200
-      console.log('채팅 요청 성공');
-      openSheet('isChatLoadingSheetOpen');
-      //409면 데이터로 chatroomid 추가로 옴
-      //리시버 false
+      if (code === 200) {
+        openSheet('isRequestSendingSheetOpen');
+      } else {
+        throw new Error('잠시 후 다시 시도해 주세요');
+      }
     } catch (error) {
       console.log(error);
       openModal({

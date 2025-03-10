@@ -4,7 +4,13 @@ import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import MusicCard from '@/components/MusicCard';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
@@ -77,7 +83,7 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
           : ['emotionRecords', userId],
       });
       // 캐시된 데이터(사용자 목록) 가져오기!
-      const previousRecords = queryClient.getQueryData<EmotionRecord[]>([
+      const previousRecords = queryClient.getQueryData<InfiniteData<EmotionRecordPages>>([
         'emotionRecords',
         isMyPage ? userData?.data?.loginId : userId,
       ]);
@@ -85,13 +91,18 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
       if (previousRecords) {
         queryClient.setQueryData(
           ['emotionRecords', isMyPage ? userData?.data?.loginId : userId],
-          (oldData: any) => ({
-            ...oldData,
-            data: {
-              ...oldData.data,
-              records: oldData.data.records.filter((r: EmotionRecord) => r.recordId !== recordId),
-            },
-          }),
+          (oldData: InfiniteData<EmotionRecordPages>) => {
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page: EmotionRecordPages) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  records: page.data.records.filter((r: EmotionRecord) => r.recordId !== recordId),
+                },
+              })),
+            };
+          },
         );
       }
       // 각 콜백의 context로 전달할 데이터 반환!

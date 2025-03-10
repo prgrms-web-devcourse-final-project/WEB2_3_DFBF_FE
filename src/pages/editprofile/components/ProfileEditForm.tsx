@@ -8,6 +8,7 @@ import NicknameInput from '@/pages/signup/components/NicknameInput';
 import { useModalStore } from '@/store/modalStore';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import { useSheetStore } from '@/store/sheetStore';
+import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -20,6 +21,7 @@ type ProfileFormType = {
   title: string;
   artist: string;
   albumImage: string;
+  videoId: string;
 };
 
 // 노래, 닉네임 변경폼
@@ -45,6 +47,7 @@ function ProfileEditForm() {
 
   const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
       setIsLoading(true);
       // 업데이트 된 것만 전송
@@ -56,10 +59,19 @@ function ProfileEditForm() {
       if (selectedProfileMusic !== prevProfileMusic.current) {
         // 프로필 뮤직이 선택되어있을 경우
         if (selectedProfileMusic) {
+          // videoId 조회
+          const videoId = await fetchSpotifyVideoId(
+            selectedProfileMusic?.spotifyId,
+            selectedProfileMusic?.artist,
+            selectedProfileMusic?.title,
+          );
+          console.log('videoId:', videoId);
+
           updatedData.spotifyId = selectedProfileMusic.spotifyId;
           updatedData.title = selectedProfileMusic.title;
           updatedData.artist = selectedProfileMusic.artist;
           updatedData.albumImage = selectedProfileMusic.album;
+          updatedData.videoId = videoId;
         }
         // 프로필 뮤직이 선택되지않아서 삭제하는 로직
         else {

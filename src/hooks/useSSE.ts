@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router';
 
 export const useSSE = () => {
   const navigate = useNavigate();
-  const { openSheet, closeSheet, setRequesterInfo, setChatConnectFail } = useSheetStore();
+  const { openSheet, closeSheet, setRequesterInfo, setChatConnectFail, closeAllSheets } =
+    useSheetStore();
   const { isAuthenticated, accessToken } = useAuthStore();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   useEffect(() => {
@@ -55,7 +56,7 @@ export const useSSE = () => {
       eventSource.addEventListener('accept', (event: any) => {
         console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
         const { chatRoomId } = JSON.parse(event.data);
-        closeSheet('isRequestSendingSheetOpen');
+        closeAllSheets();
         navigate(`/chatroom/${chatRoomId}`);
       });
 

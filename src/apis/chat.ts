@@ -16,8 +16,13 @@ export const cancelChatRequest = async (emotionRecordId: number) => {
   return data;
 };
 //채팅방 생성
-export const createChatroom = async (emotionRecordId: number) => {
-  const { data } = await axiosInstance.post(`/chat/create?recordId=${emotionRecordId}`, {});
+export const createChatroom = async (recordId: number, requestNickname: string) => {
+  const { data } = await axiosInstance.post(`/chat/create`, null, {
+    params: {
+      recordId,
+      requestNickname,
+    },
+  });
   return data;
 };
 //채팅방 닫기
@@ -35,5 +40,17 @@ export const loadChatRoomDetail = async (chatRoomId: number) => {
   const { data } = await axiosInstance.get(`/chat/room/detail`, {
     params: { chatRoomId: chatRoomId },
   });
+  return data;
+};
+
+// 채팅 거절
+export const postRejectChat = async (emotionRecordId: number, requestNickname: string) => {
+  const { data } = await axiosInstance.post('/chat/request/reject', null, {
+    params: {
+      emotionRecordId,
+      requestNickname,
+    },
+  });
+
   return data;
 };

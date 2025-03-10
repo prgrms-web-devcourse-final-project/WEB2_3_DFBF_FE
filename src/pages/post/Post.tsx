@@ -4,19 +4,14 @@ import MusicCard from '@/components/MusicCard';
 import Comment from '@/pages/post/components/Comment';
 import { useEffect, useState } from 'react';
 import { useSheetStore } from '@/store/sheetStore';
-import {
-  getEmotionRecordById,
-  getSpotifyVideoId,
-  postEmotionRecord,
-  putEmotionRecord,
-} from '@/apis/emotionRecord';
+import { getEmotionRecordById, postEmotionRecord, putEmotionRecord } from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
 import { useNavigate, useParams } from 'react-router';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
-import { searchYoutubeVideo } from '@/apis/youtube';
+import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
 
 export default function Post() {
   const navigate = useNavigate();
@@ -117,31 +112,11 @@ export default function Post() {
     });
   };
 
-  // spotifyId로 videoId 조회
-  const fetchSpotifyVideoId = async (spotifyId: string, artist: string, title: string) => {
-    try {
-      const data = await getSpotifyVideoId(spotifyId); // 서버에 videoId 조회
-      console.log('videoId 조회 결과:', data);
-
-      // 서버에 videoId 가 있으면
-      if (data.code === 200 && data.data) return data.videoId;
-      // 서버에 videoId 가 없으면
-      else {
-        // youtube 검색
-        const videoId = await searchYoutubeVideo(`${artist} - ${title} lyrics`);
-        console.log('유튜브 videoId:', videoId);
-        return videoId;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // 기록 완료
   const onCompletePost = async () => {
     if (!isCompletePost) return;
 
-    // 음악 선택 시 videoId 조회
+    // videoId 조회
     const videoId = await fetchSpotifyVideoId(
       selectedPostMusic?.spotifyId,
       selectedPostMusic?.artistName,

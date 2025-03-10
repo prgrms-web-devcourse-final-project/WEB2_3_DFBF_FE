@@ -30,7 +30,12 @@ export const closeChatroom = async (chatRoomId: number) => {
   const { data } = await axiosInstance.post(`/chat/close?chatRoomId=${chatRoomId}`, {});
   return data;
 };
-//채팅방 기록 불러오기
+//채팅방 기록 불러오기(개발서버)
+export const loadChatHistoryDev = async (chatRoomId: number) => {
+  const { data } = await axiosInstance.get(`/chat/history?chatRoomId=${chatRoomId}`);
+  return data;
+};
+//채팅방 기록 불러오기(배포)
 export const loadChatHistory = async (chatRoomId: number) => {
   const { data } = await axiosChatInstance.get(`/chat/history/${chatRoomId}`);
   return data;

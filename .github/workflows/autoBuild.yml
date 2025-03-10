@@ -35,6 +35,7 @@ jobs:
             echo "VITE_SPOTIFY_CLIENT_SECRET=${{ secrets.VITE_SPOTIFY_CLIENT_SECRET }}" >> .env
             echo "VITE_KAKAO_CLIENT_ID=${{ secrets.VITE_KAKAO_CLIENT_ID }}" >> .env
             echo "VITE_KAKAO_REDIRECT_URI=${{ secrets.VITE_KAKAO_REDIRECT_URI }}" >> .env
+            echo "VITE_APP_YOUTUBE_API_KEY=${{ secrets.VITE_APP_YOUTUBE_API_KEY }}" >> .env
             
             # Install dependencies
             npm install

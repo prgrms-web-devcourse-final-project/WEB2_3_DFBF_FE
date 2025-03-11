@@ -91,7 +91,7 @@ export default function MusicCard({
 
   return (
     <>
-      <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
+      <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white card-shadow ">
         <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
           <img
             className="object-cover w-full h-full"

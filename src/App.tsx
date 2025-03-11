@@ -4,7 +4,7 @@ import Layout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
 import Modal from '@/components/Modal';
 import Home from '@/pages/home/Home';
-import ChatConnectLoadingSheet from '@/components/ChatConnectLoadingSheet';
+import ChatConnectLoadingSheet from '@/components/ChatConnectLoadingSheet/ChatConnectLoadingSheet';
 import Chat from '@/pages/chat/Chat';
 import ChatRoom from '@/pages/chat/ChatRoom';
 import NotFound from '@/pages/NotFound';
@@ -15,10 +15,6 @@ import UserProfile from '@/pages/userprofile/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
 import BlockList from '@/pages/blocklist/BlockList';
-import { useEffect } from 'react';
-import { loadYouTubeAPI } from './utils/youtubeApiLoader';
-import { useSpotifyAuth } from './hooks/useSpotifyAuth';
-import { useYouTubeStore } from './store/youtubeStore';
 import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
 // TODO: 테스트용 나중에 지우기
@@ -27,27 +23,26 @@ import TestLoginModal from '@/components/testLogin/TestLoginModal';
 import { useSheetStore } from './store/sheetStore';
 import AnimatedLayout from '@/layouts/AnimatedLayout';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
+import { useSSE } from '@/hooks/useSSE';
+import { useYotube } from '@/hooks/useYoutube';
+import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
+import { useEffect } from 'react';
 
 function App() {
   const location = useLocation();
 
   const { isAuthenticated } = useAuthStore();
+  const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
+
   const spotifyAuth = useSpotifyAuth();
-  const { isChatLoadingSheetOpen } = useSheetStore();
-  // soundlink 로그인한 경우에만 spotify 로그인 후 토큰 가져오기
   useEffect(() => {
     if (isAuthenticated) {
       console.log('Spotify Auth Initialized:', spotifyAuth);
     }
   }, [isAuthenticated]);
 
-  const { setApiReady } = useYouTubeStore();
-
-  useEffect(() => {
-    loadYouTubeAPI().then(() => {
-      setApiReady();
-    }); // 앱이 처음 실행될 때 API 로드
-  }, []);
+  useSSE(); // SSE연결
+  useYotube();
 
   return (
     <>
@@ -89,7 +84,8 @@ function App() {
         </Routes>
       </AnimatedLayout>
       <Modal />
-      {isChatLoadingSheetOpen && <ChatConnectLoadingSheet />}
+      {isRequestSendingSheetOpen && <ChatConnectLoadingSheet type="sending" />}
+      {isRequestReceivingSheetOpen && <ChatConnectLoadingSheet type="receiving" />}
       <YouTubeAudioPlayer playerId="1" />
       <YouTubeAudioPlayer playerId="2" />
       <YouTubeAudioPlayer playerId="3" />

@@ -14,9 +14,9 @@ interface AuthCodeInputProps {
 }
 function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCodeInputProps) {
   const [resendCount, setResendCount] = useState(0); // 재전송 횟수
-  // 유효성 검사
   const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
 
+  // 유효성 검사
   const handleValidation = (value: string) => {
     if (value == '') {
       return { success: false, message: '인증번호가 오지 않았나요?' };
@@ -46,8 +46,8 @@ function AuthCodeInput({ email, emailvalidity, validity, setValidity }: AuthCode
   const { resendEmailVerification } = useResendEmailVerification(
     email,
     setValidationMessage,
-    setButtonVariant,
     setResendCount,
+    resendCount,
   );
   // 인증번호 확인 훅
   const { verifyEmail, isLoading } = useEmailVerificationCheck(

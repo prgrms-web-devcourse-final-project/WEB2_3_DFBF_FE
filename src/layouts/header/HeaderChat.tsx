@@ -18,37 +18,6 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
   const { chatRoomId } = useParams();
   // 로고와 닉네임이 모두 숨겨진 경우 `justify-end`, 아니면 `justify-between`
   const headerClass = showLogo || showNickname ? 'justify-between' : 'justify-end';
-  //채팅 기록 데이터 zustand
-  // const data = {
-  //   sender: {
-  //     nickname: '집가고싶다',
-  //     profilePicture: 'sender_profile_picture_url',
-  //   },
-  //   receiver: {
-  //     nickname: '어디가코딩해',
-  //     profilePicture: 'receiver1_profile_picture_url',
-  //   },
-  //   messageList: [
-  //     {
-  //       messageId: 1001,
-  //       type: 0,
-  //       message: '제발 집좀 보내주세요 ㅠㅠ',
-  //       sentAt: '2025-02-13 06:03',
-  //     },
-  //     {
-  //       messageId: 1002,
-  //       type: 1,
-  //       message: '안돼.',
-  //       sentAt: '2025-02-13 06:04',
-  //     },
-  //     {
-  //       messageId: 1003,
-  //       type: 0,
-  //       message: '하..',
-  //       sentAt: '2025-02-13 06:04',
-  //     },
-  //   ],
-  // };
 
   const { pastRecord } = useChatStore();
 
@@ -56,7 +25,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
 
   const { openModal, closeModal } = useModalStore();
 
-  const { disconnect } = useChatStore();
+  const { wsDisconnect } = useChatStore();
 
   return (
     <HedaerLayout>
@@ -68,7 +37,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         {showNickname && requesterInfo.nickname && (
           <span className="h4-b text-primary-normal">{requesterInfo.nickname}</span>
         )}
-        {showNickname && !requesterInfo.nickname && (
+        {showNickname && (currentRecord?.nickName || pastRecord?.nickname) && (
           <span className="h4-b text-primary-normal">
             {currentRecord?.nickName || pastRecord?.nickname}
           </span>
@@ -87,14 +56,10 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
                   console.log('chatroomid가 없습니다.');
                   return;
                 }
-                console.log('확인');
-                console.log(chatRoomId);
-                disconnect();
-                const data = await closeChatroom(Number(chatRoomId));
-                console.log(data);
+                wsDisconnect();
+                await closeChatroom(Number(chatRoomId));
                 //+ 웹소켓 연결 끊기
                 //+ 로딩
-
                 navigate('/home');
                 closeModal();
               },

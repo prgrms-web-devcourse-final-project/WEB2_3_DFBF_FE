@@ -34,6 +34,7 @@ function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: Car
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
 
     setCurrentRecord(data.data);
+    
 
     const getVideoId = async () => {
       if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
@@ -54,9 +55,9 @@ function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: Car
       getVideoId();
     }
 
-    return () => {
-      setCurrentRecord(null);
-    };
+    // return () => {
+    //   setCurrentRecord(null);
+    // };
   }, [data]);
 
   // videoId가 변경될 때마다 zustand store의 videoId를 업데이트

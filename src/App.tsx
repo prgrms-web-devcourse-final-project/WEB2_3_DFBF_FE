@@ -25,12 +25,21 @@ import AnimatedLayout from '@/layouts/AnimatedLayout';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
+import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
+import { useEffect } from 'react';
 
 function App() {
   const location = useLocation();
 
   const { isAuthenticated } = useAuthStore();
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
+
+  const spotifyAuth = useSpotifyAuth();
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('Spotify Auth Initialized:', spotifyAuth);
+    }
+  }, [isAuthenticated]);
 
   useSSE(); // SSE연결
   useYotube();

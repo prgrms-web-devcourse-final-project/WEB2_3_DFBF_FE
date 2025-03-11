@@ -1,5 +1,4 @@
 import EmotionBadge from '@/components/EmotionBadge';
-import headset from '@assets/icons/headset-icon.svg';
 import defaultImage from '@assets/images/default.png';
 
 interface MainCardProps {
@@ -10,7 +9,6 @@ interface MainCardProps {
   artist: string; // 가수
   comment: string; // 글 내용
   createdAt: string; // 날짜
-  isChatting: boolean; // 현재 채팅중인지
 }
 
 export default function MainCard({
@@ -21,7 +19,6 @@ export default function MainCard({
   artist,
   comment,
   createdAt,
-  isChatting,
 }: MainCardProps) {
   return (
     <div className="flex-none w-full cursor-pointer">
@@ -29,11 +26,6 @@ export default function MainCard({
         {/* 닉네임 + 상태 */}
         <div className="flex items-center gap-1">
           <span className="caption-m text-gray-70">{nickname}</span>
-          {isChatting && (
-            <span>
-              <img src={headset} alt="헤드셋 아이콘" />
-            </span>
-          )}
           <span className="caption-r text-gray-60">님은 지금</span>
           <EmotionBadge size="small" emotion={emotion} />
         </div>

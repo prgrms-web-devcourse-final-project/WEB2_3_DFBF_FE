@@ -129,7 +129,6 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
       {selectedRecordId !== null && (
         <CardDetailModal
           recordId={selectedRecordId}
-          isChatting={true}
           handleDelete={handleDeleteModal}
           handleEdit={handleEdit}
         />

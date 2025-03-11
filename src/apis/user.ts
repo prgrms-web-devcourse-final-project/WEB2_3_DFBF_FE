@@ -84,3 +84,9 @@ export const deleteAccount = async () => {
   const { data } = await axiosInstance.delete('/user');
   return data;
 };
+
+// 유저 채팅 상태
+export const getUserStatus = async (loginId: string) => {
+  const { data } = await axiosInstance.get(`/userStatus/${loginId}`);
+  return data;
+};

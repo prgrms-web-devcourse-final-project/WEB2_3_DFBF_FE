@@ -9,15 +9,15 @@ import { useQuery } from '@tanstack/react-query';
 import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
 import { formatDate } from '@/utils/formatDate';
 import { useEffect, useState } from 'react';
+import { useUserStatus } from '@/hooks/useUserStatus';
 
 interface CardDetailModalProps {
-  isChatting: boolean; // 현재 채팅중인지 (임시)
   recordId: number; // 감정기록 id
   handleDelete?: () => void; // 삭제 함수
   handleEdit?: () => void; // 수정 함수
 }
 
-function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: CardDetailModalProps) {
+function CardDetailModal({ recordId, handleDelete, handleEdit }: CardDetailModalProps) {
   const { isCardSheetOpen, setCurrentRecord } = useSheetStore();
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['3']?.isPlaying || false;
@@ -27,12 +27,14 @@ function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: Car
     queryFn: () => getEmotionRecordById(recordId),
   });
 
+  const loginId = data?.data?.loginId;
+  const { isChatting } = useUserStatus(loginId); // 상대방이 채팅중인지 확인
+
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   useEffect(() => {
     console.log(recordId)
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
-
     setCurrentRecord(data.data);
 
     const getVideoId = async () => {

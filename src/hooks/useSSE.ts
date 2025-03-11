@@ -12,6 +12,8 @@ export const useSSE = () => {
   const { setCurrentChatRoomId } = useChatStore();
   const { isAuthenticated, accessToken } = useAuthStore();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
+  const reconnectAttemptsRef = useRef(0); // 재연결 횟수 저장
+
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
       console.log('토큰, 로그인 문제');
@@ -19,7 +21,12 @@ export const useSSE = () => {
     }
 
     const connectSSE = () => {
-      console.log('🔌 SSE: 연결 시도 중...');
+      if (reconnectAttemptsRef.current >= 3) {
+        console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
+        return;
+      }
+
+      console.log(`🔌 SSE: 연결 시도 중... (재연결 횟수: ${reconnectAttemptsRef.current})`);
 
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -36,6 +43,7 @@ export const useSSE = () => {
 
       eventSource.addEventListener('open', () => {
         console.log('✅ SSE: 연결 성공!');
+        reconnectAttemptsRef.current = 0; // 연결 성공하면 재연결 횟수 초기화
       });
 
       eventSource.addEventListener('alarm', (event: any) => {
@@ -65,39 +73,27 @@ export const useSSE = () => {
       });
 
       eventSource.addEventListener('error', (event) => {
-        console.error('❌ SSE: 오류 발생!', event);
+        console.error('❌ SSE: 오류 발생!');
+
         eventSource.close();
+
+        if (reconnectAttemptsRef.current < 3) {
+          reconnectAttemptsRef.current += 1;
+          console.warn(
+            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
+          );
+          setTimeout(connectSSE, 1000);
+        } else {
+          console.error('🚫 SSE: 최대 재연결 횟수 초과. 더 이상 재연결하지 않습니다.');
+        }
       });
     };
 
     connectSSE();
 
-    // 5초마다 연결 상태 확인
-    const interval = setInterval(() => {
-      if (eventSourceRef.current?.readyState === 2) {
-        console.warn('⚠️ SSE: 연결이 끊어졌습니다. 다시 연결 시도...');
-        eventSourceRef.current?.close();
-        setTimeout(connectSSE, 1000);
-      } else {
-        console.log('🟢 SSE: 연결 정상 유지 중...');
-      }
-    }, 5000);
-
-    // visibilitychange 이벤트로 화면이 보이면 다시 연결
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        console.log('👀 화면이 다시 보입니다. SSE 재연결 시도...');
-        connectSSE();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
       console.log('🔴 SSE: 연결 해제');
       eventSourceRef.current?.close();
-      clearInterval(interval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isAuthenticated, accessToken]);
 };

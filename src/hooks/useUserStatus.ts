@@ -1,36 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getUserStatus } from '@/apis/user';
 
-function useUserStatus(loginId: string) {
-  const [isChatting, setIsChatting] = useState(true);
+export function useUserStatus(loginId: string) {
+  const { data } = useQuery({
+    queryKey: ['userStatus', loginId],
+    queryFn: () => (loginId ? getUserStatus(loginId) : Promise.resolve(null)),
+    enabled: !!loginId,
+    staleTime: 1000 * 60,
+  });
 
-  useEffect(() => {
-    const eventSource = new EventSource(
-      `http://43.203.98.65:8080/api/userStatus/subscribe?loginId=${loginId}`,
-    );
-
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data); // 서버에서 오는 데이터가 JSON 형식이라면 파싱
-        console.log('SSE 데이터수신:', data);
-
-        // 여기서 받은 데이터에 따라 상태 업데이트
-        setIsChatting(data.isChatting); // 예제에서는 `isChatting`을 받는다고 가정
-      } catch (error) {
-        console.error('SSE 데이터 처리 중 오류:', error);
-      }
-    };
-
-    eventSource.onerror = (error) => {
-      console.error('SSE 연결 오류:', error);
-      eventSource.close(); // 오류 발생 시 연결 종료
-    };
-
-    return () => {
-      eventSource.close(); // 컴포넌트가 언마운트되면 연결 종료
-    };
-  }, [loginId]);
-
-  return { isChatting };
+  return {
+    isChatting: data?.data?.chatStatus === 'CHATTING',
+    onlineStatus: data?.data?.onlineStatus ?? null,
+    lastActive: data?.data?.lastActiveStr ?? null,
+    userLoginId: data?.data?.loginId ?? null,
+  };
 }
-
-export default useUserStatus;

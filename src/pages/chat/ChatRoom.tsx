@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/ko';
+import { useSheetStore } from '@/store/sheetStore';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -38,6 +39,7 @@ interface ChatRoomDetail {
 }
 
 export default function ChatRoom({}: ChatRoomProps) {
+  const { setRequesterInfo } = useSheetStore();
   const { currentChatRoomId, setCurrentChatRoomId, pastChatRoomId, setPastChatRoomId } =
     useChatStore();
   const chatRoomId = currentChatRoomId || pastChatRoomId;
@@ -227,18 +229,33 @@ export default function ChatRoom({}: ChatRoomProps) {
       );
     });
 
-    return [myChat, otherChat, badWordFilter];
+    //disconnect 구독
+    const disconnection: StompSubscription = client.subscribe(
+      '/topic/disconnect',
+      function (message) {
+        const disconnectData = JSON.parse(message.body);
+        console.log('연결 종료 알림:', disconnectData);
+        setChatDisabled(true);
+        setEndTime(0);
+      },
+    );
+
+    return [myChat, otherChat, badWordFilter, disconnection];
   };
 
   // 웹소켓 연결 해제
   const disconnect = () => {
     if (stompClient) {
+      console.log('웹소켓 연결 해제');
       stompClient.deactivate();
       setStompClient(null);
       setMessages([]);
-      console.log('웹소켓 연결 해제');
     }
   };
+
+  useEffect(() => {
+    useChatStore.getState().setDisconnect(disconnect);
+  }, []);
 
   // 메시지 전송
   const sendMessage = () => {
@@ -297,19 +314,16 @@ export default function ChatRoom({}: ChatRoomProps) {
       disconnect();
       setCurrentChatRoomId(null);
       setPastChatRoomId(null);
+      setRequesterInfo(null, '');
     };
   }, []);
 
-  useEffect(() => {
-    console.log('status', chatRoomDetail?.status);
-  }, [chatRoomDetail]);
+  // useEffect(() => {
+  //   console.log('status', chatRoomDetail?.status);
+  // }, [chatRoomDetail]);
 
   //상대가 나갈 시 '대화가 종료되었습니다' 메세지 추가
   //입력 창, 버튼 비활성화
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -365,13 +379,7 @@ export default function ChatRoom({}: ChatRoomProps) {
             className={chatDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
             disabled={chatDisabled}
           >
-            <p
-              className={
-                chatDisabled ? 'text-gray-30' : 'text-primary-normal'
-              }
-            >
-              연장 요청
-            </p>
+            <p className={chatDisabled ? 'text-gray-30' : 'text-primary-normal'}>연장 요청</p>
           </button>
         </div>
         <div className="flex gap-1 items-end">

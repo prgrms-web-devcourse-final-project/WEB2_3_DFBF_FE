@@ -10,6 +10,7 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
   const { requesterInfo, currentRecord, closeAllSheets, closeSheet } = useSheetStore(); // 시트관리
   const { openModal, closeModal } = useModalStore(); // 모달관리
   const { pastRecord } = useChatStore();
+  const { setCurrentChatRoomId } = useChatStore();
 
   //채팅 요청 취소(요청 보낸 사람)
   const cancel = async () => {
@@ -45,6 +46,7 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
       );
       if (code === 200) {
         const chatRoomId = data.chatRoomId;
+        setCurrentChatRoomId(chatRoomId);
         navigate(`/chatroom/${chatRoomId}`);
         closeAllSheets();
       } else {

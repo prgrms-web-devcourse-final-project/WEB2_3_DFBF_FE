@@ -7,6 +7,9 @@ interface ChatStore {
   setPastChatRoomId: (id: number | null) => void;
   pastRecord: ChatHistory | null;
   setPastRecord: (record: ChatHistory | null) => void;
+
+  disconnect: () => void;
+  setDisconnect: (fn: () => void) => void;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -16,6 +19,9 @@ export const useChatStore = create<ChatStore>((set) => ({
   setPastChatRoomId: (id) => set({ pastChatRoomId: id }),
   pastRecord: null,
   setPastRecord: (record) => set({ pastRecord: record }),
+
+  disconnect: () => {},
+  setDisconnect: (fn) => set({ disconnect: fn }),
 }));
 
 // 요청 받는 사람 입장

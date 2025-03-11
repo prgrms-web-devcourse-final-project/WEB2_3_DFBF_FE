@@ -1,5 +1,6 @@
 import { cancelChatRequest, createChatroom, postRejectChat } from '@/apis/chat';
 import Button from '@/components/Button';
+import { useChatStore } from '@/store/chatStore';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { useNavigate } from 'react-router';
@@ -8,16 +9,19 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
   const navigate = useNavigate();
   const { requesterInfo, currentRecord, closeAllSheets, closeSheet } = useSheetStore(); // 시트관리
   const { openModal, closeModal } = useModalStore(); // 모달관리
+  const { pastRecord } = useChatStore();
 
   //채팅 요청 취소(요청 보낸 사람)
   const cancel = async () => {
-    if (!currentRecord?.recordId) {
+    if (!currentRecord?.recordId && !pastRecord?.recordId) {
       console.log('record가 존재하지 않습니다');
       return;
     }
     try {
       console.log(currentRecord);
-      const { code } = await cancelChatRequest(currentRecord.recordId);
+      const { code } = await cancelChatRequest(
+        currentRecord?.recordId || Number(pastRecord?.recordId),
+      );
       if (code === 200) {
         console.log('취소 요청 성공');
         closeSheet('isRequestSendingSheetOpen');

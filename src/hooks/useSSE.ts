@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/store/authStore';
+import { useChatStore } from '@/store/chatStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useEffect, useRef } from 'react';
@@ -8,8 +9,11 @@ export const useSSE = () => {
   const navigate = useNavigate();
   const { openSheet, closeSheet, setRequesterInfo, setChatConnectFail, closeAllSheets } =
     useSheetStore();
+  const { setCurrentChatRoomId } = useChatStore();
   const { isAuthenticated, accessToken } = useAuthStore();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
+  const reconnectAttemptsRef = useRef(0); // 재연결 횟수 저장
+
   useEffect(() => {
     if (!isAuthenticated || !accessToken) {
       console.log('토큰, 로그인 문제');
@@ -17,14 +21,19 @@ export const useSSE = () => {
     }
 
     const connectSSE = () => {
-      console.log('🔌 SSE: 연결 시도 중...');
+      if (reconnectAttemptsRef.current >= 3) {
+        console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
+        return;
+      }
+
+      console.log(`🔌 SSE: 연결 시도 중... (재연결 횟수: ${reconnectAttemptsRef.current})`);
 
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
 
       eventSourceRef.current = new EventSourcePolyfill(
-        `http://43.203.98.65:8080/api/alert/connect`,
+        `${import.meta.env.VITE_API_URL}/api/alert/connect`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         },
@@ -34,12 +43,13 @@ export const useSSE = () => {
 
       eventSource.addEventListener('open', () => {
         console.log('✅ SSE: 연결 성공!');
+        reconnectAttemptsRef.current = 0; // 연결 성공하면 재연결 횟수 초기화
       });
 
       eventSource.addEventListener('alarm', (event: any) => {
         console.log('📩 SSE: 채팅 요청 수신!', JSON.parse(event.data));
-        const { data } = JSON.parse(event.data);
-        setRequesterInfo(data.emotionRecordId, data.nickname);
+        const { emotionRecordId, nickname } = JSON.parse(event.data);
+        setRequesterInfo(emotionRecordId, nickname);
         openSheet('isRequestReceivingSheetOpen');
       });
 
@@ -56,44 +66,34 @@ export const useSSE = () => {
       eventSource.addEventListener('accept', (event: any) => {
         console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
         const { chatRoomId } = JSON.parse(event.data);
+
+        setCurrentChatRoomId(chatRoomId);
         closeAllSheets();
         navigate(`/chatroom/${chatRoomId}`);
       });
 
       eventSource.addEventListener('error', (event) => {
-        console.error('❌ SSE: 오류 발생!', event);
+        console.error('❌ SSE: 오류 발생!');
+
         eventSource.close();
+
+        if (reconnectAttemptsRef.current < 3) {
+          reconnectAttemptsRef.current += 1;
+          console.warn(
+            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
+          );
+          setTimeout(connectSSE, 1000);
+        } else {
+          console.error('🚫 SSE: 최대 재연결 횟수 초과. 더 이상 재연결하지 않습니다.');
+        }
       });
     };
 
     connectSSE();
 
-    // 5초마다 연결 상태 확인
-    const interval = setInterval(() => {
-      if (eventSourceRef.current?.readyState === 2) {
-        console.warn('⚠️ SSE: 연결이 끊어졌습니다. 다시 연결 시도...');
-        eventSourceRef.current?.close();
-        setTimeout(connectSSE, 1000);
-      } else {
-        console.log('🟢 SSE: 연결 정상 유지 중...');
-      }
-    }, 5000);
-
-    // visibilitychange 이벤트로 화면이 보이면 다시 연결
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        console.log('👀 화면이 다시 보입니다. SSE 재연결 시도...');
-        connectSSE();
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
       console.log('🔴 SSE: 연결 해제');
       eventSourceRef.current?.close();
-      clearInterval(interval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isAuthenticated, accessToken]);
 };

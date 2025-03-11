@@ -1,3 +1,4 @@
+import { useChatStore } from '@/store/chatStore';
 import { useSheetStore } from '@/store/sheetStore';
 
 interface ChatRequestMessageProps {
@@ -7,12 +8,15 @@ interface ChatRequestMessageProps {
 function ChatRequestMessage({ type }: ChatRequestMessageProps) {
   const { requesterInfo } = useSheetStore();
   const { currentRecord } = useSheetStore();
+  const { pastRecord } = useChatStore();
   if (type === 'sending') {
     return (
       <>
         <p className="h4-b text-center text-gray-50 mb-2">
-          <span className="text-primary-normal">{currentRecord?.nickName || '테스트'}</span>님에게
-          대화 요청 중...
+          <span className="text-primary-normal">
+            {currentRecord?.nickName || pastRecord?.nickname}
+          </span>
+          님에게 대화 요청 중...
         </p>
         <p className="caption-r text-center text-gray-60 mb-5">
           곧 새로운 연결이 시작됩니다. <br /> 잠시만 기다려주세요!

@@ -38,7 +38,8 @@ export default function MusicCard({
   //edit 페이지 이면 유튜브 로드 X
   const isUserEditPage = location.pathname === '/mypage/edit';
   // 음악 선택 여부에 따른 텍스트 스타일
-  const artistTextStyle = isMusicSelect ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
+  const artistTextStyle =
+    isMusicSelect || !!artist ? 'caption-r' : 'font-saeeum text-[14px] leading-[18px]';
 
   const { isMusicSheetOpen, openSheet } = useSheetStore();
 
@@ -55,7 +56,7 @@ export default function MusicCard({
         const currentMusicId = spotifyId;
         const res = await getSpotifyVideoId(currentMusicId);
         const savedVideoId = res.data;
-        console.log(savedVideoId)
+        console.log(savedVideoId);
         setCurrentVideoId(savedVideoId);
       } catch (error) {
         console.log(error);
@@ -90,7 +91,7 @@ export default function MusicCard({
 
   return (
     <>
-      <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white/80 card-shadow">
+      <div className="flex gap-2 p-[10px] w-[296px] rounded-lg bg-white card-shadow ">
         <div className="w-[58px] h-[58px] rounded-lg overflow-hidden flex-shrink-0">
           <img
             className="object-cover w-full h-full"

@@ -5,6 +5,8 @@ interface ChatStore {
   setCurrentChatRoomId: (id: number | null) => void;
   pastChatRoomId: number | null;
   setPastChatRoomId: (id: number | null) => void;
+  pastRecord: ChatHistory | null;
+  setPastRecord: (record: ChatHistory | null) => void;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -12,6 +14,8 @@ export const useChatStore = create<ChatStore>((set) => ({
   setCurrentChatRoomId: (id) => set({ currentChatRoomId: id }),
   pastChatRoomId: null,
   setPastChatRoomId: (id) => set({ pastChatRoomId: id }),
+  pastRecord: null,
+  setPastRecord: (record) => set({ pastRecord: record }),
 }));
 
 // 요청 받는 사람 입장

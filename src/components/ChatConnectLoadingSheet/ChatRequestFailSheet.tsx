@@ -3,10 +3,12 @@ import Button from '@/components/Button';
 import sad from '@/assets/icons/sad-icon.svg';
 import { useNavigate } from 'react-router';
 import { useSheetStore } from '@/store/sheetStore';
+import { useChatStore } from '@/store/chatStore';
 
 function ChatRequestFailSheet() {
   const navigate = useNavigate();
   const { currentRecord, closeSheet } = useSheetStore();
+  const { pastRecord } = useChatStore();
   const handleClickToHome = () => {
     closeSheet('isRequestSendingSheetOpen');
     closeSheet('isRequestReceivingSheetOpen');
@@ -17,7 +19,9 @@ function ChatRequestFailSheet() {
       <div className="relative w-full max-w-[600px] h-screen px-3 bg-background flex flex-col justify-center items-center">
         <img src={logo} className="w-[186px] h-[40px] mb-5" alt="로고" />
         <p className="h4-b text-center text-gray-50 mb-2">
-          <span className="text-primary-normal">{currentRecord?.nickName}</span>
+          <span className="text-primary-normal">
+            {currentRecord?.nickName || pastRecord?.nickname}
+          </span>
           <span>님과 연결되지 않았어요</span>
         </p>
 

@@ -19,38 +19,38 @@ interface ChatHistoryCardProps {
 
 export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
   const navigate = useNavigate();
-  const { setPastChatRoomId } = useChatStore();
-  // const { openSheet } = useSheetStore();
-  // const { openModal, closeModal } = useModalStore();
+  const { setPastChatRoomId, setPastRecord } = useChatStore();
+  const { openSheet } = useSheetStore();
+  const { openModal, closeModal } = useModalStore();
 
   const createdAt = dayjs(item.createdAt).tz('Asia/Seoul').format('YYYY.MM.DD');
 
   //채팅 요청
   //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
-  // const request = async () => {
-  //   if (!recordId) {
-  //     console.log('recordId가 존재하지 않습니다.');
-  //     return;
-  //   }
-  //   try {
-  //     const { code } = await requestChat(recordId);
+  const request = async () => {
+    if (!item.recordId) {
+      console.log('recordId가 존재하지 않습니다.');
+      return;
+    }
+    try {
+      const { code } = await requestChat(Number(item.recordId));
 
-  //     //200
-  //     if (code === 200) {
-  //       openSheet('isRequestSendingSheetOpen');
-  //     } else {
-  //       throw new Error('잠시 후 다시 시도해 주세요');
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     openModal({
-  //       title: '잠시 후 다시 시도해 주세요',
-  //       onConfirm: () => {
-  //         closeModal();
-  //       },
-  //     });
-  //   }
-  // };
+      //200
+      if (code === 200) {
+        openSheet('isRequestSendingSheetOpen');
+      } else {
+        throw new Error('잠시 후 다시 시도해 주세요');
+      }
+    } catch (error) {
+      console.log(error);
+      openModal({
+        title: '잠시 후 다시 시도해 주세요',
+        onConfirm: () => {
+          closeModal();
+        },
+      });
+    }
+  };
 
   const handleChatHistory = () => {
     setPastChatRoomId(item.chatRoomId);
@@ -59,6 +59,8 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
 
   const handleRequest = (e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
+    setPastRecord(item);
+    request();
   };
 
   return (

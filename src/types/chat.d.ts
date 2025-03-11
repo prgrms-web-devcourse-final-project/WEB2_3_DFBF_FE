@@ -8,4 +8,5 @@ interface ChatHistory {
   albumImage: string | null;
   createdAt: string; // 또는 Date
   comment: string;
+  recordId: string;
 }

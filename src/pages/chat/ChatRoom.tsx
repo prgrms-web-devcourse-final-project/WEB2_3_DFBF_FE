@@ -9,12 +9,12 @@ import { loadChatHistoryDev, loadChatRoomDetail } from '@/apis/chat';
 import { useAuthStore } from '@/store/authStore';
 import { useScrollStore } from '@/store/scrollStore';
 import { useChatStore } from '@/store/chatStore';
+import { useSheetStore } from '@/store/sheetStore';
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/ko';
-import { useSheetStore } from '@/store/sheetStore';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -100,14 +100,14 @@ export default function ChatRoom({}: ChatRoomProps) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // 모바일 여부 체크 (윈도우의 경우는 navigator.userAgent를 통해 체크 가능)
     if (!isMobile) {
-      if (event.key === 'Enter' && !event.shiftKey) {
+      if (event.nativeEvent.isComposing === false && event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         // 제출하는 로직을 여기에 작성
         sendMessage();
         console.log('폼 제출!');
       }
     } else {
-      if (event.key === 'Enter' && !event.shiftKey) {
+      if (event.nativeEvent.isComposing === false && event.key === 'Enter' && !event.shiftKey) {
         // 모바일에서 엔터 키를 누르면 줄바꿈을 할 수 있도록 preventDefault() 호출 안 함
         return;
       }
@@ -251,11 +251,11 @@ export default function ChatRoom({}: ChatRoomProps) {
       setStompClient(null);
       setMessages([]);
     }
-  };
+  };  
 
-  useEffect(() => {
+  useEffect(()=>{
     useChatStore.getState().setDisconnect(disconnect);
-  }, []);
+  },[stompClient])
 
   // 메시지 전송
   const sendMessage = () => {
@@ -287,16 +287,16 @@ export default function ChatRoom({}: ChatRoomProps) {
 
   // 10분 연장 요청
   // sse로 상대한테 보낸 후 연장
-  const handleExtendSession = () => {
-    if (stompClient) {
-      stompClient.publish({
-        destination: '/app/extendSession',
-        body: JSON.stringify({}), // 빈 JSON 객체 전달
-      });
+  // const handleExtendSession = () => {
+  //   if (stompClient) {
+  //     stompClient.publish({
+  //       destination: '/app/extendSession',
+  //       body: JSON.stringify({}), // 빈 JSON 객체 전달
+  //     });
 
-      setEndTime((prev) => prev + 60 * 1000 * 10); // 기존 종료 시간에 10분 추가
-    }
-  };
+  //     setEndTime((prev) => prev + 60 * 1000 * 10); // 기존 종료 시간에 10분 추가
+  //   }
+  // };
 
   useEffect(() => {
     loadChatRoomInfo();
@@ -306,21 +306,19 @@ export default function ChatRoom({}: ChatRoomProps) {
   //나갈 때 disconnect
   //중복 connect 안되게 조심
   useEffect(() => {
-    if (currentChatRoomId) connect();
-    else if (pastChatRoomId) fetchChatHistory();
-    else return;
+    if (currentChatRoomId) {
+      connect(); // 웹소켓 연결
+    } else if (pastChatRoomId) {
+      fetchChatHistory(); // 채팅 내역 가져오기
+    }
 
     return () => {
-      disconnect();
+      // disconnect();
       setCurrentChatRoomId(null);
       setPastChatRoomId(null);
       setRequesterInfo(null, '');
     };
-  }, []);
-
-  // useEffect(() => {
-  //   console.log('status', chatRoomDetail?.status);
-  // }, [chatRoomDetail]);
+  }, [currentChatRoomId, pastChatRoomId]);
 
   //상대가 나갈 시 '대화가 종료되었습니다' 메세지 추가
   //입력 창, 버튼 비활성화
@@ -374,13 +372,13 @@ export default function ChatRoom({}: ChatRoomProps) {
           <p className="text-gray-80">
             남은시간: <span className="text-primary-normal">{formattedTime}</span>
           </p>
-          <button
+          {/* <button
             onClick={handleExtendSession}
             className={chatDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
             disabled={chatDisabled}
           >
             <p className={chatDisabled ? 'text-gray-30' : 'text-primary-normal'}>연장 요청</p>
-          </button>
+          </button> */}
         </div>
         <div className="flex gap-1 items-end">
           <textarea

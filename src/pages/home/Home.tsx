@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import SearchBar from '@/components/SearchBar';
-import MainCard from '@/components/MainCard';
+import MainCard from '@/pages/home/components/MainCard';
 import { useEffect, useState } from 'react';
 import EmotionFilter from '@/components/EmotionFilter';
 import { useSheetStore } from '@/store/sheetStore';
@@ -45,20 +45,18 @@ function Home() {
     queryKey: ['emotionRecords', selectedPostMusic?.spotifyId, selectedEmotion],
     queryFn: async ({ pageParam }) => {
       // console.log('pageParam:', pageParam);
-      try {
-        const { data } = await getEmotionRecords(
-          pageParam,
-          10,
-          selectedPostMusic?.spotifyId,
-          selectedEmotion,
-        );
 
-        return data;
-      } catch (error) {
-        console.error('감정 기록 불러오기 에러', error);
-        return { records: [], currentPage: 1, totalPages: 1 };
-      }
+      const { data } = await getEmotionRecords(
+        pageParam,
+        10,
+        selectedPostMusic?.spotifyId,
+        selectedEmotion,
+      );
+
+      console.log('감정 기록 불러오기', data);
+      return data;
     },
+
     getNextPageParam: (last) => {
       if (last.currentPage < last.totalPages) {
         return last.currentPage + 1;
@@ -137,7 +135,6 @@ function Home() {
                         artist={record.spotifyMusic.artist} // 가수
                         comment={record.comment} // 글 내용
                         createdAt={formatDate(record.createdAt)} // 날짜
-                        isChatting={true} // 현재 채팅중인지
                       />
                     </div>
                   </div>
@@ -156,9 +153,7 @@ function Home() {
           </div>
         )}
       </div>
-      {selectedRecordId !== null && (
-        <CardDetailModal recordId={selectedRecordId} isChatting={false} />
-      )}
+      {selectedRecordId !== null && <CardDetailModal recordId={selectedRecordId} />}
       {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}
     </div>

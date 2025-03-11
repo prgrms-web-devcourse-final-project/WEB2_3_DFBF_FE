@@ -72,7 +72,7 @@ export const useSSE = () => {
         navigate(`/chatroom/${chatRoomId}`);
       });
 
-      eventSource.addEventListener('error', (event) => {
+      eventSource.addEventListener('error', () => {
         console.error('❌ SSE: 오류 발생!');
 
         eventSource.close();

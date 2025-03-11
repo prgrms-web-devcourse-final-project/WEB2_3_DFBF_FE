@@ -5,9 +5,10 @@ import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useEffect, useRef, useState } from 'react';
 import { MAX_CHAT_MESSAGE_LENGTH } from '@/constants';
-import { loadChatHistoryDev } from '@/apis/chat';
+import { loadChatHistoryDev, loadChatRoomDetail } from '@/apis/chat';
 import { useAuthStore } from '@/store/authStore';
 import { useScrollStore } from '@/store/scrollStore';
+import { useChatStore } from '@/store/chatStore';
 
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -26,11 +27,21 @@ interface ChatMessage {
   createdAt?: string;
   isMyMessage?: boolean;
 }
+interface ChatRoomDetail {
+  spotifyId: string;
+  title: string;
+  artist: string;
+  albumImage: string;
+  vedioId: string;
+  status: string;
+  createdAt: string;
+}
 
 export default function ChatRoom({}: ChatRoomProps) {
-  // const [chatRoomId, setChatRoomId] = useState<number | null>(7);
-  const chatRoomId = 1;
-  // const [myUserData, setMyUserData] = useState<ChatUser | null>(null);
+  const { currentChatRoomId, setCurrentChatRoomId, pastChatRoomId, setPastChatRoomId } =
+    useChatStore();
+  const chatRoomId = currentChatRoomId || pastChatRoomId;
+  const [chatRoomDetail, setChatRoomDetail] = useState<ChatRoomDetail | null>(null);
 
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -39,6 +50,8 @@ export default function ChatRoom({}: ChatRoomProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const { scrollContainerRefCurrent } = useScrollStore();
+
+  const [chatDisabled, setChatDisabled] = useState(false);
 
   // 최신 메시지로 스크롤
   useEffect(() => {
@@ -49,6 +62,34 @@ export default function ChatRoom({}: ChatRoomProps) {
   }, [messages, scrollContainerRefCurrent]);
 
   const MAX_LINES = 8;
+
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [endTime, setEndTime] = useState(new Date().getTime() + 60 * 1000 * 10);
+  //타이머 10분
+  //새로고침 해도 남은 시간 유지하려면 로컬스토리지?
+  useEffect(() => {
+    if (!currentChatRoomId) {
+      setTimeLeft(0);
+      setChatDisabled(true);
+      return; // 타이머 설정을 하지 않음
+    }
+
+    const interval = setInterval(() => {
+      const diff = Math.max(0, Math.ceil((endTime - new Date().getTime()) / 1000)); // 남은 초 계산
+
+      setTimeLeft(diff);
+
+      if (diff <= 0) {
+        clearInterval(interval);
+        setTimeLeft(0); // 0초로 고정
+        setChatDisabled(true);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval); //interval 정리
+  }, [endTime]);
+
+  const formattedTime = dayjs.duration(timeLeft, 'seconds').format('mm:ss');
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageInput(e.target.value);
@@ -91,6 +132,15 @@ export default function ChatRoom({}: ChatRoomProps) {
     adjustHeight(); // 텍스트가 변경될 때마다 높이를 조정
   }, [messageInput]);
 
+  //채팅방 상세 정보 가져오기
+  //노래 정보, videoId, status(CONNECTED 등), createdAt
+  const loadChatRoomInfo = async () => {
+    if (!chatRoomId) return;
+    const data = await loadChatRoomDetail(chatRoomId);
+    console.log(data);
+    setChatRoomDetail(data.data);
+  };
+
   //웹소켓 연결
   const connect = () => {
     const token = useAuthStore.getState().accessToken;
@@ -110,6 +160,7 @@ export default function ChatRoom({}: ChatRoomProps) {
 
     client.activate();
     setStompClient(client);
+    loadChatRoomInfo();
   };
   // 채팅 내역 불러오기
   const fetchChatHistory = async () => {
@@ -125,7 +176,7 @@ export default function ChatRoom({}: ChatRoomProps) {
         console.warn('No chat history found (204 No Content)');
         return;
       }
-      setMessages(response.data);
+      setMessages(response.data || []);
     } catch (error) {
       console.error('Error fetching chat history:', error);
     }
@@ -135,22 +186,48 @@ export default function ChatRoom({}: ChatRoomProps) {
   const subscribeToMessages = (client: Client) => {
     if (!client.connected) return;
 
-    // 1:1 메시지 받기
-    const privateChat: StompSubscription = client.subscribe(
+    // 내 메세지 구독
+    const myChat: StompSubscription = client.subscribe('/user/queue/mychat', (message) => {
+      const chat: ChatMessage = JSON.parse(message.body);
+      console.log('my', chat);
+
+      setMessages((prev) => (Array.isArray(prev) ? [...prev, chat] : [chat]));
+    });
+    // 전체 메세지 구독
+    const otherChat: StompSubscription = client.subscribe(
       `/queue/chat-${chatRoomId}`,
       (message) => {
         const chat: ChatMessage = JSON.parse(message.body);
-        setMessages((prev) => [...prev, chat]);
+        console.log('other', chat);
+
+        // 중복 여부를 확인: createdAt과 message 텍스트가 동일하면 중복으로 판단
+        setMessages((prev) => {
+          if (Array.isArray(prev)) {
+            const duplicate = prev.find(
+              (m) => m.createdAt === chat.createdAt && m.message === chat.message,
+            );
+            // 중복이면 추가하지 않음
+            if (duplicate) {
+              return prev;
+            }
+            return [...prev, chat];
+          }
+          return [chat];
+        });
       },
     );
 
     // 나쁜 말 필터링 메시지 받기
     const badWordFilter: StompSubscription = client.subscribe('/topic/badword', (message) => {
       if (!chatRoomId) return;
-      setMessages((prev) => [...prev, { chatRoomId, message: `[나쁜 말 감지] ${message.body}` }]);
+      setMessages((prev) =>
+        Array.isArray(prev)
+          ? [...prev, { chatRoomId, message: `[나쁜 말 감지] ${message.body}` }]
+          : [{ chatRoomId, message: `[나쁜 말 감지] ${message.body}` }],
+      );
     });
 
-    return [privateChat, badWordFilter];
+    return [myChat, otherChat, badWordFilter];
   };
 
   // 웹소켓 연결 해제
@@ -192,24 +269,40 @@ export default function ChatRoom({}: ChatRoomProps) {
   };
 
   // 10분 연장 요청
-  // const handleExtendSession = () => {
-  //   if (stompClient) {
-  //     stompClient.publish({
-  //       destination: '/app/extendSession',
-  //       body: JSON.stringify({}), // 빈 JSON 객체 전달
-  //     });
-  //   }
-  // };
+  // sse로 상대한테 보낸 후 연장
+  const handleExtendSession = () => {
+    if (stompClient) {
+      stompClient.publish({
+        destination: '/app/extendSession',
+        body: JSON.stringify({}), // 빈 JSON 객체 전달
+      });
+
+      setEndTime((prev) => prev + 60 * 1000 * 10); // 기존 종료 시간에 10분 추가
+    }
+  };
+
+  useEffect(() => {
+    loadChatRoomInfo();
+  }, []);
 
   //채팅방 입장 시 connect
   //나갈 때 disconnect
+  //중복 connect 안되게 조심
   useEffect(() => {
-    connect();
+    if (currentChatRoomId) connect();
+    else if (pastChatRoomId) fetchChatHistory();
+    else return;
 
     return () => {
       disconnect();
+      setCurrentChatRoomId(null);
+      setPastChatRoomId(null);
     };
   }, []);
+
+  useEffect(() => {
+    console.log('status', chatRoomDetail?.status);
+  }, [chatRoomDetail]);
 
   //상대가 나갈 시 '대화가 종료되었습니다' 메세지 추가
   //입력 창, 버튼 비활성화
@@ -227,7 +320,7 @@ export default function ChatRoom({}: ChatRoomProps) {
     <div className="relative w-full max-w-[600px] mx-auto bottom-padding-chat">
       {/* 상단 고정된 뮤직 플레이어 */}
       <div className="fixed top-[55px] left-1/2 -translate-x-1/2 w-full max-w-[600px]">
-        <ChatMusicPlayer />
+        <ChatMusicPlayer chatRoomDetail={chatRoomDetail} />
       </div>
 
       {/* 채팅 메시지 영역 */}
@@ -252,7 +345,7 @@ export default function ChatRoom({}: ChatRoomProps) {
           })}
 
         {/* 마지막 메시지의 시간 표시 */}
-        {!!messages.length && (
+        {!!(messages && messages.length) && (
           <p className="text-gray-500 text-xs text-center mt-2">
             {dayjs(messages.at(-1)?.createdAt)
               .tz('Asia/Seoul')
@@ -262,18 +355,23 @@ export default function ChatRoom({}: ChatRoomProps) {
         )}
       </div>
 
-      {/* <div>
-        <Button onClick={connect}>채팅 연결</Button>
-        <Button onClick={disconnect}>채팅 연결 해제</Button>
-      </div> */}
-
       <div className="bottom-padding-nav px-3 pt-[5px] bg-white max-w-[600px] fixed bottom-0 w-full left-1/2 -translate-x-1/2 z-41">
         <div className="flex justify-between mb-2 caption-b">
           <p className="text-gray-80">
-            남은시간: <span className="text-primary-normal">08:45</span>
+            남은시간: <span className="text-primary-normal">{formattedTime}</span>
           </p>
-          <button className="cursor-pointer">
-            <p className="text-primary-normal">연장 요청 (0/2)</p>
+          <button
+            onClick={handleExtendSession}
+            className={chatDisabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+            disabled={chatDisabled}
+          >
+            <p
+              className={
+                chatDisabled ? 'text-gray-30' : 'text-primary-normal'
+              }
+            >
+              연장 요청
+            </p>
           </button>
         </div>
         <div className="flex gap-1 items-end">
@@ -288,8 +386,13 @@ export default function ChatRoom({}: ChatRoomProps) {
             className="flex-1 border min-h-[32px] border-primary-hover rounded-2xl py-[6px] px-3 outline-0 caption-m text-gray-80 placeholder:text-gray-50 resize-none overflow-y-hidden"
             placeholder="메시지 입력"
             onInput={adjustHeight}
+            disabled={chatDisabled}
           />
-          <Button onClick={sendMessage} className="w-[32px] h-[32px] rounded-full">
+          <Button
+            onClick={sendMessage}
+            variant={chatDisabled ? 'disabled' : 'primary'}
+            className="w-[32px] h-[32px] rounded-full"
+          >
             <img src={sendIcon} alt="send" />
           </Button>
         </div>

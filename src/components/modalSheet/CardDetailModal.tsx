@@ -30,6 +30,7 @@ function CardDetailModal({ isChatting, recordId, handleDelete, handleEdit }: Car
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log(recordId)
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
 
     setCurrentRecord(data.data);

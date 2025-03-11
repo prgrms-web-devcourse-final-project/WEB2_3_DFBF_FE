@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/store/authStore';
+import { useChatStore } from '@/store/chatStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useEffect, useRef } from 'react';
@@ -8,6 +9,7 @@ export const useSSE = () => {
   const navigate = useNavigate();
   const { openSheet, closeSheet, setRequesterInfo, setChatConnectFail, closeAllSheets } =
     useSheetStore();
+  const { setCurrentChatRoomId } = useChatStore();
   const { isAuthenticated, accessToken } = useAuthStore();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
   useEffect(() => {
@@ -56,6 +58,8 @@ export const useSSE = () => {
       eventSource.addEventListener('accept', (event: any) => {
         console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
         const { chatRoomId } = JSON.parse(event.data);
+
+        setCurrentChatRoomId(chatRoomId);
         closeAllSheets();
         navigate(`/chatroom/${chatRoomId}`);
       });

@@ -3,60 +3,66 @@ import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play.svg';
 import pause from '@assets/icons/pause.svg';
 import { useYouTubeStore } from '@/store/youtubeStore';
-import { useQuery } from '@tanstack/react-query';
-import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
+// import { useQuery } from '@tanstack/react-query';
+// import { getEmotionRecordById, getSpotifyVideoId } from '@/apis/emotionRecord';
 
-export default function ChatMusicPlayer() {
+interface ChatRoomDetail {
+  spotifyId: string;
+  title: string;
+  artist: string;
+  albumImage: string;
+  vedioId: string;
+  status: string;
+  createdAt: string;
+}
+
+interface ChatMusicPlayerProps {
+  chatRoomDetail: ChatRoomDetail | null;
+}
+
+export default function ChatMusicPlayer({ chatRoomDetail }: ChatMusicPlayerProps) {
   const [moveDistance, setMoveDistance] = useState(0);
   const titleRef = useRef<HTMLParagraphElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  //임시
-  const recordId = 7;
-  //sse로 전달받은 recordId
-  const { data } = useQuery({
-    queryKey: ['emotionRecord', recordId],
-    queryFn: () => getEmotionRecordById(recordId),
-  });
-
   const { setVideoId, players, setIsPlaying } = useYouTubeStore();
   const isPlaying = players['2']?.isPlaying || false;
 
-  const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  // const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [isError, setIsError] = useState(false);
   //저장되어있는 videoId 가져오기
-  useEffect(() => {
-    const getVideoId = async () => {
-      console.log(data);
-      if (!data?.data?.spotifyMusic) return;
+  // useEffect(() => {
+  //   const getVideoId = async () => {
+  //     console.log(data);
+  //     if (!data?.data?.spotifyMusic) return;
 
-      try {
-        setIsLoading(true);
-        const currentMusicId = data.data.spotifyMusic.spotifyId;
-        const res = await getSpotifyVideoId(currentMusicId);
-        const savedVideoId = res.data;
-        setCurrentVideoId(savedVideoId);
-      } catch (error) {
-        setIsError(true);
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getVideoId();
-  }, [data]);
+  //     try {
+  //       setIsLoading(true);
+  //       const currentMusicId = data.data.spotifyMusic.spotifyId;
+  //       const res = await getSpotifyVideoId(currentMusicId);
+  //       const savedVideoId = res.data;
+  //       setCurrentVideoId(savedVideoId);
+  //     } catch (error) {
+  //       setIsError(true);
+  //       console.log(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   getVideoId();
+  // }, [data]);
 
   const handlePlayButton = () => {
     setIsPlaying('2', (prev) => !prev);
   };
 
-  // videoId가 변경될 때마다 zustand store의 videoId를 업데이트
+  // zustand store의 videoId를 업데이트
   useEffect(() => {
-    if (currentVideoId) {
-      setVideoId('2', currentVideoId); // YouTube store의 videoId를 업데이트
+    if (chatRoomDetail?.vedioId) {
+      setVideoId('2', chatRoomDetail?.vedioId); // YouTube store의 videoId를 업데이트
     }
-  }, [currentVideoId]);
+  }, [chatRoomDetail]);
 
   // setTimeout을 사용해 렌더링이 완료된 후 측정하여 정확하게 측정
   useEffect(() => {
@@ -69,7 +75,7 @@ export default function ChatMusicPlayer() {
         setMoveDistance(titleWidth > containerWidth ? titleWidth - containerWidth : 0);
       }, 50); // 약간의 지연을 줘서 렌더링 이후 측정
     }
-  }, [data]);
+  }, [chatRoomDetail]);
 
   useEffect(() => {
     return () => {
@@ -79,46 +85,46 @@ export default function ChatMusicPlayer() {
   }, []);
 
   // 유튜브 비디오 로딩 중 처리
-  if (isLoading)
-    return (
-      <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
-        <div className="flex w-[calc(100%-28px)]">
-          <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
-          <div className="mx-2 flex-grow overflow-hidden relative">
-            <div ref={containerRef} className="w-full">
-              <p className="inline-block whitespace-nowrap body-m text-gray-80">로딩 중...</p>
-            </div>
-          </div>
-        </div>
-        <button className="cursor-pointer">
-          <img src={play} className="w-[28px]" alt="play" />
-        </button>
-      </div>
-    );
-  if (isError)
-    return (
-      <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
-        <div className="flex w-[calc(100%-28px)]">
-          <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
-          <div className="mx-2 flex-grow overflow-hidden relative">
-            <div ref={containerRef} className="w-full">
-              <p className="inline-block whitespace-nowrap body-m text-gray-80">
-                노래를 불러오는데 실패했습니다.
-              </p>
-            </div>
-          </div>
-        </div>
-        <button className="cursor-pointer">
-          <img src={play} className="w-[28px]" alt="play" />
-        </button>
-      </div>
-    );
+  // if (isLoading)
+  //   return (
+  //     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
+  //       <div className="flex w-[calc(100%-28px)]">
+  //         <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
+  //         <div className="mx-2 flex-grow overflow-hidden relative">
+  //           <div ref={containerRef} className="w-full">
+  //             <p className="inline-block whitespace-nowrap body-m text-gray-80">로딩 중...</p>
+  //           </div>
+  //         </div>
+  //       </div>
+  //       <button className="cursor-pointer">
+  //         <img src={play} className="w-[28px]" alt="play" />
+  //       </button>
+  //     </div>
+  //   );
+  // if (isError)
+  //   return (
+  //     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
+  //       <div className="flex w-[calc(100%-28px)]">
+  //         <img src={defaultImage} alt="album" className="w-[48px] h-[48px]" />
+  //         <div className="mx-2 flex-grow overflow-hidden relative">
+  //           <div ref={containerRef} className="w-full">
+  //             <p className="inline-block whitespace-nowrap body-m text-gray-80">
+  //               노래를 불러오는데 실패했습니다.
+  //             </p>
+  //           </div>
+  //         </div>
+  //       </div>
+  //       <button className="cursor-pointer">
+  //         <img src={play} className="w-[28px]" alt="play" />
+  //       </button>
+  //     </div>
+  //   );
 
   return (
     <div className="px-2 py-1 flex justify-between card-shadow rounded-lg mx-[46px] bg-white/90 backdrop-blur-[2px]">
       <div className="flex w-[calc(100%-28px)]">
         <img
-          src={data?.data?.spotifyMusic.albumImage}
+          src={chatRoomDetail?.albumImage}
           alt="album"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
@@ -142,11 +148,11 @@ export default function ChatMusicPlayer() {
                 } as React.CSSProperties
               }
             >
-              {data?.data?.spotifyMusic.title}
+              {chatRoomDetail?.title}
             </p>
           </div>
           <p className="inline-block whitespace-nowrap caption-r text-gray-60">
-            {data?.data?.spotifyMusic.artist}
+            {chatRoomDetail?.artist}
           </p>
         </div>
       </div>

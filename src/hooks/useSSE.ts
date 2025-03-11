@@ -24,7 +24,7 @@ export const useSSE = () => {
       }
 
       eventSourceRef.current = new EventSourcePolyfill(
-        `http://43.203.98.65:8080/api/alert/connect`,
+        `${import.meta.env.VITE_API_URL}/api/alert/connect`,
         {
           headers: { Authorization: `Bearer ${accessToken}` },
         },
@@ -38,8 +38,8 @@ export const useSSE = () => {
 
       eventSource.addEventListener('alarm', (event: any) => {
         console.log('📩 SSE: 채팅 요청 수신!', JSON.parse(event.data));
-        const { data } = JSON.parse(event.data);
-        setRequesterInfo(data.emotionRecordId, data.nickname);
+        const { emotionRecordId, nickname } = JSON.parse(event.data);
+        setRequesterInfo(emotionRecordId, nickname);
         openSheet('isRequestReceivingSheetOpen');
       });
 

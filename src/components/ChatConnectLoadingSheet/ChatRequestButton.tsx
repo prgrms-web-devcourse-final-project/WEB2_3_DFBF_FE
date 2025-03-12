@@ -1,4 +1,5 @@
 import { cancelChatRequest, createChatroom, postRejectChat } from '@/apis/chat';
+import { getEmotionRecordById } from '@/apis/emotionRecord';
 import Button from '@/components/Button';
 import { useChatStore } from '@/store/chatStore';
 import { useModalStore } from '@/store/modalStore';
@@ -7,7 +8,8 @@ import { useNavigate } from 'react-router';
 
 function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
   const navigate = useNavigate();
-  const { requesterInfo, currentRecord, closeAllSheets, closeSheet } = useSheetStore(); // 시트관리
+  const { requesterInfo, currentRecord, setCurrentRecord, closeAllSheets, closeSheet } =
+    useSheetStore(); // 시트관리
   const { openModal, closeModal } = useModalStore(); // 모달관리
   const { pastRecord } = useChatStore();
   const { setCurrentChatRoomId } = useChatStore();
@@ -46,6 +48,8 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
       );
       if (code === 200) {
         const chatRoomId = data.chatRoomId;
+        const res = await getEmotionRecordById(requesterInfo.emotionRecordId as number);
+        setCurrentRecord(res);
         setCurrentChatRoomId(chatRoomId);
         navigate(`/chatroom/${chatRoomId}`);
         closeAllSheets();

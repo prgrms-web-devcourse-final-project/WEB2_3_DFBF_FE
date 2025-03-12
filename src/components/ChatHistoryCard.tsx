@@ -53,6 +53,7 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
   };
 
   const handleChatHistory = () => {
+    setPastRecord(item);
     setPastChatRoomId(item.chatRoomId);
     navigate(`/chatroom/${item.chatRoomId}`);
   };

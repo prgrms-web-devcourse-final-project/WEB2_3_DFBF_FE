@@ -19,9 +19,9 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
   // 로고와 닉네임이 모두 숨겨진 경우 `justify-end`, 아니면 `justify-between`
   const headerClass = showLogo || showNickname ? 'justify-between' : 'justify-end';
 
-  const { pastRecord } = useChatStore();
+  const { pastRecord, setPastChatRoomId, setCurrentChatRoomId } = useChatStore();
 
-  const { requesterInfo, currentRecord } = useSheetStore();
+  const { requesterInfo, setRequesterInfo, currentRecord } = useSheetStore();
 
   const { openModal, closeModal } = useModalStore();
 
@@ -47,7 +47,9 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (!currentRecord) {
+            console.log('cr', currentRecord);
+            console.log('pr', pastRecord);
+            if (!pastRecord) {
               openModal({
                 title: '이 대화를 마무리할까요?',
                 message: '채팅을 종료하면 다시 복구할 수 없습니다',
@@ -71,6 +73,9 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
             } else {
               navigate('/chat');
             }
+            setCurrentChatRoomId(null);
+            setPastChatRoomId(null);
+            setRequesterInfo(null, '');
           }}
           className="cursor-pointer"
         >

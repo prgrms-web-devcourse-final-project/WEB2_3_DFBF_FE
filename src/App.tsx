@@ -18,7 +18,7 @@ import BlockList from '@/pages/blocklist/BlockList';
 import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
 // TODO: 테스트용 나중에 지우기
-import TestLoginModal from '@/components/testLogin/TestLoginModal';
+// import TestLoginModal from '@/components/testLogin/TestLoginModal';
 
 import { useSheetStore } from './store/sheetStore';
 import AnimatedLayout from '@/layouts/AnimatedLayout';
@@ -47,7 +47,7 @@ function App() {
   return (
     <>
       {/* 테스트용 나중에 지우기 */}
-      <TestLoginModal />
+      {/* <TestLoginModal /> */}
       <AnimatedLayout>
         <Routes location={location}>
           <Route path="/" element={<Layout />}>

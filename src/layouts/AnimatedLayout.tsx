@@ -34,7 +34,7 @@ function AnimatedLayout({ children }: { children: React.ReactNode }) {
         <motion.div
           key={location.pathname}
           {...getAnimation()}
-          className={twMerge('absolute left-1/2 -translate-x-1/2 w-full max-w-[600px] z-10')}
+          className={twMerge('absolute left-1/2 -translate-x-1/2 w-[600px] z-10')}
         >
           {children}
         </motion.div>

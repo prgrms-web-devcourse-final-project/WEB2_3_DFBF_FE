@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/ko';
+import { twMerge } from 'tailwind-merge';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -26,7 +27,7 @@ interface ChatMessage {
   chatRoomId: number;
   message: string;
   createdAt?: string;
-  isMyMessage?: boolean;
+  isMyMessage?: boolean | null;
 }
 interface ChatRoomDetail {
   spotifyId: string;
@@ -85,6 +86,14 @@ export default function ChatRoom({}: ChatRoomProps) {
         clearInterval(interval);
         setTimeLeft(0); // 0초로 고정
         setChatDisabled(true);
+
+        if (chatRoomId) {
+          // 10분 지나면 대화가 종료되었다는 메세지 추가
+          setMessages((prev) => [
+            ...prev,
+            { chatRoomId, message: '대화가 종료되었습니다.', isMyMessage: null },
+          ]);
+        }
       }
     }, 1000);
 
@@ -163,7 +172,9 @@ export default function ChatRoom({}: ChatRoomProps) {
     client.activate();
     setStompClient(client);
     loadChatRoomInfo();
+    //웹소켓 연결 메세지
   };
+
   // 채팅 내역 불러오기
   const fetchChatHistory = async () => {
     try {
@@ -179,6 +190,14 @@ export default function ChatRoom({}: ChatRoomProps) {
         return;
       }
       setMessages(response.data || []);
+
+      //이전 채팅 불러온 후 새로운 채팅이 시작되었습니다 메세지 추가
+      if (!pastChatRoomId) {
+        setMessages((prev) => [
+          ...prev,
+          { chatRoomId, message: '새로운 채팅이 시작되었습니다.', isMyMessage: null },
+        ]);
+      }
     } catch (error) {
       console.error('Error fetching chat history:', error);
     }
@@ -230,15 +249,19 @@ export default function ChatRoom({}: ChatRoomProps) {
     });
 
     //disconnect 구독
-    const disconnection: StompSubscription = client.subscribe(
-      '/topic/disconnect',
-      function (message) {
-        const disconnectData = JSON.parse(message.body);
-        console.log('연결 종료 알림:', disconnectData);
-        setChatDisabled(true);
-        setEndTime(0);
-      },
-    );
+    const disconnection: StompSubscription = client.subscribe('/topic/disconnect', (message) => {
+      if (!chatRoomId) return;
+      const disconnectData = JSON.parse(message.body);
+      console.log('연결 종료 알림:', disconnectData);
+      setChatDisabled(true);
+      setEndTime(0);
+
+      // 상대방이 나갔다는 메시지를 추가
+      setMessages((prev) => [
+        ...prev,
+        { chatRoomId, message: '상대방이 연결을 해제했습니다.', isMyMessage: null },
+      ]);
+    });
 
     return [myChat, otherChat, badWordFilter, disconnection];
   };
@@ -251,11 +274,11 @@ export default function ChatRoom({}: ChatRoomProps) {
       setStompClient(null);
       setMessages([]);
     }
-  };  
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     useChatStore.getState().setDisconnect(disconnect);
-  },[stompClient])
+  }, [stompClient]);
 
   // 메시지 전송
   const sendMessage = () => {
@@ -344,11 +367,26 @@ export default function ChatRoom({}: ChatRoomProps) {
             const isSameSender = prevMsg && prevMsg.isMyMessage === msg.isMyMessage;
 
             return (
-              <div key={index} className={`flex ${isMyMessage ? 'justify-end' : 'justify-start'}`}>
+              <div
+                key={index}
+                className={`flex ${
+                  isMyMessage === null
+                    ? 'justify-center' // 시스템 메시지는 가운데 정렬
+                    : isMyMessage
+                      ? 'justify-end'
+                      : 'justify-start'
+                }`}
+              >
                 <div
-                  className={`px-4 py-2 rounded-lg max-w-[75%] break-words ${
-                    isMyMessage ? 'bg-primary-normal text-white' : 'bg-white text-gray-80'
-                  } ${isSameSender ? 'mt-1' : 'mt-4'}`}
+                  className={twMerge(
+                    'px-4 py-2 rounded-lg max-w-[75%] break-words',
+                    isMyMessage === null
+                      ? 'bg-gray-20/60 text-xs rounded-full'
+                      : isMyMessage
+                        ? 'bg-primary-normal text-white'
+                        : 'bg-white text-gray-80',
+                    isSameSender ? 'mt-1' : 'mt-4',
+                  )}
                 >
                   {msg.message}
                 </div>

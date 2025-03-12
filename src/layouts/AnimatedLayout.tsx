@@ -40,11 +40,11 @@ function AnimatedLayout({ children }: { children: React.ReactNode }) {
         </motion.div>
       </AnimatePresence>
       {/* 양옆에 배경을 만드는 Grid 컨테이너 */}
-      <div className="absolute top-0 left-0 right-0 bottom-0 grid grid-cols-[1fr_auto_1fr]">
+      <div className="absolute top-0 left-0 right-0 bottom-0 grid grid-cols-[1fr_minmax(0,600px)_1fr]">
         {/* 왼쪽 배경 */}
         <div className="w-full h-full bg-white z-50"></div>
         {/* 실제 내용이 들어가는 부분 */}
-        <div className="relative w-[600px]"></div>
+        <div className="relative w-full max-w-[600px]"></div>
         {/* 오른쪽 배경 */}
         <div className="w-full h-full bg-white z-50"></div>
       </div>

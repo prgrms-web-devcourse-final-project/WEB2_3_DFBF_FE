@@ -42,10 +42,12 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
   //sse로 받은 상대 정보로 '보내는 사람' 바꾸기
   const createChat = async () => {
     try {
-      const { code, data } = await createChatroom(
+      const { code, data, message } = await createChatroom(
         requesterInfo.emotionRecordId as number,
         requesterInfo.nickname,
       );
+      console.log(code, message, data);
+
       if (code === 200) {
         const chatRoomId = data.chatRoomId;
         const res = await getEmotionRecordById(requesterInfo.emotionRecordId as number);
@@ -53,10 +55,17 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
         setCurrentChatRoomId(chatRoomId);
         navigate(`/chatroom/${chatRoomId}`);
         closeAllSheets();
+      }
+      else if (code === 500) {
+        openModal({
+          title: 'SSE가 연결되지 않았습니다',
+          onConfirm: () => {
+            closeModal();
+          },
+        });
       } else {
         throw new Error('이미 취소된 요청입니다.');
       }
-      //409 이면 이미 채팅방 있음 => 기존 채팅방으로
     } catch (error) {
       console.log(error);
       openModal({

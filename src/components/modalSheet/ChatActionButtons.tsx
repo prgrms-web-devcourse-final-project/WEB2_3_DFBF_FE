@@ -6,8 +6,9 @@ import playIcon from '@assets/icons/play/play-icon-gray.svg';
 import pauseIcon from '@assets/icons/pause-icon-gray.svg';
 import { useNavigate } from 'react-router';
 import { useSheetStore } from '@/store/sheetStore';
-import { requestChat } from '@/apis/chat';
+import { cancelChatRequest, requestChat } from '@/apis/chat';
 import { useModalStore } from '@/store/modalStore';
+import { useChatStore } from '@/store/chatStore';
 
 interface ChatActionButtonsProps {
   recordId: number;
@@ -29,12 +30,36 @@ function ChatActionButtons({
 }: ChatActionButtonsProps) {
   const navigate = useNavigate();
 
-  const { openSheet } = useSheetStore(); // 모달 시트
+  const { openSheet, closeSheet, currentRecord } = useSheetStore(); // 모달 시트
+  const { pastRecord } = useChatStore();
   const { openModal, closeModal } = useModalStore();
 
   const handleGoToUserPage = () => {
     // closeAllSheets(); // 모든 시트를 닫아야할지 카드모달시트만 닫으면 될지 고민중
     navigate(`/user/${authorId}`); // 유저 페이지로 이동
+  };
+
+  //채팅 요청 취소(요청 보낸 사람)
+  const cancel = async () => {
+    if (!currentRecord?.recordId && !pastRecord?.recordId) {
+      console.log('record가 존재하지 않습니다');
+      return;
+    }
+    try {
+      console.log(currentRecord);
+      const { code } = await cancelChatRequest(
+        currentRecord?.recordId || Number(pastRecord?.recordId),
+      );
+      if (code === 200) {
+        console.log('취소 요청 성공');
+        closeSheet('isRequestSendingSheetOpen');
+      } else {
+        throw new Error('취소 요청 실패');
+      }
+    } catch (error) {
+      console.error(error);
+      closeSheet('isRequestSendingSheetOpen'); // 취소 요청 실패시 창 닫기
+    }
   };
 
   //채팅 요청
@@ -45,10 +70,25 @@ function ChatActionButtons({
       return;
     }
     try {
-      const { code } = await requestChat(recordId);
-
-      //200
-      if (code === 200) {
+      const data = await requestChat(recordId);
+      console.log(data);
+      if (data.data === '요청은 갔지만, 상대방의 SSE가 없어 알림이 전송되지 않았습니다.') {
+        openModal({
+          title: 'SSE가 연결되지 않았습니다',
+          onConfirm: () => {
+            closeModal();
+            cancel();
+          },
+        });
+        return;
+      } else if (data.message.includes('후에')) {
+        openModal({
+          title: data.message,
+          onConfirm: () => {
+            closeModal();
+          },
+        });
+      } else if (data.code === 200) {
         openSheet('isRequestSendingSheetOpen');
       } else {
         throw new Error('잠시 후 다시 시도해 주세요');

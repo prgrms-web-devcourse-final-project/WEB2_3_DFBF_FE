@@ -33,14 +33,23 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
       return;
     }
     try {
-      const { code } = await requestChat(Number(item.recordId));
+      const { code, message } = await requestChat(Number(item.recordId));
+      console.log(code, message);
 
       //200
       if (code === 200) {
         openSheet('isRequestSendingSheetOpen');
+      } else if (message.includes('yourself')) {
+        openModal({
+          title: '자신의 게시글에는 요청할 수 없습니다',
+          onConfirm: () => {
+            closeModal();
+          },
+        });
       } else {
         throw new Error('잠시 후 다시 시도해 주세요');
       }
+      //자신의 게시글에 요청했을 경우
     } catch (error) {
       console.log(error);
       openModal({

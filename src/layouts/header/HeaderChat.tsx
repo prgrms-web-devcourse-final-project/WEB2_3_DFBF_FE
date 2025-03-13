@@ -21,7 +21,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
 
   const { pastRecord, setPastChatRoomId, setCurrentChatRoomId } = useChatStore();
 
-  const { requesterInfo, setRequesterInfo, currentRecord } = useSheetStore();
+  const { setRequesterInfo, currentRecord } = useSheetStore();
 
   const { openModal, closeModal } = useModalStore();
 
@@ -34,9 +34,6 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         {showLogo && <img src={logoIcon} alt="로고" />}
 
         {/* 닉네임 */}
-        {showNickname && requesterInfo.nickname && (
-          <span className="h4-b text-primary-normal">{requesterInfo.nickname}</span>
-        )}
         {showNickname && (currentRecord?.nickName || pastRecord?.nickname) && (
           <span className="h4-b text-primary-normal">
             {currentRecord?.nickName || pastRecord?.nickname}

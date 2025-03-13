@@ -63,7 +63,7 @@ function ProfileEditForm() {
             navigate('/mypage');
           },
         });
-        queryClient.refetchQueries({ queryKey: ['userProfile'] }); // 즉시 최신 데이터 가져오기
+        queryClient.refetchQueries({ queryKey: ['myProfile'] }); // 즉시 최신 데이터 가져오기
       } else {
         throw new Error();
       }

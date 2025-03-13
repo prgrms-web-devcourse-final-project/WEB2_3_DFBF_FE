@@ -27,6 +27,7 @@ import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { useEffect } from 'react';
+import { useTokenExpired } from '@/hooks/useTokenRefresh';
 
 function App() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function App() {
   }, [isAuthenticated]);
 
   useSSE(); // SSE연결
+  useTokenExpired(); // 토큰 만료 체크
   useYotube();
 
   return (

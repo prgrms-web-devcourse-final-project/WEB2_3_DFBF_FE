@@ -26,8 +26,9 @@ function UserProfile({ isMyPage }: { isMyPage: boolean }) {
 
   // 유저 정보 가져오기
   const { data: userData, isLoading: isUserLoading } = useQuery({
-    queryKey: isMyPage ? ['myPage'] : ['userPage'], // 유저페이지 캐싱할때 추가적으로 넣어주자
+    queryKey: isMyPage ? ['myProfile'] : ['userProfile'], // 유저페이지 캐싱할때 추가적으로 넣어주자
     queryFn: () => (isMyPage ? getMyProfile() : getUserProfile(userId as string)),
+    staleTime: 5 * 60 * 1000,
   });
 
   // 유저 정보 전역 저장

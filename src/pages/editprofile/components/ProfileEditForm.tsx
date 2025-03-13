@@ -9,6 +9,7 @@ import { useModalStore } from '@/store/modalStore';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
@@ -27,14 +28,12 @@ type ProfileFormType = {
 // 노래, 닉네임 변경폼
 function ProfileEditForm() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient(); // ✅ queryClient 가져오기
 
   const { selectedProfileMusic, selectProfileMusic, clearProfileMusic } = useMusicCardStore(); // 음악관리
   const { openModal, closeModal } = useModalStore(); // 모달 관리
   const { closeAllSheets } = useSheetStore(); // 시트관리
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [isMusicSelect, setIsMusicSelect] = useState(false);
   const [nickname, setNickname] = useState(''); // 닉네임
   const [isNicknameValid, setIsNicknameValid] = useState(false); // 닉네임 유효성
@@ -45,48 +44,17 @@ function ProfileEditForm() {
   //노래 이전과 달라진게 없으면 disable
   const isProfileMusicSame = _.isEqual(prevProfileMusic.current, selectedProfileMusic);
 
-  const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // 유저 정보 불러오기
+  const { data: userData } = useQuery({
+    queryKey: ['myProfile'],
+    queryFn: () => getMyProfile(),
+    staleTime: 5 * 60 * 1000,
+  });
 
-    try {
-      setIsLoading(true);
-      // 업데이트 된 것만 전송
-      const updatedData: Partial<ProfileFormType> = {};
-      if (nickname !== prevNickname.current) {
-        updatedData.nickName = nickname;
-      }
-      // 현재 프로필 뮤직이랑 이전 프로필 뮤직이 다를때만 업데이트
-      if (selectedProfileMusic !== prevProfileMusic.current) {
-        // 프로필 뮤직이 선택되어있을 경우
-        if (selectedProfileMusic) {
-          // videoId 조회
-          const videoId = await fetchSpotifyVideoId(
-            selectedProfileMusic?.spotifyId,
-            selectedProfileMusic?.artist,
-            selectedProfileMusic?.title,
-          );
-          console.log('videoId:', videoId);
-
-          updatedData.spotifyId = selectedProfileMusic.spotifyId;
-          updatedData.title = selectedProfileMusic.title;
-          updatedData.artist = selectedProfileMusic.artist;
-          updatedData.albumImage = selectedProfileMusic.album;
-          updatedData.videoId = videoId;
-        }
-        // 프로필 뮤직이 선택되지않아서 삭제하는 로직
-        else {
-          updatedData.spotifyId = -1;
-        }
-      }
-
-      console.log('전송 데이터:', updatedData);
-
-      // API 호출
-      const data = await patchEditProfile(updatedData);
-      console.log('응답 데이터:', data);
-
+  const { mutate, isPending, isSuccess, isError } = useMutation({
+    mutationFn: patchEditProfile,
+    onSuccess: (data) => {
       if (data.code === 200) {
-        setIsComplete(true);
         openModal({
           title: '프로필 수정 완료',
           message: '프로필이 성공적으로 수정되었습니다!',
@@ -95,14 +63,12 @@ function ProfileEditForm() {
             navigate('/mypage');
           },
         });
+        queryClient.refetchQueries({ queryKey: ['myProfile'] }); // 즉시 최신 데이터 가져오기
       } else {
         throw new Error();
       }
-    } catch (error) {
-      setIsError(true);
-      console.error('프로필 수정 오류:', error);
-
-      // 에러 메시지를 모달로 표시
+    },
+    onError: () => {
       openModal({
         title: '프로필 수정 실패',
         message: '잠시 후 다시 시도해주세요.',
@@ -111,18 +77,53 @@ function ProfileEditForm() {
           navigate(-1);
         },
       });
-    } finally {
-      setIsLoading(false);
+    },
+  });
+
+  const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // 업데이트 된 것만 전송
+    const updatedData: Partial<ProfileFormType> = {};
+    if (nickname !== prevNickname.current) {
+      updatedData.nickName = nickname;
     }
+    // 현재 프로필 뮤직이랑 이전 프로필 뮤직이 다를때만 업데이트
+    if (selectedProfileMusic !== prevProfileMusic.current) {
+      // 프로필 뮤직이 선택되어있을 경우
+      if (selectedProfileMusic) {
+        // videoId 조회
+        const videoId = await fetchSpotifyVideoId(
+          selectedProfileMusic?.spotifyId,
+          selectedProfileMusic?.artist,
+          selectedProfileMusic?.title,
+        );
+        console.log('videoId:', videoId);
+
+        updatedData.spotifyId = selectedProfileMusic.spotifyId;
+        updatedData.title = selectedProfileMusic.title;
+        updatedData.artist = selectedProfileMusic.artist;
+        updatedData.albumImage = selectedProfileMusic.album;
+        updatedData.videoId = videoId;
+      }
+      // 프로필 뮤직이 선택되지않아서 삭제하는 로직
+      else {
+        updatedData.spotifyId = -1;
+      }
+    }
+
+    console.log('전송 데이터:', updatedData);
+
+    mutate(updatedData);
   };
 
   //submit 조건
   const isProfileEditable = !isProfileMusicSame || isNicknameValid;
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (isPending) {
       return <SpinLoading />;
-    } else if (isComplete) {
+    } else if (isSuccess) {
       return <Complete />;
     } else if (isError) {
       return <ErrorShake />;
@@ -140,22 +141,20 @@ function ProfileEditForm() {
   }, [selectedProfileMusic]);
 
   useEffect(() => {
-    const loadMyProfile = async () => {
-      const { data } = await getMyProfile();
-      const { nickname, profileMusic } = data;
+    if (userData) {
+      const { nickname, profileMusic } = userData.data;
 
       prevNickname.current = nickname; // 이전 닉네임 저장
       prevProfileMusic.current = profileMusic?.spotifyId ? profileMusic : null; // 이전 음악저장
 
       setNickname(nickname);
       selectProfileMusic(prevProfileMusic.current);
-    };
-    loadMyProfile();
+    }
 
     return () => {
       clearProfileMusic();
     };
-  }, []);
+  }, [userData]);
 
   return (
     <form className="flex flex-col justify-between h-full p-5" onSubmit={handleProfileSubmit}>

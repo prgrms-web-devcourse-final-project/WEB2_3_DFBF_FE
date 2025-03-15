@@ -36,6 +36,14 @@ export const putEmotionRecord = async (recordId: number, emotionRecord: EmotionR
   return data;
 };
 
+// 본인 감정 기록 조회
+export const getMyEmotionRecords = async (page: number, size = 10) => {
+  const { data } = await axiosInstance.get('/emotion/my-emotion-record', {
+    params: { page, size },
+  });
+  return data;
+};
+
 // 유저별 감정 기록 조회
 export const getUserEmotionRecords = async (tag: string, page: number, size = 10) => {
   const { data } = await axiosInstance.get('/emotion/user', {

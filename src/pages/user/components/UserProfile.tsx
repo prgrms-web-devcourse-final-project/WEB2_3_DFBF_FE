@@ -8,7 +8,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useInView } from 'react-intersection-observer';
-import EmotionRecordCardList from '@/pages/userprofile/components/EmotionRecordCardList';
+import EmotionRecordCardList from '@/pages/user/components/EmotionRecordCardList';
 import { useUserStore } from '@/store/userStore';
 import Loading from '@/components/loading/Loading';
 import { useDeleteEmotionRecord } from '@/hooks/useDeleteEmotionRecord';

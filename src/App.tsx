@@ -11,7 +11,7 @@ import NotFound from '@/pages/NotFound';
 import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
 import Post from '@/pages/post/Post';
-import UserProfile from '@/pages/userprofile/UserProfile';
+import UserProfile from '@/pages/user/components/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
 import BlockList from '@/pages/blocklist/BlockList';

@@ -12,6 +12,17 @@ import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
 import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+interface RequestDataType {
+  spotifyId: string;
+  videoId: any;
+  title: string;
+  artist: string;
+  albumImage: string;
+  emotion: string;
+  comment: string;
+}
 
 export default function Post() {
   const navigate = useNavigate();
@@ -22,13 +33,10 @@ export default function Post() {
   const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
   const { closeAllSheets } = useSheetStore();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [isError, setIsError] = useState(false);
-
   const [isMusicSelect, setIsMusicSelect] = useState(false); //음악 선택 상태 확인
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
   const [comment, setComment] = useState<string>(''); // 코멘트
+  const queryClient = useQueryClient();
 
   // 수정모드
   useEffect(() => {
@@ -112,6 +120,23 @@ export default function Post() {
     });
   };
 
+  // ✅ useMutation 설정 (작성, 수정)
+  const { mutate, isPending, isSuccess, isError } = useMutation({
+    mutationFn: async (requestData: RequestDataType) => {
+      return isEditMode
+        ? putEmotionRecord(Number(postId), requestData) // 수정 모드
+        : postEmotionRecord(requestData); // 새 글 작성 모드
+    },
+    onSuccess: () => {
+      handlePostSuccessModal(); // 성공 모달 띄우기
+      queryClient.invalidateQueries({ queryKey: ['userPosts', 'me'] });
+    },
+    onError: (error) => {
+      console.error(error);
+      handlePostFailModal();
+    },
+  });
+
   // 기록 완료
   const onCompletePost = async () => {
     if (!isCompletePost) return;
@@ -123,45 +148,22 @@ export default function Post() {
       selectedPostMusic?.songTitle,
     );
 
-    try {
-      setIsLoading(true);
-
-      const requestData = {
-        spotifyId: selectedPostMusic?.spotifyId,
-        videoId: videoId,
-        title: selectedPostMusic?.songTitle,
-        artist: selectedPostMusic?.artistName,
-        albumImage: selectedPostMusic?.albumImage,
-        emotion: selectedEmotion,
-        comment: comment,
-      };
-
-      let data;
-      if (isEditMode) {
-        // 수정 모드
-        data = await putEmotionRecord(Number(postId), requestData);
-      } else {
-        // 새 글 작성
-        data = await postEmotionRecord(requestData);
-      }
-      console.log(isEditMode ? '수정 완료' : '기록 완료:', data);
-      console.log('요청 데이터:', requestData);
-
-      setIsComplete(true);
-      handlePostSuccessModal();
-    } catch (error) {
-      console.error(error);
-      setIsError(true);
-      handlePostFailModal();
-    } finally {
-      setIsLoading(false);
-    }
+    const requestData = {
+      spotifyId: selectedPostMusic?.spotifyId,
+      videoId: videoId,
+      title: selectedPostMusic?.songTitle,
+      artist: selectedPostMusic?.artistName,
+      albumImage: selectedPostMusic?.albumImage,
+      emotion: selectedEmotion,
+      comment: comment,
+    };
+    mutate(requestData); // useMutation 실행
   };
 
   const renderButtonContent = () => {
-    if (isLoading) {
+    if (isPending) {
       return <SpinLoading />;
-    } else if (isComplete) {
+    } else if (isSuccess) {
       return <Complete />;
     } else if (isError) {
       return <ErrorShake />;

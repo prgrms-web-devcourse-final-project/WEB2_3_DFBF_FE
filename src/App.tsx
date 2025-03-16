@@ -11,7 +11,6 @@ import NotFound from '@/pages/NotFound';
 import Login from '@/pages/Login';
 import SignUp from '@/pages/signup/SignUp';
 import Post from '@/pages/post/Post';
-import UserProfile from '@/pages/user/components/UserProfile';
 import PrivateRoute from './routes/PrivateRoute';
 import EditProfile from '@/pages/editprofile/EditProfile';
 import BlockList from '@/pages/blocklist/BlockList';
@@ -27,6 +26,8 @@ import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { useEffect } from 'react';
+import MyPage from '@/pages/user/MyPage';
+import UserPage from '@/pages/user/UserPage';
 
 function App() {
   const location = useLocation();
@@ -72,10 +73,10 @@ function App() {
               <Route path="/post" element={<Post />} />
               <Route path="/post/:postId/edit" element={<Post />} />
               <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
-              <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
+              <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/edit" element={<EditProfile />} />
               <Route path="/mypage/blocklist" element={<BlockList />} />
-              <Route path="/user/:userId" element={<UserProfile isMyPage={false} />} />
+              <Route path="/user/:userId" element={<UserPage />} />
             </Route>
 
             <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />

@@ -27,7 +27,7 @@ function Home() {
   // 감정 필터링
   const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-    console.log(selectedEmotion);
+    // console.log(selectedEmotion);
   };
 
   // 유저 상세 페이지 모달 열기
@@ -55,7 +55,7 @@ function Home() {
         selectedEmotion,
       );
 
-      console.log('감정 기록 불러오기', data);
+      // console.log('감정 기록 불러오기', data);
       return data;
     },
 
@@ -107,7 +107,7 @@ function Home() {
   //홈 이동 시 스크롤 제일 위로
   useEffect(() => {
     if (scrollContainerRefCurrent) {
-      console.log(scrollContainerRefCurrent);
+      // console.log(scrollContainerRefCurrent);
       scrollContainerRefCurrent.scrollTop = 0; // 제일 위로 스크롤
     }
   }, [scrollContainerRefCurrent]);

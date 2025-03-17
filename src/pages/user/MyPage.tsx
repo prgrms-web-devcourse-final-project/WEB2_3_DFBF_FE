@@ -21,8 +21,6 @@ const MyPage = () => {
     select: (data) => data.data,
   });
 
-  console.log(userData);
-
   // 감정 기록 데이터 불러오기
   const {
     data: emotionRecords,
@@ -43,7 +41,6 @@ const MyPage = () => {
     staleTime: 5 * 60 * 1000,
     select: (data) => data.pages,
   });
-  console.log(emotionRecords);
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {

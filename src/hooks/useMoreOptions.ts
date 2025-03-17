@@ -32,8 +32,8 @@ export const useMoreOptions = () => {
     } finally {
       logout(); // 토큰 초기화
       useAuthStore.persist.clearStorage(); // 로컬스토리지에서 persist 데이터 삭제
-      queryClient.removeQueries({ queryKey: ['myProfile'] }); // 본인 정보 쿼리 무효화
-      queryClient.removeQueries({ queryKey: ['userPosts', 'me'] }); // 본인 post 쿼리 무효화
+      queryClient.removeQueries({ queryKey: ['myProfile'] }); // 프로필 정보 캐시 초기화
+      queryClient.removeQueries({ queryKey: ['userPosts', 'me'] }); // 포스트 정보 캐시 초기화
       navigate('/');
     }
   };

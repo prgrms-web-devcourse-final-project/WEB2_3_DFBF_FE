@@ -9,6 +9,7 @@ export function useUserStatus(loginId: string) {
     staleTime: 1000 * 60,
   });
 
+  console.log(data);
   return {
     isChatting: data?.data?.chatStatus === 'CHATTING',
     onlineStatus: data?.data?.onlineStatus ?? null,

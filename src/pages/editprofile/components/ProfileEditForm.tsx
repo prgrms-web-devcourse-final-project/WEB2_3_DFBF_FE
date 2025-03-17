@@ -63,7 +63,7 @@ function ProfileEditForm() {
             navigate('/mypage');
           },
         });
-        queryClient.refetchQueries({ queryKey: ['myProfile'] }); // 즉시 최신 데이터 가져오기
+        queryClient.invalidateQueries({ queryKey: ['myProfile'] }); // 즉시 최신 데이터 가져오기
       } else {
         throw new Error();
       }
@@ -164,7 +164,7 @@ function ProfileEditForm() {
             <p>테마곡 설정</p>
             <button
               onClick={clearProfileMusic}
-              className="border-b border-gray-80 cursor-pointer"
+              className="border-b cursor-pointer border-gray-80"
               type="button"
             >
               삭제

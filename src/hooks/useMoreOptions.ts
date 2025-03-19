@@ -4,6 +4,7 @@ import { deleteAccount, getUserInfo } from '@/apis/user';
 import { useAuthStore } from '@/store/authStore';
 import { useModalStore } from '@/store/modalStore';
 import { useUserStore } from '@/store/userStore';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLocation, useNavigate, useParams } from 'react-router';
 
 // url에 따라서 헤더의 moreOptions 선택
@@ -11,6 +12,7 @@ export const useMoreOptions = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const param = useParams();
+  const queryClient = useQueryClient();
 
   const { logout } = useAuthStore();
   const { openModal, closeModal } = useModalStore();
@@ -21,13 +23,18 @@ export const useMoreOptions = () => {
   const handleLogout = async () => {
     try {
       const { code } = await postLogout();
-      if (code === 200) {
-        logout(); // 토큰 초기화
-        useAuthStore.persist.clearStorage(); // 로컬스토리지에서 persist 데이터 삭제
-        navigate('/');
+      // 200이외에 code에서는 에러 처리
+      if (code !== 200) {
+        throw new Error('로그아웃 에러가 발생했습니다.');
       }
     } catch (error) {
-      console.error('로그아웃 에러가 발생했습니다.');
+      console.error(error);
+    } finally {
+      logout(); // 토큰 초기화
+      useAuthStore.persist.clearStorage(); // 로컬스토리지에서 persist 데이터 삭제
+      queryClient.removeQueries({ queryKey: ['myProfile'] }); // 프로필 정보 캐시 초기화
+      queryClient.removeQueries({ queryKey: ['userPosts', 'me'] }); // 포스트 정보 캐시 초기화
+      navigate('/');
     }
   };
 

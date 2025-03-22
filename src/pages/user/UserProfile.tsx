@@ -1,19 +1,18 @@
 import CardDetailModal from '@/components/modalSheet/CardDetailModal';
-import MusicCard from '@/components/MusicCard';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import EmotionRecordCardList from '@/pages/user/components/EmotionRecordCardList';
 import { useDeleteEmotionRecord } from '@/hooks/useDeleteEmotionRecord';
+import UserProfileInfo from '@/pages/user/components/UserProfileInfo/UserProfileInfo';
+import UserEmotionRecordList from '@/pages/user/components/UserEmotionRecordList/UserEmotionRecordList';
 
 interface UserProfileProps {
-  userData: UserInfo; // 유저정보
-  emotionRecords: EmotionRecordPages[]; // 감정 기록 정보
+  isMyPage?: boolean; // 마이페이지 여부 확인 -> false면 유저페이지
 }
 
 // 마이페이지 / 유저페이지 UI
-function UserProfile({ userData, emotionRecords }: UserProfileProps) {
+function UserProfile({ isMyPage = false }: UserProfileProps) {
   const navigate = useNavigate();
 
   const { openSheet, closeSheet } = useSheetStore(); // 시트
@@ -57,22 +56,11 @@ function UserProfile({ userData, emotionRecords }: UserProfileProps) {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full h-full gap-4">
-        <div className="flex flex-col items-center">
-          <span className="h3-b">{userData?.nickname}</span>
-          <span className="caption-m text-gray-60">@{userData?.loginId}</span>
-        </div>
-
-        <MusicCard
-          title={userData?.profileMusic?.title}
-          artist={userData?.profileMusic?.artist}
-          image={userData?.profileMusic?.album}
-          spotifyId={userData?.profileMusic?.spotifyId}
-          rightElement="play"
-        />
-        <EmotionRecordCardList emotionRecords={emotionRecords} handleOpenSheet={handleOpenSheet} />
+      <div className="flex flex-col items-center w-full h-full gap-5 py-4">
+        <UserProfileInfo isMyPage={isMyPage} />
+        <UserEmotionRecordList isMyPage={isMyPage} handleOpenSheet={handleOpenSheet} />
       </div>
-      {selectedRecordId !== null && (
+      {selectedRecordId && (
         <CardDetailModal
           recordId={selectedRecordId}
           handleDelete={handleDeleteModal}

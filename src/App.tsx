@@ -26,9 +26,8 @@ import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
 import { useEffect } from 'react';
-import MyPage from '@/pages/user/MyPage';
-import UserPage from '@/pages/user/UserPage';
 import { useTokenExpired } from '@/hooks/useTokenRefresh';
+import UserProfile from '@/pages/user/UserProfile';
 
 function App() {
   const location = useLocation();
@@ -75,10 +74,10 @@ function App() {
               <Route path="/post" element={<Post />} />
               <Route path="/post/:postId/edit" element={<Post />} />
               <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
-              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
               <Route path="/mypage/edit" element={<EditProfile />} />
               <Route path="/mypage/blocklist" element={<BlockList />} />
-              <Route path="/user/:userId" element={<UserPage />} />
+              <Route path="/user/:userId" element={<UserProfile />} />
             </Route>
 
             <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />

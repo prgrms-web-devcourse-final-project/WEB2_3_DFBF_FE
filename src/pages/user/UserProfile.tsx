@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router';
 import { useDeleteEmotionRecord } from '@/hooks/useDeleteEmotionRecord';
 import UserProfileInfo from '@/pages/user/components/UserProfileInfo/UserProfileInfo';
 import UserEmotionRecordList from '@/pages/user/components/UserEmotionRecordList/UserEmotionRecordList';
+import { useIsFetching } from '@tanstack/react-query';
+import Loading from '@/components/loading/Loading';
 
 interface UserProfileProps {
   isMyPage?: boolean; // 마이페이지 여부 확인 -> false면 유저페이지
@@ -13,6 +15,8 @@ interface UserProfileProps {
 
 // 마이페이지 / 유저페이지 UI
 function UserProfile({ isMyPage = false }: UserProfileProps) {
+  const isFetching = useIsFetching(); // 전체 쿼리 중 fetch 중인 게 있는지
+
   const navigate = useNavigate();
 
   const { openSheet, closeSheet } = useSheetStore(); // 시트
@@ -67,6 +71,7 @@ function UserProfile({ isMyPage = false }: UserProfileProps) {
           handleEdit={handleEdit}
         />
       )}
+      {isFetching && <Loading />}
     </>
   );
 }

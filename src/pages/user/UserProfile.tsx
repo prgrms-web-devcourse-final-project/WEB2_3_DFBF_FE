@@ -71,7 +71,7 @@ function UserProfile({ isMyPage = false }: UserProfileProps) {
           handleEdit={handleEdit}
         />
       )}
-      {isFetching && <Loading />}
+      {isFetching > 0 && <Loading />}
     </>
   );
 }

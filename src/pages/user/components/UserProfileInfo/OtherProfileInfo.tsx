@@ -1,17 +1,10 @@
-import { getUserProfile } from '@/apis/user';
+import { useOtherProfileInfo } from '@/hooks/user/useOtherProfileInfo';
 import ProfileInfoView from '@/pages/user/components/UserProfileInfo/ProfileInfoView';
-import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router';
 
 // 다른 유저 프로핑 정보
 const OtherProfileInfo = () => {
-  const { userId } = useParams(); // 유저 Id
   // 유저 정보 가져오기
-  const { data: userData } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: () => getUserProfile(userId as string),
-    select: (data) => data.data,
-  });
+  const { data: userData } = useOtherProfileInfo();
   return <ProfileInfoView userData={userData} />;
 };
 

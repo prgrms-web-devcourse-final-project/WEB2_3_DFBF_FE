@@ -8,8 +8,8 @@ import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
 import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import usePostForm from '@/hooks/usePostForm';
-import { useMusicSelection } from '@/hooks/useMusicSelection';
+import usePostForm from '@/hooks/post/usePostForm';
+import useMusicSelection from '@/hooks/post/useMusicSelection';
 import PostForm from '@/pages/post/components/PostForm';
 
 interface RequestDataType {

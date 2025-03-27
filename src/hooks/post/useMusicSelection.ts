@@ -2,7 +2,7 @@ import { useMusicCardStore } from '@/store/MusicCardStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { useEffect, useState } from 'react';
 
-export const useMusicSelection = () => {
+export default function useMusicSelection() {
   const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
   const { closeAllSheets } = useSheetStore();
   const [isMusicSelect, setIsMusicSelect] = useState(false); //음악 선택 상태 확인
@@ -19,4 +19,4 @@ export const useMusicSelection = () => {
   }, [selectedPostMusic]);
 
   return { selectedPostMusic, isMusicSelect, clearPostMusic, selectPostMusic };
-};
+}

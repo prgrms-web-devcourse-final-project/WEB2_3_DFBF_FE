@@ -21,7 +21,7 @@ function MusicSearchList({ spotifyId, songTitle, artistName, albumImage }: Music
       selectProfileMusic({ spotifyId, title: songTitle, artist: artistName, album: albumImage });
     } else {
       // 기본적으로 selectPostMusic 호출
-      selectPostMusic({ spotifyId, songTitle, artistName, albumImage });
+      selectPostMusic({ spotifyId, title: songTitle, artist: artistName, albumImage });
     }
   };
 

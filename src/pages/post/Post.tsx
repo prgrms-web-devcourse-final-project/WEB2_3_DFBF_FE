@@ -1,8 +1,6 @@
 import Button from '@/components/Button';
 import { useEffect } from 'react';
-import { getEmotionRecordById } from '@/apis/emotionRecord';
-import { useModalStore } from '@/store/modalStore';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
@@ -12,104 +10,42 @@ import useMusicSelection from '@/hooks/post/useMusicSelection';
 import PostForm from '@/pages/post/components/PostForm';
 import usePostSubmit from '@/hooks/post/usePostSubmit';
 import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
+import useEditInit from '@/hooks/post/useEditInit';
+import usePostModals from '@/hooks/post/usePostModals';
 
 export default function Post() {
-  const navigate = useNavigate();
   const { postId } = useParams();
   const isEditMode = Boolean(postId); // 수정 모드인지 확인
   const mode = isEditMode ? 'edit' : 'create';
 
-  const { openModal, closeModal } = useModalStore();
-
   const queryClient = useQueryClient();
 
-  const {
-    selectedEmotion,
-    setSelectedEmotion,
-    comment,
-    setComment,
-    onEmotionClick,
-    onChangeComment,
-    isFilled,
-  } = usePostForm();
-  const { selectedPostMusic, isMusicSelect, clearPostMusic, selectPostMusic } = useMusicSelection();
-
-  // 수정모드
-  useEffect(() => {
-    if (isEditMode && postId) {
-      // 수정 데이터 가져오기
-      const getEmotionRecord = async (postId: number) => {
-        const { data } = await getEmotionRecordById(postId);
-        const { comment, emotion, spotifyMusic } = data;
-
-        // 'artist' → 'artistName', 'title' → 'songTitle'
-        const editMusic = {
-          albumImage: spotifyMusic.albumImage,
-          artist: spotifyMusic.artist, // 변환
-          title: spotifyMusic.title, // 변환
-          spotifyId: spotifyMusic.spotifyId,
-        };
-
-        setSelectedEmotion(emotion);
-        setComment(comment);
-        selectPostMusic(editMusic);
-        console.log('음악 선택됨:', selectedPostMusic);
-        console.log('수정 데이터:', data);
-      };
-
-      getEmotionRecord(Number(postId));
-    }
-  }, []);
+  const { selectedEmotion, comment, onEmotionClick, onChangeComment, isFilled } = usePostForm();
+  const { selectedPostMusic, isMusicSelect, clearPostMusic } = useMusicSelection(); // 음악 선택 상태
+  const { showSuccessModal, showFailModal } = usePostModals(isEditMode); // 모달 관련 훅
+  useEditInit(isEditMode ? Number(postId) : null); // 수정 모드일 때 초기값
 
   // 기록 완료 조건 확인
   const isCompletePost = selectedPostMusic && isFilled;
 
-  // 글 등록 성공 모달
-  const handlePostSuccessModal = () => {
-    openModal({
-      title: isEditMode ? '글 수정 성공' : '글 등록 성공',
-      message: '내가 쓴 글을 확인하러 가 볼까요?',
-      confirmText: '확인하러 가기',
-      cancelText: '홈으로 가기',
-      onConfirm: () => {
-        navigate('/mypage', { replace: true });
-        closeModal();
-      },
-      onCancel: () => {
-        navigate('/home', { replace: true });
-        closeModal();
-      },
-    });
-  };
-
-  // 글 등록 실패 모달
-  const handlePostFailModal = () => {
-    openModal({
-      title: isEditMode ? '글 수정 실패' : '글 등록 실패',
-      message: '잠시 후 다시 시도해 주세요.',
-      confirmText: '확인',
-      onConfirm: async () => {
-        closeModal();
-        navigate(-1);
-      },
-    });
-  };
-
-  const onSuccess = () => {
-    handlePostSuccessModal();
+  // 글 등록 성공
+  const handlePostSuccess = () => {
+    showSuccessModal();
     queryClient.invalidateQueries({ queryKey: ['userPosts', 'me'] });
   };
 
-  const onError = (error: Error) => {
+  // 글 등록 실패
+  const handlePostError = (error: Error) => {
     console.error(error);
-    handlePostFailModal();
+    showFailModal();
   };
 
+  // 글 등록
   const { onSubmit, isPending, isSuccess, isError } = usePostSubmit({
     mode,
     postId,
-    onSuccess,
-    onError,
+    onSuccess: handlePostSuccess,
+    onError: handlePostError,
   });
 
   // 기록 완료

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-export default function usePostForm() {
+const usePostForm = () => {
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
   const [comment, setComment] = useState<string>(''); // 코멘트
 
@@ -24,4 +24,6 @@ export default function usePostForm() {
     onChangeComment,
     isFilled,
   };
-}
+};
+
+export default usePostForm;

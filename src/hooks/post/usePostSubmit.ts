@@ -18,12 +18,12 @@ interface UsePostSubmitProps {
   onError: (error: Error) => void;
 }
 
-export default function usePostSubmit({
+const usePostSubmit = ({
   mode, // 'create' | 'edit'
   postId,
   onSuccess,
   onError,
-}: UsePostSubmitProps) {
+}: UsePostSubmitProps) => {
   // ✅ useMutation 설정 (작성, 수정)
   const { mutate, isPending, isSuccess, isError } = useMutation({
     mutationFn: async (requestData: RequestDataType) => {
@@ -39,4 +39,6 @@ export default function usePostSubmit({
     mutate(data); // useMutation 실행
   };
   return { onSubmit, isPending, isSuccess, isError };
-}
+};
+
+export default usePostSubmit;

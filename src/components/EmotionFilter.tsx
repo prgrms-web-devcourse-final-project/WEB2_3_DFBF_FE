@@ -1,5 +1,6 @@
 import EmotionBadge from '@/components/EmotionBadge';
 import { EMOTIONS } from '@/constants';
+import { memo } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface EmotionFilterProps {
@@ -7,7 +8,7 @@ interface EmotionFilterProps {
   onEmotionClick: (emotion: string) => void;
 }
 
-export default function EmotionFilter({ selectedEmotion, onEmotionClick }: EmotionFilterProps) {
+const EmotionFilter = ({ selectedEmotion, onEmotionClick }: EmotionFilterProps) => {
   return (
     <div className="w-fit h-fit grid grid-cols-4 gap-y-3 gap-x-5">
       {EMOTIONS.map((emotion) => (
@@ -25,4 +26,6 @@ export default function EmotionFilter({ selectedEmotion, onEmotionClick }: Emoti
       ))}
     </div>
   );
-}
+};
+
+export default memo(EmotionFilter);

@@ -33,7 +33,7 @@ interface EmotionRecordPages {
 
 interface MusicCardItem {
   spotifyId: string;
-  songTitle: string;
-  artistName: string;
+  title: string;
+  artist: string;
   albumImage: string;
 }

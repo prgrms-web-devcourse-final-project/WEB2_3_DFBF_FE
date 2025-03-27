@@ -1,31 +1,23 @@
 import Button from '@/components/Button';
 import { useEffect } from 'react';
-import { getEmotionRecordById, postEmotionRecord, putEmotionRecord } from '@/apis/emotionRecord';
+import { getEmotionRecordById } from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
 import { useNavigate, useParams } from 'react-router';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
-import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import usePostForm from '@/hooks/post/usePostForm';
 import useMusicSelection from '@/hooks/post/useMusicSelection';
 import PostForm from '@/pages/post/components/PostForm';
-
-interface RequestDataType {
-  spotifyId: string;
-  videoId: string | null;
-  title: string;
-  artist: string;
-  albumImage: string;
-  emotion: string;
-  comment: string;
-}
+import usePostSubmit from '@/hooks/post/usePostSubmit';
+import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
 
 export default function Post() {
   const navigate = useNavigate();
   const { postId } = useParams();
   const isEditMode = Boolean(postId); // 수정 모드인지 확인
+  const mode = isEditMode ? 'edit' : 'create';
 
   const { openModal, closeModal } = useModalStore();
 
@@ -53,8 +45,8 @@ export default function Post() {
         // 'artist' → 'artistName', 'title' → 'songTitle'
         const editMusic = {
           albumImage: spotifyMusic.albumImage,
-          artistName: spotifyMusic.artist, // 변환
-          songTitle: spotifyMusic.title, // 변환
+          artist: spotifyMusic.artist, // 변환
+          title: spotifyMusic.title, // 변환
           spotifyId: spotifyMusic.spotifyId,
         };
 
@@ -103,44 +95,45 @@ export default function Post() {
     });
   };
 
-  // ✅ useMutation 설정 (작성, 수정)
-  const { mutate, isPending, isSuccess, isError } = useMutation({
-    mutationFn: async (requestData: RequestDataType) => {
-      return isEditMode
-        ? putEmotionRecord(Number(postId), requestData) // 수정 모드
-        : postEmotionRecord(requestData); // 새 글 작성 모드
-    },
-    onSuccess: () => {
-      handlePostSuccessModal(); // 성공 모달 띄우기
-      queryClient.invalidateQueries({ queryKey: ['userPosts', 'me'] });
-    },
-    onError: (error) => {
-      console.error(error);
-      handlePostFailModal();
-    },
+  const onSuccess = () => {
+    handlePostSuccessModal();
+    queryClient.invalidateQueries({ queryKey: ['userPosts', 'me'] });
+  };
+
+  const onError = (error: Error) => {
+    console.error(error);
+    handlePostFailModal();
+  };
+
+  const { onSubmit, isPending, isSuccess, isError } = usePostSubmit({
+    mode,
+    postId,
+    onSuccess,
+    onError,
   });
 
   // 기록 완료
   const onCompletePost = async () => {
-    if (!isCompletePost) return;
+    if (!isCompletePost || !selectedEmotion) return;
 
     // videoId 조회
     const videoId = await fetchSpotifyVideoId(
       selectedPostMusic?.spotifyId,
-      selectedPostMusic?.artistName,
-      selectedPostMusic?.songTitle,
+      selectedPostMusic?.artist,
+      selectedPostMusic?.title,
     );
 
-    const requestData = {
+    const data = {
       spotifyId: selectedPostMusic?.spotifyId,
-      videoId: videoId,
-      title: selectedPostMusic?.songTitle,
-      artist: selectedPostMusic?.artistName,
+      videoId,
+      title: selectedPostMusic?.title,
+      artist: selectedPostMusic?.artist,
       albumImage: selectedPostMusic?.albumImage,
-      emotion: selectedEmotion as string,
-      comment: comment,
+      emotion: selectedEmotion,
+      comment,
     };
-    mutate(requestData); // useMutation 실행
+
+    onSubmit(data);
   };
 
   const renderButtonContent = () => {

@@ -31,8 +31,8 @@ export default function PostForm({
         {/* 음악 검색 */}
         <MusicCard
           image={selectedPostMusic?.albumImage}
-          title={selectedPostMusic?.songTitle}
-          artist={selectedPostMusic?.artistName}
+          title={selectedPostMusic?.title}
+          artist={selectedPostMusic?.artist}
           isMusicSelect={isMusicSelect}
           buttonContent={isMusicSelect ? '변경' : '등록'}
           buttonType={isMusicSelect ? 'secondary' : 'primary'}

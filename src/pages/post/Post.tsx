@@ -1,22 +1,20 @@
 import Button from '@/components/Button';
-import EmotionFilter from '@/components/EmotionFilter';
-import MusicCard from '@/components/MusicCard';
-import Comment from '@/pages/post/components/Comment';
-import { useEffect, useState } from 'react';
-import { useSheetStore } from '@/store/sheetStore';
+import { useEffect } from 'react';
 import { getEmotionRecordById, postEmotionRecord, putEmotionRecord } from '@/apis/emotionRecord';
 import { useModalStore } from '@/store/modalStore';
 import { useNavigate, useParams } from 'react-router';
-import { useMusicCardStore } from '@/store/MusicCardStore';
 import SpinLoading from '@/components/loading/SpinLoading';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
 import { fetchSpotifyVideoId } from '@/utils/fetchSpotifyVideoId';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import usePostForm from '@/hooks/usePostForm';
+import { useMusicSelection } from '@/hooks/useMusicSelection';
+import PostForm from '@/pages/post/components/PostForm';
 
 interface RequestDataType {
   spotifyId: string;
-  videoId: any;
+  videoId: string | null;
   title: string;
   artist: string;
   albumImage: string;
@@ -30,13 +28,19 @@ export default function Post() {
   const isEditMode = Boolean(postId); // 수정 모드인지 확인
 
   const { openModal, closeModal } = useModalStore();
-  const { selectedPostMusic, selectPostMusic, clearPostMusic } = useMusicCardStore();
-  const { closeAllSheets } = useSheetStore();
 
-  const [isMusicSelect, setIsMusicSelect] = useState(false); //음악 선택 상태 확인
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const [comment, setComment] = useState<string>(''); // 코멘트
   const queryClient = useQueryClient();
+
+  const {
+    selectedEmotion,
+    setSelectedEmotion,
+    comment,
+    setComment,
+    onEmotionClick,
+    onChangeComment,
+    isFilled,
+  } = usePostForm();
+  const { selectedPostMusic, isMusicSelect, clearPostMusic, selectPostMusic } = useMusicSelection();
 
   // 수정모드
   useEffect(() => {
@@ -65,29 +69,8 @@ export default function Post() {
     }
   }, []);
 
-  // 음악 선택 됨 -> 아티스트 폰트 스타일 변경, 모달 닫기
-  useEffect(() => {
-    if (selectedPostMusic) {
-      setIsMusicSelect(true);
-      closeAllSheets();
-      console.log('음악 선택됨:', selectedPostMusic);
-    } else {
-      setIsMusicSelect(false);
-    }
-  }, [selectedPostMusic]);
-
-  // 감정 선택 시
-  const onEmotionClick = (emotion: string) => {
-    setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-  };
-
-  // 코멘트 입력 시
-  const onChangeComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
-  };
-
   // 기록 완료 조건 확인
-  const isCompletePost = selectedPostMusic && selectedEmotion && comment.trim().length > 0;
+  const isCompletePost = selectedPostMusic && isFilled;
 
   // 글 등록 성공 모달
   const handlePostSuccessModal = () => {
@@ -154,7 +137,7 @@ export default function Post() {
       title: selectedPostMusic?.songTitle,
       artist: selectedPostMusic?.artistName,
       albumImage: selectedPostMusic?.albumImage,
-      emotion: selectedEmotion,
+      emotion: selectedEmotion as string,
       comment: comment,
     };
     mutate(requestData); // useMutation 실행
@@ -178,32 +161,14 @@ export default function Post() {
 
   return (
     <div className="flex flex-col items-center justify-between w-full pb-10">
-      <div className="flex flex-col items-center gap-6 mt-5 w-fit">
-        {/* 감정 선택 */}
-        <div className="flex flex-col items-center gap-5">
-          <h2 className="text-2xl font-saeeum text-gray-60">이 순간, 어떤 감정이 떠오르나요?</h2>
-          <EmotionFilter onEmotionClick={onEmotionClick} selectedEmotion={selectedEmotion} />
-        </div>
-
-        {/* 음악 검색 */}
-
-        <MusicCard
-          image={selectedPostMusic?.albumImage}
-          title={selectedPostMusic?.songTitle}
-          artist={selectedPostMusic?.artistName}
-          isMusicSelect={isMusicSelect}
-          buttonContent={isMusicSelect ? '변경' : '등록'}
-          buttonType={isMusicSelect ? 'secondary' : 'primary'}
-          rightElement="button"
-        />
-
-        {/* 사용자 코멘트 */}
-        <Comment
-          selectedEmotion={selectedEmotion}
-          comment={comment}
-          onChangeComment={onChangeComment}
-        />
-      </div>
+      <PostForm
+        onEmotionClick={onEmotionClick}
+        selectedEmotion={selectedEmotion}
+        selectedPostMusic={selectedPostMusic}
+        isMusicSelect={isMusicSelect}
+        comment={comment}
+        onChangeComment={onChangeComment}
+      />
       {/* 버튼 */}
       <Button
         variant={isCompletePost ? 'primary' : 'disabled'}

@@ -2,7 +2,7 @@ import Button from '@/components/Button';
 import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play-circle.svg';
 import pause from '@assets/icons/pause-circle.svg';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useSheetStore } from '@/store/sheetStore';
 import MusicSearchSheet from './modalSheet/MusicSearchSheet';
 import { useYouTubeStore } from '@/store/youtubeStore';
@@ -21,7 +21,7 @@ interface MusicCardProps {
   rightElement?: 'none' | 'play' | 'button'; // 오른쪽 요소 타입
 }
 
-export default function MusicCard({
+const MusicCard = ({
   image,
   title,
   artist,
@@ -30,7 +30,7 @@ export default function MusicCard({
   buttonContent = '등록',
   buttonType = 'primary',
   rightElement = 'button',
-}: MusicCardProps) {
+}: MusicCardProps) => {
   const location = useLocation();
   const { postId } = useParams();
   const isUserPage = location.pathname.includes('/mypage') || location.pathname.includes('/user');
@@ -139,7 +139,8 @@ export default function MusicCard({
       {isMusicSheetOpen && <MusicSearchSheet />}
     </>
   );
-}
+};
+export default memo(MusicCard);
 
 // 사용예시
 //1.

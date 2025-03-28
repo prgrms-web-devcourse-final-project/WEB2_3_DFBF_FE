@@ -89,7 +89,7 @@ function Home() {
   useEffect(() => {
     if (selectedPostMusic) {
       closeAllSheets();
-      setSearchText(`${selectedPostMusic.artistName} - ${selectedPostMusic.songTitle}`);
+      setSearchText(`${selectedPostMusic.artist} - ${selectedPostMusic.title}`);
     } else if (!selectedPostMusic && searchText) {
       // 음악 선택 해제 시 검색창 초기화
       setSearchText('');

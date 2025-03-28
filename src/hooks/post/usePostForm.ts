@@ -1,28 +1,40 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
+
+interface FormData {
+  emotion: string | null; // 감정
+  comment: string; // 코멘트
+}
 
 const usePostForm = () => {
-  const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정
-  const [comment, setComment] = useState<string>(''); // 코멘트
+  const [formData, setFormData] = useState<FormData>({
+    emotion: null,
+    comment: '',
+  });
 
-  const onEmotionClick = useCallback((emotion: string) => {
-    setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-  }, []);
+  const setEmotion = (emotion: string | null) => {
+    console.log('emotion:', emotion);
+    setFormData((prev) =>
+      prev.emotion === emotion ? { ...prev, emotion: null } : { ...prev, emotion },
+    );
+  };
+  const setComment = (comment: string) => {
+    setFormData((prev) => ({ ...prev, comment }));
+  };
 
-  const onChangeComment = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComment(e.target.value);
-  }, []);
+  // 폼 초기화
+  const clearForm = () => {
+    setFormData({ emotion: null, comment: '' });
+  };
 
-  // 기록 완료 조건 확인
-  const isFilled = selectedEmotion && comment.trim().length > 0;
+  // 코멘트가 비어있지 않은 경우
+  const isComment = formData.comment.trim().length > 0;
 
   return {
-    selectedEmotion,
-    setSelectedEmotion,
-    comment,
+    formData,
+    setEmotion,
     setComment,
-    onEmotionClick,
-    onChangeComment,
-    isFilled,
+    isComment,
+    clearForm,
   };
 };
 

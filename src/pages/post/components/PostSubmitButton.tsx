@@ -4,7 +4,7 @@ import ErrorShake from '@/components/loading/ErrorShake';
 import SpinLoading from '@/components/loading/SpinLoading';
 
 interface PostSubmitButtonProps {
-  isEditMode: boolean;
+  mode: 'create' | 'edit';
   isCompletePost: boolean | null;
   isPending: boolean;
   isSuccess: boolean;
@@ -13,7 +13,7 @@ interface PostSubmitButtonProps {
 }
 
 export default function PostSubmitButton({
-  isEditMode,
+  mode,
   isCompletePost,
   isPending,
   isSuccess,
@@ -27,7 +27,7 @@ export default function PostSubmitButton({
       return <Complete />;
     } else if (isError) {
       return <ErrorShake />;
-    } else return isEditMode ? <span>수정 완료</span> : <span>기록 완료</span>;
+    } else return mode === 'edit' ? <span>수정 완료</span> : <span>기록 완료</span>;
   };
 
   return (

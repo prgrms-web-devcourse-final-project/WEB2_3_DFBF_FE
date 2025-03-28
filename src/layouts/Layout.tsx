@@ -1,13 +1,11 @@
-import Header from '@/layouts/header/Header';
 import { Outlet, useLocation } from 'react-router';
-import HeaderWithBack from '@/layouts/header/HeaderWithBack';
-import HeaderChat from '@/layouts/header/HeaderChat';
 import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
 import MyErrorBoundary from '@/components/ErrorBoundary';
-import { useEffect, useRef } from 'react';
-import { useScrollStore } from '@/store/scrollStore';
+// import { useEffect, useRef } from 'react';
+// import { useScrollStore } from '@/store/scrollStore';
 import BottomNavWrapper from '@/layouts/bottomNav/BottomNavWrapper';
+import HeaderWrapper from '@/layouts/header/HeaderWrapper';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -22,46 +20,27 @@ function Layout() {
     //지난 대화 기록 페이지
     location.pathname === '/chat';
 
-  const headerConfig: { [key: string]: React.ReactNode } = {
-    '/home': <Header />,
-    '/chat': <Header />,
-    '/mypage': <Header showMoreOptions />,
-    '/post': <HeaderWithBack text="글 등록" />,
-    '/signup': <HeaderWithBack text="회원가입" />,
-    '/mypage/blocklist': <HeaderWithBack text="차단 목록" />,
-    '/mypage/edit': <HeaderWithBack text="내 정보 수정" showMoreOptions />,
-  };
-
-  const renderHeader = () => {
-    if (location.pathname.includes('/user')) {
-      return <HeaderWithBack showMoreOptions />;
-    }
-    if (location.pathname.includes('/chatroom')) {
-      return <HeaderChat showLogo showNickname />;
-    }
-    return headerConfig[location.pathname] ?? <Header />;
-  };
-
   //헤더 클릭 시 스크롤
-  const { setScrollContainerRefCurrent } = useScrollStore();
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 참조
-  useEffect(() => {
-    if (scrollContainerRef.current) setScrollContainerRefCurrent(scrollContainerRef.current);
-  }, [scrollContainerRef]);
+  // const { setScrollContainerRefCurrent } = useScrollStore();
+  // const scrollContainerRef = useRef<HTMLDivElement | null>(null); // 스크롤 컨테이너 참조
+  // useEffect(() => {
+  //   if (scrollContainerRef.current) setScrollContainerRefCurrent(scrollContainerRef.current);
+  // }, [scrollContainerRef]);
 
-  const handleScrollToTop = () => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
+  // const handleScrollToTop = () => {
+  //   if (scrollContainerRef.current) {
+  //     scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+  //   }
+  // };
 
   return (
     <div
-      ref={scrollContainerRef}
+      // ref={scrollContainerRef}
       className="relative max-w-[600px] min-w-[320px] w-full h-screen mx-auto bg-background flex flex-col overflow-y-auto scroll"
     >
       {/* 헤더 */}
-      <div onClick={handleScrollToTop}>{renderHeader()}</div>
+      {/* <div onClick={handleScrollToTop}>{renderHeader()}</div> */}
+      <HeaderWrapper />
 
       {/* 메인 컨텐츠 영역 */}
       <div

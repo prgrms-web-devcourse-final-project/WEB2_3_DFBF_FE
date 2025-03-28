@@ -1,9 +1,13 @@
 import postIcon from '@/assets/icons/new-post-icon.svg';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { twMerge } from 'tailwind-merge';
 
 export default function PostButton() {
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 URL 가져오기
+  const hasPostButton = location.pathname === '/home' || location.pathname === '/mypage';
+
+  if (!hasPostButton) return null;
   return (
     <button
       onClick={() => navigate('/post')}

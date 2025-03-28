@@ -1,13 +1,18 @@
 import { getEmotionRecordById } from '@/apis/emotionRecord';
 import useMusicSelection from '@/hooks/post/useMusicSelection';
-import usePostForm from '@/hooks/post/usePostForm';
 import { useEffect } from 'react';
 
-const useEditInit = (postId: number | null) => {
-  const { setSelectedEmotion, setComment } = usePostForm();
+interface useEditInitProps {
+  postId: number | null;
+  setEmotion: (emotion: string | null) => void;
+  setComment: (comment: string) => void;
+}
+
+const useEditInit = ({ postId, setEmotion, setComment }: useEditInitProps) => {
   const { selectPostMusic, selectedPostMusic } = useMusicSelection();
 
   useEffect(() => {
+    console.log('수정모드입니다 postId:', postId);
     if (!postId) return;
 
     // 수정 데이터 가져오기
@@ -23,7 +28,7 @@ const useEditInit = (postId: number | null) => {
         spotifyId: spotifyMusic.spotifyId,
       };
 
-      setSelectedEmotion(emotion);
+      setEmotion(emotion);
       setComment(comment);
       selectPostMusic(editMusic);
       console.log('음악 선택됨:', selectedPostMusic);

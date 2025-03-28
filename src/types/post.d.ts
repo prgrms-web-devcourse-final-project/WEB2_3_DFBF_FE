@@ -37,3 +37,14 @@ interface MusicCardItem {
   artist: string;
   albumImage: string;
 }
+
+// 감정 기록 작성 데이터
+interface EmotionRecordRequest {
+  spotifyId: string;
+  videoId: string;
+  title: string;
+  artist: string;
+  albumImage: string;
+  emotion: string;
+  comment: string;
+}

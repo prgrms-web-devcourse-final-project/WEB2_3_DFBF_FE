@@ -1,5 +1,4 @@
 import Header from '@/layouts/header/Header';
-import BottomNav from '@/layouts/BottomNav';
 import { Outlet, useLocation } from 'react-router';
 import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import HeaderChat from '@/layouts/header/HeaderChat';
@@ -8,6 +7,7 @@ import PostButton from '@/components/PostButton';
 import MyErrorBoundary from '@/components/ErrorBoundary';
 import { useEffect, useRef } from 'react';
 import { useScrollStore } from '@/store/scrollStore';
+import BottomNavWrapper from '@/layouts/bottomNav/BottomNavWrapper';
 
 function Layout() {
   const location = useLocation(); // 현재 URL 가져오기
@@ -21,12 +21,6 @@ function Layout() {
     location.pathname.includes('/user') ||
     //지난 대화 기록 페이지
     location.pathname === '/chat';
-
-  const renderBottomNav = () => {
-    if (showNav) {
-      return <BottomNav />;
-    } else return null;
-  };
 
   const headerConfig: { [key: string]: React.ReactNode } = {
     '/home': <Header />,
@@ -47,8 +41,6 @@ function Layout() {
     }
     return headerConfig[location.pathname] ?? <Header />;
   };
-
-  const hasPostButton = location.pathname === '/home' || location.pathname === '/mypage';
 
   //헤더 클릭 시 스크롤
   const { setScrollContainerRefCurrent } = useScrollStore();
@@ -84,8 +76,9 @@ function Layout() {
       </div>
 
       {/* 하단 네비게이션 */}
-      {renderBottomNav()}
-      {hasPostButton && <PostButton />}
+      <BottomNavWrapper />
+      {/* 글작성 버튼 */}
+      <PostButton />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import MusicAnimation from '@/components/MusicAnimation';
 import { useNavigate } from 'react-router';
 function Landing() {

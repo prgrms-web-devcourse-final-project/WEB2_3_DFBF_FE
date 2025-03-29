@@ -1,5 +1,5 @@
 import { useModalStore } from '@/store/modalStore';
-import Button from './Button';
+import Button from './button/Button';
 import { createPortal } from 'react-dom';
 import { useEffect, useRef } from 'react';
 // import { spawn } from 'child_process';

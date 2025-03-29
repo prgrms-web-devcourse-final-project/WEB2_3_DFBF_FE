@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import Complete from '@/components/loading/Complete';
 import ErrorShake from '@/components/loading/ErrorShake';
 import SpinLoading from '@/components/loading/SpinLoading';

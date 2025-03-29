@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import CountdownTimer from '@/components/CountdownTimer';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';

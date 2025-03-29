@@ -1,5 +1,5 @@
 import logo from '@/assets/icons/logo.svg';
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import sad from '@/assets/icons/sad-icon.svg';
 import { useNavigate } from 'react-router';
 import { useSheetStore } from '@/store/sheetStore';

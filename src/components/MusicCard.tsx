@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import defaultImage from '@assets/images/default.png';
 import play from '@assets/icons/play/play-circle.svg';
 import pause from '@assets/icons/pause-circle.svg';

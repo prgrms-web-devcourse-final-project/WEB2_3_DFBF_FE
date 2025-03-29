@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import SpinLoading from '@/components/loading/SpinLoading';
 import { useSignUp } from '@/hooks/useSignUp';
 import AuthCodeInput from '@/pages/signup/components/AuthCodeInput';

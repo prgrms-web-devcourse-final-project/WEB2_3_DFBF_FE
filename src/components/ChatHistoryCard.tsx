@@ -1,4 +1,4 @@
-import Button from './Button';
+import Button from './button/Button';
 import defaultImage from '@assets/images/default.png';
 
 import dayjs from 'dayjs';

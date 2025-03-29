@@ -7,7 +7,7 @@ export const useIdAvailability = (
   setValidity: (val: boolean) => void,
   setValidation: (val: { success: boolean; message: string }) => void,
 ) => {
-  const { mutate, isPending } = useMutation({
+  return useMutation({
     mutationFn: () => getIdAvailability(text),
     onSuccess: (data) => {
       if (data.code === 200) {
@@ -25,6 +25,4 @@ export const useIdAvailability = (
       });
     },
   });
-
-  return { mutate, isPending };
 };

@@ -1,6 +1,6 @@
 import { cancelChatRequest, createChatroom, postRejectChat } from '@/apis/chat';
 import { getEmotionRecordById } from '@/apis/emotionRecord';
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import { useChatStore } from '@/store/chatStore';
 import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
@@ -55,8 +55,7 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
         setCurrentChatRoomId(chatRoomId);
         navigate(`/chatroom/${chatRoomId}`);
         closeAllSheets();
-      }
-      else if (code === 500) {
+      } else if (code === 500) {
         openModal({
           title: 'SSE가 연결되지 않았습니다',
           onConfirm: () => {

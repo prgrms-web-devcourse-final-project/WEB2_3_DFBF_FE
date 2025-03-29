@@ -7,14 +7,14 @@ export const useEmailVerificationCheck = (
   authcode: string, // 인증코드
   setValidity: (val: boolean) => void,
   setValidationMessage: (val: { success: boolean; message: string }) => void,
-  setButtonVariant: (val: 'primary' | 'disabled') => void,
+  setButtonEnabled: (val: boolean) => void,
 ) => {
   const verificationCheckMutation = useMutation({
     mutationFn: () => postEmailVerificationCheck(email, authcode),
     onSuccess: ({ code }) => {
       if (code === 200) {
         setValidationMessage({ success: true, message: '이메일 인증이 완료되었습니다' });
-        setButtonVariant('disabled'); // 버튼 비활성화
+        setButtonEnabled(false); // 버튼 비활성화
         setValidity(true); // 완료 처리
       } else {
         setValidationMessage({ success: false, message: '인증 코드가 올바르지 않습니다' });

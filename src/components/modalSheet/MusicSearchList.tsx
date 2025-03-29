@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import { useMusicCardStore } from '@/store/MusicCardStore';
 import { useLocation, useParams } from 'react-router';
 

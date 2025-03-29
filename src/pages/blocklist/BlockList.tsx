@@ -1,5 +1,5 @@
 import { deleteBlockList, fetchBlockList } from '@/apis/blockList';
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import InfoMessage from '@/components/InfoMessage';
 import { useModalStore } from '@/store/modalStore';
 import { useEffect, useState } from 'react';

@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import sad from '@/assets/icons/sad-icon.svg';
 
 interface ErrorPageProps {

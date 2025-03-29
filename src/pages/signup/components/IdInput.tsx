@@ -1,9 +1,7 @@
 import InputField from '@/components/InputField';
-import SpinLoading from '@/components/loading/SpinLoading';
 import { ID_REGEX } from '@/constants';
 import { useIdAvailability } from '@/hooks/useIdAvailability';
 import { useValidationWithButton } from '@/hooks/useValidationWithButton';
-import { useEffect, useState } from 'react';
 
 interface IdInputProps {
   setValue: (val: string) => void;
@@ -12,8 +10,6 @@ interface IdInputProps {
 }
 
 function IdInput({ setValue, validity, setValidity }: IdInputProps) {
-  const [showLoading, setShowLoading] = useState(false); // 로딩 UI 표시 여부
-
   // 유효성 검사
   const handleValidation = (value: string) => {
     if (!ID_REGEX.test(value)) {
@@ -22,7 +18,7 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
     return { success: false, message: '' };
   };
   // 중복확인 훅
-  const { text, validationMessage, setValidationMessage, buttonVariant, handleChange } =
+  const { text, validationMessage, setValidationMessage, buttonEnabled, handleChange } =
     useValidationWithButton({
       validity,
       setValidity,
@@ -30,28 +26,19 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
       REGEX: ID_REGEX,
     });
 
-  const { mutate, isPending } = useIdAvailability(
+  const { isPending, mutate } = useIdAvailability(
     text,
     setValue,
     setValidity,
     setValidationMessage,
   );
 
-  // 0.1초 후 로딩 UI 표시
-  useEffect(() => {
-    let loadingTimeout: NodeJS.Timeout;
-    if (isPending) {
-      loadingTimeout = setTimeout(() => setShowLoading(true), 100);
-    } else {
-      setShowLoading(false);
-    }
-    return () => clearTimeout(loadingTimeout);
-  }, [isPending]);
-
-  const renderButtonContent = () => {
-    if (showLoading) {
-      return <SpinLoading />;
-    } else return <span>중복확인</span>;
+  // 버튼 props
+  const buttonHandler = {
+    buttonEnabled: buttonEnabled,
+    buttonText: '중복확인',
+    isPending: isPending,
+    onClick: mutate,
   };
 
   return (
@@ -59,13 +46,11 @@ function IdInput({ setValue, validity, setValidity }: IdInputProps) {
       id="id"
       label="아이디"
       placeholder="아이디를 입력해 주세요"
-      variant={buttonVariant}
-      buttonText={renderButtonContent()}
       value={text}
       onChange={handleChange}
       isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
       validationMessage={validationMessage.message} // ✅ 메시지 전달
-      onClick={() => mutate()}
+      buttonHandler={buttonHandler}
     />
   );
 }

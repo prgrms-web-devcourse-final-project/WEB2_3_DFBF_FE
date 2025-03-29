@@ -8,14 +8,14 @@ export const useEmailCheck = (
   setEmail: (val: string) => void, // formdata 수정
   setValidity: (val: boolean) => void,
   setValidationMessage: (val: { success: boolean; message: string }) => void,
-  setButtonVariant: (val: 'primary' | 'disabled') => void,
+  setButtonEnabled: (val: boolean) => void,
 ) => {
   // 이메일 인증 요청 훅 사용
   const { requestEmailVerification, isPending } = useEmailVerification(
     email,
     setValidationMessage,
     setValidity,
-    setButtonVariant,
+    setButtonEnabled,
     setEmail,
   );
   // ✅ 이메일 중복 확인 요청

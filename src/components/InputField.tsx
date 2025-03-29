@@ -1,32 +1,30 @@
-import Button from '@/components/Button';
+import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
 import Input from '@/components/Input';
 import { twMerge } from 'tailwind-merge';
 
-//id, label 필수
+type ButtonHandler = {
+  buttonEnabled: boolean;
+  buttonText: string;
+  isPending: boolean;
+  onClick: () => void;
+};
+
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
-  className?: string;
   isValid?: boolean;
-  validationMessage?: string; // 띄울 메세지
-}
-interface ButtonProps {
-  buttonText?: string | React.ReactNode;
-  variant?: 'primary' | 'disabled';
-  onClick?: () => void;
+  validationMessage?: string;
+  buttonHandler?: ButtonHandler;
 }
 
 export default function InputField({
   id,
   label,
-  className,
-  buttonText,
-  variant,
-  onClick,
   isValid,
   validationMessage,
+  buttonHandler,
   ...props
-}: InputFieldProps & ButtonProps) {
+}: InputFieldProps) {
   return (
     <div className="flex flex-col w-full">
       <label htmlFor={id} className="body-r text-gray-80 ml-[5px] mb-0.5">
@@ -34,15 +32,15 @@ export default function InputField({
       </label>
       <div className="flex gap-2">
         <Input id={id} {...props} />
-        {buttonText && (
-          <Button
-            variant={variant}
+        {buttonHandler && (
+          <LoadingSpinnerButton
+            buttonEnabled={buttonHandler.buttonEnabled}
+            buttonText={buttonHandler.buttonText}
+            isPending={buttonHandler.isPending}
             className="w-[65px] flex-shrink-0"
-            onClick={onClick}
+            onClick={buttonHandler.onClick}
             type="button"
-          >
-            {buttonText}
-          </Button>
+          />
         )}
       </div>
       <div className="flex items-center h-5">

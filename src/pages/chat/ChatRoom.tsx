@@ -1,6 +1,6 @@
 import sendIcon from '@/assets/icons/send-icon.svg';
 import ChatMusicPlayer from './components/ChatMusicPlayer';
-import Button from '@/components/Button';
+import Button from '@/components/button/Button';
 import { Client, StompSubscription } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useEffect, useRef, useState } from 'react';

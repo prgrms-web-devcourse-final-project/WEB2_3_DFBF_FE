@@ -3,8 +3,6 @@ import { forwardRef } from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'disabled';
-  className?: string;
-  onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -16,20 +14,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <>
-        <button
-          ref={ref}
-          className={twMerge(
-            'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
-            buttonStyle[variant],
-            className,
-          )}
-          disabled={variant === 'disabled'}
-          {...props}
-        >
-          {children}
-        </button>
-      </>
+      <button
+        ref={ref}
+        className={twMerge(
+          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
+          buttonStyle[variant],
+          className,
+        )}
+        disabled={variant === 'disabled'}
+        {...props}
+      >
+        {children}
+      </button>
     );
   },
 );

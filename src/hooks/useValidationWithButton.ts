@@ -23,7 +23,7 @@ export const useValidationWithButton = ({
     success: false,
     message: initialMessage,
   });
-  const [buttonVariant, setButtonVariant] = useState<'primary' | 'disabled'>('disabled');
+  const [buttonEnabled, setButtonEnabled] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -38,9 +38,9 @@ export const useValidationWithButton = ({
     }
     // 정규 표현식에 따라서 버튼 달리하기
     if (REGEX.test(text)) {
-      setButtonVariant('primary');
+      setButtonEnabled(true);
     } else {
-      setButtonVariant('disabled');
+      setButtonEnabled(false);
     }
   }, [text]);
 
@@ -54,8 +54,8 @@ export const useValidationWithButton = ({
     setText,
     validationMessage,
     setValidationMessage,
-    buttonVariant,
+    buttonEnabled,
     handleChange,
-    setButtonVariant,
+    setButtonEnabled,
   };
 };

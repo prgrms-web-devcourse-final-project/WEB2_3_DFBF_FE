@@ -1,12 +1,19 @@
 import Button from '@/components/button/Button';
+import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
 import CountdownTimer from '@/components/CountdownTimer';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
+type ButtonHandler = {
+  buttonEnabled: boolean;
+  buttonText: string;
+  isPending: boolean;
+  onClick: () => void;
+};
+
 interface InputAuthCodeProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
-  className?: string;
   isValid: boolean;
   validationMessage: string; // 띄울 메세지
   emailSent: boolean;
@@ -15,19 +22,13 @@ interface InputAuthCodeProps extends React.InputHTMLAttributes<HTMLInputElement>
   resendCount: number; // 재전송 횟수
 
   // ✅ 버튼 관련 속성 추가
-  buttonText: string | React.ReactNode;
-  variant: 'primary' | 'disabled';
-  onClick: () => void;
+  buttonHandler?: ButtonHandler;
   onButtonClick?: () => void;
 }
 
 function InputAuthCode({
   id,
   label,
-  className,
-  buttonText,
-  variant,
-  onClick,
   isValid,
   disabled,
   value,
@@ -36,6 +37,7 @@ function InputAuthCode({
   resendCount,
   onTimeout,
   onResendEmail,
+  buttonHandler,
   ...props
 }: InputAuthCodeProps) {
   // 메세지 색 선택 로직
@@ -63,15 +65,15 @@ function InputAuthCode({
           />
           {emailSent && !isValid && <CountdownTimer key={resendCount} onTimeout={onTimeout} />}
         </div>
-        {buttonText && (
-          <Button
-            variant={variant}
+        {buttonHandler && (
+          <LoadingSpinnerButton
+            buttonEnabled={buttonHandler.buttonEnabled}
+            buttonText={buttonHandler.buttonText}
+            isPending={buttonHandler.isPending}
             className="w-[65px] flex-shrink-0"
-            onClick={onClick}
+            onClick={buttonHandler.onClick}
             type="button"
-          >
-            {buttonText}
-          </Button>
+          />
         )}
       </div>
       <div className="flex items-center h-5">

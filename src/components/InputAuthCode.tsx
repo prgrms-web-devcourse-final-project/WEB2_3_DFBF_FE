@@ -1,4 +1,3 @@
-import Button from '@/components/button/Button';
 import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
 import CountdownTimer from '@/components/CountdownTimer';
 import React from 'react';

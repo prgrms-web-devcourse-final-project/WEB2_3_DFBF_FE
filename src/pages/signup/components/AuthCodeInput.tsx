@@ -1,5 +1,4 @@
 import InputAuthCode from '@/components/InputAuthCode';
-import SpinLoading from '@/components/loading/SpinLoading';
 import { AUTHCODE_REGEX } from '@/constants';
 import { useEmailVerificationCheck } from '@/hooks/useEmailVerificationCheck';
 import { useResendEmailVerification } from '@/hooks/useResendEmailVerification';

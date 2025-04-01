@@ -51,6 +51,8 @@ function ProfileEditForm() {
     staleTime: 5 * 60 * 1000,
   });
 
+  console.log(userData);
+
   const { mutate, isPending, isSuccess, isError } = useMutation({
     mutationFn: patchEditProfile,
     onSuccess: (data) => {
@@ -143,7 +145,6 @@ function ProfileEditForm() {
   useEffect(() => {
     if (userData) {
       const { nickname, profileMusic } = userData.data;
-
       prevNickname.current = nickname; // 이전 닉네임 저장
       prevProfileMusic.current = profileMusic?.spotifyId ? profileMusic : null; // 이전 음악저장
 
@@ -182,9 +183,8 @@ function ProfileEditForm() {
           />
         </div>
         <NicknameInput
-          initialValue={nickname}
-          setValue={(nickname) => setNickname(nickname)}
-          validity={isNicknameValid}
+          initialText={nickname}
+          changeFormNickname={(nickname) => setNickname(nickname)}
           setValidity={(val) => setIsNicknameValid(val)}
         />
       </div>

@@ -1,6 +1,5 @@
 import InputField from '@/components/InputField';
-import { PASSWORD_REGEX } from '@/constants';
-import { useValidation } from '@/hooks/useValidation';
+import { useState } from 'react';
 
 interface PasswordConfirmInputProps {
   label?: string;
@@ -15,22 +14,23 @@ function PasswordConfirmInput({
   setValidity,
   password,
 }: PasswordConfirmInputProps) {
-  // 유효성 검사
-  const handleValidation = (value: string) => {
-    if (value === password && PASSWORD_REGEX.test(value)) {
-      return { success: true, message: '비밀번호가 일치합니다' };
-    } else {
-      return { success: false, message: '비밀번호가 일치하지 않습니다' };
-    }
-  };
-  const { text, validationMessage, handleChange } = useValidation(handleValidation);
+  const [text, setText] = useState('');
+  const [validationMessage, setValidationMessage] = useState({
+    success: false,
+    message: '',
+  });
 
-  // ✅ 포커스 아웃 시 유효성 검사 실행
-  const handleBlur = () => {
-    if (text === password && PASSWORD_REGEX.test(text)) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setText(value);
+    setValidity(false); // form validity 초기화
+
+    // 유효성 검사
+    if (value === password && value !== '') {
+      setValidationMessage({ success: true, message: '비밀번호가 일치합니다' });
       setValidity(true);
     } else {
-      setValidity(false);
+      setValidationMessage({ success: false, message: '비밀번호가 일치하지 않습니다' });
     }
   };
 
@@ -42,7 +42,6 @@ function PasswordConfirmInput({
       placeholder={placeholder}
       value={text}
       onChange={handleChange}
-      onBlur={handleBlur}
       isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
       validationMessage={validationMessage.message} // ✅ 메시지 전달
     />

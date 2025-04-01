@@ -1,50 +1,74 @@
+import { getNicknameAvailability } from '@/apis/user';
 import InputField from '@/components/InputField';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
-import { useNicknameAvailability } from '@/hooks/useNicknameAvailability';
-import { useValidationWithButton } from '@/hooks/useValidationWithButton';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 interface NicknameInputProps {
-  initialValue?: string; // 초기값
-  setValue: (val: string) => void;
-  validity: boolean;
+  initialText?: string; // 초기값
+  changeFormNickname: (val: string) => void;
   setValidity: (val: boolean) => void;
 }
 
-function NicknameInput({ initialValue, setValue, validity, setValidity }: NicknameInputProps) {
-  // 유효성 검사
-  const handleValidation = (value: string) => {
+function NicknameInput({ initialText = '', changeFormNickname, setValidity }: NicknameInputProps) {
+  const [text, setText] = useState(initialText);
+  const [validationMessage, setValidationMessage] = useState({
+    success: false,
+    message: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setText(value);
+    changeFormNickname(value); // form id 업데이트
+    setValidity(false); // form validity 초기화
+
+    // 유효성 검사
+    const isValid = NICKNAME_REGEX.test(value);
+
     if (value.length < MIN_NICKNAME_LENGTH || value.length > MAX_NICKNAME_LENGTH) {
-      return { success: false, message: '닉네임은 2~7자 사이로 입력해야 합니다' };
+      return setValidationMessage({
+        success: false,
+        message: '닉네임은 2~7자 사이로 입력해야 합니다',
+      });
     }
-    if (!NICKNAME_REGEX.test(value)) {
-      return {
+    if (!isValid) {
+      setValidationMessage({
         success: false,
         message:
           '닉네임에는 영어, 한글, 숫자만 사용할 수 있으며, 공백 및 특수문자는 허용되지 않습니다',
-      };
+      });
+    } else {
+      setValidationMessage({ success: true, message: '' });
     }
-
-    return { success: false, message: '' };
   };
-  const { text, validationMessage, setValidationMessage, buttonEnabled, handleChange } =
-    useValidationWithButton({
-      validity,
-      setValidity,
-      handleValidationMessage: handleValidation,
-      REGEX: NICKNAME_REGEX,
-      initialText: initialValue,
-    });
   // 닉네임 중복을 확인하는 함수
-  const { mutate, isPending } = useNicknameAvailability(
-    text,
-    setValue,
-    setValidity,
-    setValidationMessage,
-  );
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => getNicknameAvailability(text),
+    onSuccess: (data) => {
+      if (data.code === 200) {
+        setValidationMessage({ success: true, message: '사용 가능한 닉네임입니다' });
+        setValidity(true);
+      } else if (data.code === 409) {
+        setValidationMessage({ success: false, message: '이미 사용 중인 닉네임입니다' });
+      }
+    },
+    onError: () => {
+      setValidationMessage({
+        success: false,
+        message: '예기치 않은 오류가 발생했습니다. 다시 시도해주세요',
+      });
+    },
+  });
+
+  // initialText가 변경되면 text 상태를 업데이트
+  useEffect(() => {
+    setText(initialText);
+  }, [initialText]);
 
   // 버튼 props
   const buttonHandler = {
-    buttonEnabled: buttonEnabled,
+    buttonEnabled: validationMessage.success,
     buttonText: '중복확인',
     isPending: isPending,
     onClick: mutate,

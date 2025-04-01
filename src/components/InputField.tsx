@@ -3,10 +3,10 @@ import Input from '@/components/Input';
 import { twMerge } from 'tailwind-merge';
 
 type ButtonHandler = {
-  buttonEnabled: boolean;
-  buttonText: string;
-  isPending: boolean;
-  onClick: () => void;
+  buttonEnabled: boolean; // 버튼 비활성화 여부
+  buttonText: string; // 버튼 text
+  isPending: boolean; // pending 중인지 판단
+  onClick: () => void; // 클릭 함수
 };
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -27,27 +27,29 @@ export default function InputField({
 }: InputFieldProps) {
   return (
     <div className="flex flex-col w-full">
+      {/* 라벨 */}
       <label htmlFor={id} className="body-r text-gray-80 ml-[5px] mb-0.5">
         {label}
       </label>
+
+      {/* 입력 필드 + 버튼 */}
       <div className="flex gap-2">
         <Input id={id} {...props} />
         {buttonHandler && (
           <LoadingSpinnerButton
-            buttonEnabled={buttonHandler.buttonEnabled}
-            buttonText={buttonHandler.buttonText}
-            isPending={buttonHandler.isPending}
+            {...buttonHandler}
             className="w-[65px] flex-shrink-0"
-            onClick={buttonHandler.onClick}
             type="button"
           />
         )}
       </div>
+
+      {/* 유효성 검사 메시지 */}
       <div className="flex items-center h-5">
-        {validationMessage !== '' && (
+        {validationMessage && (
           <p
             className={twMerge(
-              'text-functional-danger text-[9px]/[18px] ml-[5px]',
+              'text-[9px]/[18px] ml-1',
               isValid ? 'text-functional-success' : 'text-functional-danger',
             )}
           >

@@ -116,11 +116,11 @@ function PasswordEditForm() {
         <PasswordInput
           label="새 비밀번호"
           placeholder="새 비밀번호를 입력해 주세요"
-          setValue={(password) => setNewPassword(password)}
+          changeFormPassword={(password) => setNewPassword(password)}
           setValidity={(password) => setValidity((prev) => ({ ...prev, password }))}
         />
         <PasswordConfirmInput
-          label="새 비밀번호"
+          label="새 비밀번호 확인"
           placeholder="새 비밀번호를 다시 입력해 주세요"
           setValidity={(passwordConfirm) => setValidity((prev) => ({ ...prev, passwordConfirm }))}
           password={newPassword}

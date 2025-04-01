@@ -2,7 +2,7 @@ import { getNicknameAvailability } from '@/apis/user';
 import InputField from '@/components/InputField';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface NicknameInputProps {
   initialText?: string; // 초기값
@@ -60,6 +60,11 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
       });
     },
   });
+
+  // initialText가 변경되면 text 상태를 업데이트
+  useEffect(() => {
+    setText(initialText);
+  }, [initialText]);
 
   // 버튼 props
   const buttonHandler = {

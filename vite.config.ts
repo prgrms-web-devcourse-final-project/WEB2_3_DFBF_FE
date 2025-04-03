@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import tailwindcss from '@tailwindcss/vite';
 import { fileURLToPath, URL } from 'url';
-import compression from 'vite-plugin-compression';
+import viteCompression from 'vite-plugin-compression';
 
 // https://vite.dev/config/
 
@@ -16,13 +16,9 @@ export default defineConfig(({ mode }) => {
       global: 'window', // global을 window로 설정
     },
     plugins: [
-      compression({
-        algorithm: 'brotliCompress', // Brotli 적용
-        ext: '.br', // Brotli 확장자 사용
-      }),
-      compression({
-        algorithm: 'gzip', // Gzip도 적용 (백업용)
-        ext: '.gz',
+      viteCompression({
+        algorithm: 'gzip',
+        ext: 'gz',
       }),
       react(),
       tailwindcss(),

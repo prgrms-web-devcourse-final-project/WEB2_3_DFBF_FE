@@ -18,12 +18,10 @@ export default defineConfig(({ mode }) => {
     plugins: [
       compression({
         algorithm: 'brotliCompress', // Brotli 적용
-        threshold: 1024, // 1KB 이상만 압축
         ext: '.br', // Brotli 확장자 사용
       }),
       compression({
         algorithm: 'gzip', // Gzip도 적용 (백업용)
-        threshold: 1024, // 1KB 이상만 압축
         ext: '.gz',
       }),
       react(),

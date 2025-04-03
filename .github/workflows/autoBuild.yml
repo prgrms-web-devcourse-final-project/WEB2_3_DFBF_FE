@@ -43,3 +43,7 @@ jobs:
             
             # Build React app using Vite
             npm run build
+
+            # 🛠 빌드된 파일 목록 출력 (압축 파일 확인)
+            echo "🔍 Checking built files..."
+            ls -lh dist/assets/

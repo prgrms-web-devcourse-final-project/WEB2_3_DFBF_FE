@@ -1,18 +1,16 @@
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
-import { useMoreOptions } from '@/hooks/useMoreOptions';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 import backIcon from '@assets/icons/back-icon.svg';
 import { useNavigate } from 'react-router';
 
 interface HeaderWithBackProps {
-  showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
   text?: string; // 헤더 텍스트
+  moreOptionsItems?: { label: string; onClick?: () => void }[]; // 더보기 메뉴에 실행할 함수
 }
 
 // 뒤로 가기 있는 헤더
-function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) {
+function HeaderWithBack({ text, moreOptionsItems }: HeaderWithBackProps) {
   const navigate = useNavigate();
-  const moreOptionsItems = useMoreOptions();
   return (
     <HedaerLayout>
       <div className="flex items-center justify-between w-full">
@@ -31,7 +29,7 @@ function HeaderWithBack({ showMoreOptions = false, text }: HeaderWithBackProps) 
         </div>
 
         {/* 더보기 메뉴 */}
-        {showMoreOptions && <MoreOptionsSelect items={moreOptionsItems} />}
+        {moreOptionsItems && <MoreOptionsSelect items={moreOptionsItems} />}
       </div>
     </HedaerLayout>
   );

@@ -1,13 +1,16 @@
 import Header from '@/layouts/header/Header';
 import HeaderChat from '@/layouts/header/HeaderChat';
 import HeaderWithBack from '@/layouts/header/HeaderWithBack';
+import MypageEditHeader from '@/layouts/header/MypageEditHeader';
+import MypageHeader from '@/layouts/header/MypageHeader';
+import UserPageHeader from '@/layouts/header/UserPageHeader';
 import { useLocation } from 'react-router';
 
 const HeaderWrapper = () => {
   const { pathname } = useLocation();
 
   if (pathname.startsWith('/user')) {
-    return <HeaderWithBack showMoreOptions />;
+    return <UserPageHeader />;
   }
 
   if (pathname.startsWith('/chatroom')) {
@@ -19,7 +22,7 @@ const HeaderWrapper = () => {
   }
 
   if (pathname === '/mypage') {
-    return <Header showMoreOptions />;
+    return <MypageHeader />;
   }
 
   if (pathname === '/post') {
@@ -35,7 +38,7 @@ const HeaderWrapper = () => {
   }
 
   if (pathname === '/mypage/edit') {
-    return <HeaderWithBack text="내 정보 수정" showMoreOptions />;
+    return <MypageEditHeader />;
   }
 
   return <Header />;

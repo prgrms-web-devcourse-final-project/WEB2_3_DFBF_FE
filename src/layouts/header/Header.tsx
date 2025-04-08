@@ -4,23 +4,21 @@ import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import HedaerLayout from '@/layouts/header/HedaerLayout';
 
 import logo from '@assets/icons/logo.svg';
-import { useMoreOptions } from '@/hooks/useMoreOptions';
 interface HeaderProps {
-  showMoreOptions?: boolean; // 더보기 메뉴를 표시할지 여부
+  moreOptionsItems?: { label: string; onClick?: () => void }[]; // 더보기 메뉴에 실행할 함수
 }
 
-function Header({ showMoreOptions = false }: HeaderProps) {
-  const moreOptionsItems = useMoreOptions();
+function Header({ moreOptionsItems }: HeaderProps) {
   return (
     <HedaerLayout>
       <div className="w-full flex items-center justify-between">
-        <Link to="/">
+        <Link to="/home">
           <img className="w-[103px] h-[22px]" src={logo} alt="logo" />
         </Link>
 
         <div className="flex gap-1">
           {/* 더보기 메뉴 */}
-          {showMoreOptions && <MoreOptionsSelect items={moreOptionsItems} />}
+          {moreOptionsItems && <MoreOptionsSelect items={moreOptionsItems} />}
         </div>
       </div>
     </HedaerLayout>

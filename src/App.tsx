@@ -1,5 +1,4 @@
-import { useAuthStore } from '@/store/authStore';
-import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { Route, Routes, useLocation } from 'react-router';
 import Layout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
 import Modal from '@/components/Modal';
@@ -25,22 +24,16 @@ import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
-import { useEffect } from 'react';
 import { useTokenExpired } from '@/hooks/useTokenRefresh';
 import UserProfile from '@/pages/user/UserProfile';
+import PublicRoute from '@/routes/PublicRoute';
 
 function App() {
   const location = useLocation();
 
-  const { isAuthenticated } = useAuthStore();
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
 
-  const spotifyAuth = useSpotifyAuth();
-  useEffect(() => {
-    if (isAuthenticated) {
-      console.log('Spotify Auth Initialized:', spotifyAuth);
-    }
-  }, [isAuthenticated]);
+  useSpotifyAuth();
 
   useSSE(); // SSE연결
   useTokenExpired(); // 토큰 만료 체크
@@ -53,19 +46,11 @@ function App() {
       <AnimatedLayout>
         <Routes location={location}>
           <Route path="/" element={<Layout />}>
-            <Route
-              index
-              element={isAuthenticated ? <Navigate to="/home" replace /> : <Landing />}
-            />
-
-            <Route
-              path="/login"
-              element={isAuthenticated ? <Navigate to="/home" replace /> : <Login />}
-            />
-            <Route
-              path="/signup"
-              element={isAuthenticated ? <Navigate to="/home" replace /> : <SignUp />}
-            />
+            <Route element={<PublicRoute />}>
+              <Route index element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+            </Route>
 
             {/* PrivateRoute 적용 */}
             <Route element={<PrivateRoute />}>

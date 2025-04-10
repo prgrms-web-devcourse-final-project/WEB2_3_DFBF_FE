@@ -6,9 +6,10 @@ import playIcon from '@assets/icons/play/play-icon-gray.svg';
 import pauseIcon from '@assets/icons/pause-icon-gray.svg';
 import { useNavigate } from 'react-router';
 import { useSheetStore } from '@/store/sheetStore';
-import { cancelChatRequest, requestChat } from '@/apis/chat';
+// import { cancelChatRequest, requestChat } from '@/apis/chat';
+import { requestChat } from '@/apis/chat';
 import { useModalStore } from '@/store/modalStore';
-import { useChatStore } from '@/store/chatStore';
+// import { useChatStore } from '@/store/chatStore';
 
 interface ChatActionButtonsProps {
   recordId: number;
@@ -30,8 +31,9 @@ function ChatActionButtons({
 }: ChatActionButtonsProps) {
   const navigate = useNavigate();
 
-  const { openSheet, closeSheet, currentRecord } = useSheetStore(); // 모달 시트
-  const { pastRecord } = useChatStore();
+  // const { openSheet, closeSheet, currentRecord } = useSheetStore(); // 모달 시트
+  const { openSheet } = useSheetStore(); // 모달 시트
+  // const { pastRecord } = useChatStore();
   const { openModal, closeModal } = useModalStore();
 
   const handleGoToUserPage = () => {
@@ -40,27 +42,27 @@ function ChatActionButtons({
   };
 
   //채팅 요청 취소(요청 보낸 사람)
-  const cancel = async () => {
-    if (!currentRecord?.recordId && !pastRecord?.recordId) {
-      console.log('record가 존재하지 않습니다');
-      return;
-    }
-    try {
-      console.log(currentRecord);
-      const { code } = await cancelChatRequest(
-        currentRecord?.recordId || Number(pastRecord?.recordId),
-      );
-      if (code === 200) {
-        console.log('취소 요청 성공');
-        closeSheet('isRequestSendingSheetOpen');
-      } else {
-        throw new Error('취소 요청 실패');
-      }
-    } catch (error) {
-      console.error(error);
-      closeSheet('isRequestSendingSheetOpen'); // 취소 요청 실패시 창 닫기
-    }
-  };
+  // const cancel = async () => {
+  //   if (!currentRecord?.recordId && !pastRecord?.recordId) {
+  //     console.log('record가 존재하지 않습니다');
+  //     return;
+  //   }
+  //   try {
+  //     console.log(currentRecord);
+  //     const { code } = await cancelChatRequest(
+  //       currentRecord?.recordId || Number(pastRecord?.recordId),
+  //     );
+  //     if (code === 200) {
+  //       console.log('취소 요청 성공');
+  //       closeSheet('isRequestSendingSheetOpen');
+  //     } else {
+  //       throw new Error('취소 요청 실패');
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     closeSheet('isRequestSendingSheetOpen'); // 취소 요청 실패시 창 닫기
+  //   }
+  // };
 
   //채팅 요청
   //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
@@ -71,7 +73,6 @@ function ChatActionButtons({
     // }
     try {
       const { code } = await requestChat(recordId);
-      console.log('code', code);
       if (code === 200) {
         openSheet('isRequestSendingSheetOpen');
       } else if (code === 202) {
@@ -79,7 +80,7 @@ function ChatActionButtons({
           title: '현재 로그아웃 중입니다.',
           onConfirm: () => {
             closeModal();
-            cancel();
+            // cancel();
           },
         });
       } else {

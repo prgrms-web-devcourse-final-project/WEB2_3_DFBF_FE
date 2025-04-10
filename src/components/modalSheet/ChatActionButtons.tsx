@@ -14,7 +14,7 @@ interface ChatActionButtonsProps {
   recordId: number;
   isChatting: boolean;
   isPlaying: boolean;
-  isOwnPost: boolean; // 본인 글 여부(임시)
+  isOwnPost: boolean; // 본인 글 여부
   authorId: string; // 작성자 id
   onPlayPauseToggle: () => void;
 }
@@ -65,31 +65,23 @@ function ChatActionButtons({
   //채팅 요청
   //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
   const request = async () => {
-    if (!recordId) {
-      console.log('recordId가 존재하지 않습니다.');
-      return;
-    }
+    // if (!recordId) {
+    //   console.log('recordId가 존재하지 않습니다.');
+    //   return;
+    // }
     try {
-      const data = await requestChat(recordId);
-      console.log(data);
-      if (data.data === '요청은 갔지만, 상대방의 SSE가 없어 알림이 전송되지 않았습니다.') {
+      const { code } = await requestChat(recordId);
+      console.log('code', code);
+      if (code === 200) {
+        openSheet('isRequestSendingSheetOpen');
+      } else if (code === 202) {
         openModal({
-          title: 'SSE가 연결되지 않았습니다',
+          title: '현재 로그아웃 중입니다.',
           onConfirm: () => {
             closeModal();
             cancel();
           },
         });
-        return;
-      } else if (data.message.includes('후에')) {
-        openModal({
-          title: data.message,
-          onConfirm: () => {
-            closeModal();
-          },
-        });
-      } else if (data.code === 200) {
-        openSheet('isRequestSendingSheetOpen');
       } else {
         throw new Error('잠시 후 다시 시도해 주세요');
       }

@@ -2,8 +2,3 @@
 @import '@styles/fonts.css';
 @import '@styles/typography.css';
 @import '@styles/scrollbar.css';
-
-html,
-body {
-  overflow-x: hidden;
-}

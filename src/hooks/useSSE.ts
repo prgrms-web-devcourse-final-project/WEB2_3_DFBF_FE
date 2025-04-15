@@ -77,10 +77,10 @@ export const useSSE = () => {
 
         eventSource.close();
 
-        if (reconnectAttemptsRef.current < 3) {
+        if (reconnectAttemptsRef.current < 20) {
           reconnectAttemptsRef.current += 1;
           console.warn(
-            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
+            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${20 - reconnectAttemptsRef.current})`,
           );
           setTimeout(connectSSE, 1000);
         } else {

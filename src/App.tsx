@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router';
+import { Route, Routes } from 'react-router';
 import Layout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
 import Modal from '@/components/Modal';
@@ -15,11 +15,7 @@ import EditProfile from '@/pages/editprofile/EditProfile';
 import BlockList from '@/pages/blocklist/BlockList';
 import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 
-// TODO: 테스트용 나중에 지우기
-// import TestLoginModal from '@/components/testLogin/TestLoginModal';
-
 import { useSheetStore } from './store/sheetStore';
-import AnimatedLayout from '@/layouts/AnimatedLayout';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
@@ -29,8 +25,6 @@ import UserProfile from '@/pages/user/UserProfile';
 import PublicRoute from '@/routes/PublicRoute';
 
 function App() {
-  const location = useLocation();
-
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
 
   useSpotifyAuth();
@@ -41,35 +35,31 @@ function App() {
 
   return (
     <>
-      {/* 테스트용 나중에 지우기 */}
-      {/* <TestLoginModal /> */}
-      <AnimatedLayout>
-        <Routes location={location}>
-          <Route path="/" element={<Layout />}>
-            <Route element={<PublicRoute />}>
-              <Route index element={<Landing />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-            </Route>
-
-            {/* PrivateRoute 적용 */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/home" element={<Home />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/post" element={<Post />} />
-              <Route path="/post/:postId/edit" element={<Post />} />
-              <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
-              <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
-              <Route path="/mypage/edit" element={<EditProfile />} />
-              <Route path="/mypage/blocklist" element={<BlockList />} />
-              <Route path="/user/:userId" element={<UserProfile />} />
-            </Route>
-
-            <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />
-            <Route path="*" element={<NotFound />} />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route element={<PublicRoute />}>
+            <Route index element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
           </Route>
-        </Routes>
-      </AnimatedLayout>
+
+          {/* PrivateRoute 적용 */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/home" element={<Home />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/post" element={<Post />} />
+            <Route path="/post/:postId/edit" element={<Post />} />
+            <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
+            <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
+            <Route path="/mypage/edit" element={<EditProfile />} />
+            <Route path="/mypage/blocklist" element={<BlockList />} />
+            <Route path="/user/:userId" element={<UserProfile />} />
+          </Route>
+
+          <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
       <Modal />
       {isRequestSendingSheetOpen && <ChatConnectLoadingSheet type="sending" />}
       {isRequestReceivingSheetOpen && <ChatConnectLoadingSheet type="receiving" />}

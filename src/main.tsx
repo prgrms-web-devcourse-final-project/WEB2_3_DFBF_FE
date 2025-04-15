@@ -5,6 +5,7 @@ import { registerSW } from 'virtual:pwa-register';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './styles/index.css';
 import App from './App.tsx';
+import ScrollToTop from '@/components/ScrollToTop.tsx';
 
 // PWA 서비스 워커 등록
 const updateSW = registerSW({
@@ -24,6 +25,7 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
+      <ScrollToTop />
       <App />
     </BrowserRouter>
     <ReactQueryDevtools initialIsOpen={false} />

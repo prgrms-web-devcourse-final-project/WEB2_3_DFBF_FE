@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from 'react-router';
+import { Route, Routes } from 'react-router';
 import Layout from '@/layouts/Layout';
 import Landing from '@/pages/landing/Landing';
 import Modal from '@/components/Modal';

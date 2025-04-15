@@ -21,8 +21,8 @@ export const useSSE = () => {
     }
 
     const connectSSE = () => {
-      if (reconnectAttemptsRef.current >= 3) {
-        console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
+      if (reconnectAttemptsRef.current >= 20) {
+        console.warn('🚫 SSE: 최대 재연결 횟수(20번) 초과, 더 이상 재연결하지 않습니다.');
         return;
       }
 

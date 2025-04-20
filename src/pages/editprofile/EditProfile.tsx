@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ProfileEditForm from '@/pages/editprofile/components/ProfileEditForm';
 import PasswordEditForm from '@/pages/editprofile/components/PasswordEditForm';
 import { twMerge } from 'tailwind-merge';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function EditProfile() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -31,13 +32,16 @@ function EditProfile() {
       </div>
 
       {/* 폼 */}
-      {activeTab === 'profile' ? (
-        // 프로필 수정 탭
-        <ProfileEditForm />
-      ) : (
-        // 비밀번호 변경 탭
-        <PasswordEditForm />
-      )}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab} // 핵심! key를 다르게 주면 된다
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          {activeTab === 'profile' ? <ProfileEditForm /> : <PasswordEditForm />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

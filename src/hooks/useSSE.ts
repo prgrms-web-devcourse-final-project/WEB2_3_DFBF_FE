@@ -15,14 +15,16 @@ export const useSSE = () => {
   const reconnectAttemptsRef = useRef(0); // 재연결 횟수 저장
 
   useEffect(() => {
+    // 로그인 상태가 아니거나 토큰이 없으면 SSE 연결을 하지 않음
     if (!isAuthenticated || !accessToken) {
-      console.log('토큰, 로그인 문제');
+      console.log('로그아웃상태이거나 토큰이 없어서 SSE 연결을 해제합니다.');
+      eventSourceRef.current?.close(); // 혹시 연결이 살아있으면 종료
       return;
     }
 
     const connectSSE = () => {
-      if (reconnectAttemptsRef.current >= 20) {
-        console.warn('🚫 SSE: 최대 재연결 횟수(20번) 초과, 더 이상 재연결하지 않습니다.');
+      if (reconnectAttemptsRef.current >= 3) {
+        console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
         return;
       }
 
@@ -77,10 +79,10 @@ export const useSSE = () => {
 
         eventSource.close();
 
-        if (reconnectAttemptsRef.current < 20) {
+        if (reconnectAttemptsRef.current < 3) {
           reconnectAttemptsRef.current += 1;
           console.warn(
-            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${20 - reconnectAttemptsRef.current})`,
+            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
           );
           setTimeout(connectSSE, 1000);
         } else {

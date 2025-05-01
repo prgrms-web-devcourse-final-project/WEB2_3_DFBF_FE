@@ -15,6 +15,7 @@ export const useSSE = () => {
   const reconnectAttemptsRef = useRef(0); // 재연결 횟수 저장
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     // 로그인 상태가 아니거나 토큰이 없으면 SSE 연결을 하지 않음
     if (!isAuthenticated || !accessToken) {
       console.log('로그아웃상태이거나 토큰이 없어서 SSE 연결을 해제합니다.');
@@ -23,6 +24,7 @@ export const useSSE = () => {
     }
 
     const connectSSE = () => {
+      // 최대 재연결 횟수 초과 시 종료
       if (reconnectAttemptsRef.current >= 3) {
         console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
         return;
@@ -30,10 +32,16 @@ export const useSSE = () => {
 
       console.log(`🔌 SSE: 연결 시도 중... (재연결 횟수: ${reconnectAttemptsRef.current})`);
 
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
+      // 기존 연결이 있다면 종료
+      eventSourceRef.current?.close();
+
+      // 로그인 상태와 토큰을 한 번 더 검증
+      if (!isAuthenticated || !accessToken) {
+        console.log('⛔ SSE 연결 시도 중단: 로그아웃 상태거나 토큰 없음');
+        return;
       }
 
+      // SSE 연결
       eventSourceRef.current = new EventSourcePolyfill(
         `${import.meta.env.VITE_API_URL}/api/alert/connect`,
         {
@@ -84,7 +92,7 @@ export const useSSE = () => {
           console.warn(
             `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
           );
-          setTimeout(connectSSE, 1000);
+          timeoutId = setTimeout(connectSSE, 1000);
         } else {
           console.error('🚫 SSE: 최대 재연결 횟수 초과. 더 이상 재연결하지 않습니다.');
         }
@@ -95,6 +103,7 @@ export const useSSE = () => {
 
     return () => {
       console.log('🔴 SSE: 연결 해제');
+      clearTimeout(timeoutId);
       eventSourceRef.current?.close();
     };
   }, [isAuthenticated, accessToken]);

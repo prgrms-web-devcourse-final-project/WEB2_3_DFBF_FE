@@ -20,7 +20,6 @@ import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
-import { useTokenExpired } from '@/hooks/useTokenRefresh';
 import UserProfile from '@/pages/user/UserProfile';
 import PublicRoute from '@/routes/PublicRoute';
 
@@ -30,7 +29,6 @@ function App() {
   useSpotifyAuth();
 
   useSSE(); // SSE연결
-  useTokenExpired(); // 토큰 만료 체크
   useYotube();
 
   return (

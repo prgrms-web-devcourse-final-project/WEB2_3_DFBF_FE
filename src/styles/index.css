@@ -2,3 +2,7 @@
 @import '@styles/fonts.css';
 @import '@styles/typography.css';
 @import '@styles/scrollbar.css';
+
+html {
+  overflow-y: scroll; /* 항상 스크롤바 공간 확보 (윈도우에서 효과적) */
+}

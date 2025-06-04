@@ -21,11 +21,11 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           script: |
             # Pull latest code from dev branch
-            cd /home/ubuntu/react
+            cd /home/ohs/react
             git pull origin dev
 
             # Create .env file

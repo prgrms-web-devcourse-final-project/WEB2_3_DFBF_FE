@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/store/authStore';
 import { useChatStore } from '@/store/chatStore';
+import { useModalStore } from '@/store/modalStore';
 import { useSheetStore } from '@/store/sheetStore';
 import { EventSourcePolyfill } from 'event-source-polyfill';
 import { useEffect, useRef } from 'react';
@@ -9,6 +10,7 @@ export const useSSE = () => {
   const navigate = useNavigate();
   const { openSheet, closeSheet, setRequesterInfo, setChatConnectFail, closeAllSheets } =
     useSheetStore();
+  const { openModal } = useModalStore();
   const { setCurrentChatRoomId } = useChatStore();
   const { isAuthenticated, accessToken } = useAuthStore();
   const eventSourceRef = useRef<EventSourcePolyfill | null>(null);
@@ -26,6 +28,11 @@ export const useSSE = () => {
     const connectSSE = () => {
       // 최대 재연결 횟수 초과 시 종료
       if (reconnectAttemptsRef.current >= 3) {
+        openModal({
+          title: '⚠️ 알림 연결이 불안정합니다.',
+          message: '새로고침으로 복구할 수 있어요.',
+          onConfirm: () => window.location.reload(),
+        });
         console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
         return;
       }

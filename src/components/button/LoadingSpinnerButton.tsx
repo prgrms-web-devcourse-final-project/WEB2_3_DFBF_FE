@@ -13,12 +13,18 @@ const LoadingSpinnerButton = ({
   isPending,
   buttonText,
   buttonEnabled,
+  onClick,
   ...props
 }: LoadingSpinnerButtonProps) => {
   const showLoading = useDelayedLoading({ isPending });
 
   return (
-    <Button variant={buttonEnabled ? 'primary' : 'disabled'} {...props}>
+    <Button
+      variant={buttonEnabled ? 'primary' : 'disabled'}
+      disabled={isPending}
+      onClick={onClick}
+      {...props}
+    >
       {showLoading ? <SpinLoading /> : buttonText}
     </Button>
   );

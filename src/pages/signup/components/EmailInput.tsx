@@ -1,4 +1,5 @@
 import { getEmailAvailability, postEmailVerificationRequest } from '@/apis/email';
+import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
 import InputField from '@/components/InputField';
 import { EMAIL_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
@@ -20,8 +21,8 @@ function EmailInput({
 }: EmailInputProps) {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [text, setText] = useState('');
-  const [validationMessage, setValidationMessage] = useState({
-    success: false,
+  const [validationStatus, setValidationStatus] = useState({
+    isValid: false, // 유효성 통과여부
     message: '',
   });
 
@@ -35,10 +36,10 @@ function EmailInput({
     const isValid = EMAIL_REGEX.test(value);
 
     if (isValid) {
-      setValidationMessage({ success: true, message: '' });
+      setValidationStatus({ isValid: true, message: '' });
     } else {
-      setValidationMessage({
-        success: false,
+      setValidationStatus({
+        isValid: false,
         message: '입력하신 이메일 주소가 올바른 형식이 아닙니다.',
       });
     }
@@ -51,8 +52,8 @@ function EmailInput({
       if (code === 200) {
         requestEmailVerification(); // ✅ 이메일 인증 요청 실행
       } else if (code === 409) {
-        setValidationMessage({
-          success: false,
+        setValidationStatus({
+          isValid: false,
           message: '이 이메일은 이미 사용 중입니다. 다른 이메일을 입력해주세요',
         });
       }
@@ -74,8 +75,8 @@ function EmailInput({
       mutationFn: () => postEmailVerificationRequest(text),
       onSuccess: ({ code }) => {
         if (code === 200) {
-          setValidationMessage({
-            success: true,
+          setValidationStatus({
+            isValid: true,
             message:
               '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
           });
@@ -94,14 +95,6 @@ function EmailInput({
       },
     });
 
-  const buttonHandler = {
-    // authcode가 유효하면 disabled
-    buttonEnabled: validationMessage.success && !emailValidity,
-    buttonText: '인증요청',
-    isPending: isCheckingEmail && isRequestingEmailVerification,
-    onClick: checkEmailAvailability,
-  };
-
   return (
     <InputField
       id="email"
@@ -109,10 +102,18 @@ function EmailInput({
       placeholder="이메일을 입력해 주세요"
       value={text}
       onChange={handleChange}
-      isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
-      validationMessage={validationMessage.message} // ✅ 메시지 전달
+      isValid={validationStatus.isValid} // ✅ 유효성 검사 여부 전달
+      message={validationStatus.message} // ✅ 메시지 전달
       disabled={authcodeValidity} // input disabled
-      buttonHandler={buttonHandler}
+      actionButton={
+        <LoadingSpinnerButton
+          isPending={isCheckingEmail && isRequestingEmailVerification}
+          className="w-[65px]"
+          buttonText="인증요청"
+          buttonEnabled={validationStatus.isValid && !emailValidity}
+          onClick={() => checkEmailAvailability()}
+        />
+      }
     />
   );
 }

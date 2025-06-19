@@ -124,7 +124,9 @@ export default function Login() {
             />
           </div>
         </div>
-        <Button className="focus:outline-primary-active mt-[14px]">{renderButtonContent()}</Button>
+        <Button className="focus:outline-primary-active mt-[14px]" type="submit">
+          {renderButtonContent()}
+        </Button>
       </form>
 
       <div className="flex flex-col gap-3 items-center w-full mt-2.5 ">

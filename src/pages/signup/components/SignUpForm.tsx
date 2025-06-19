@@ -79,7 +79,6 @@ function SignUpForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 기본 폼 제출 방지
     if (!buttonEnabled) return; // 유효하지 않으면 실행하지 않음
-    console.log(formDataRef.current);
     signUp(formDataRef.current);
   };
 
@@ -125,6 +124,7 @@ function SignUpForm() {
         )}
       </div>
       <LoadingSpinnerButton
+        type="submit"
         isPending={isPending}
         buttonEnabled={buttonEnabled}
         buttonText="지금 시작하기"

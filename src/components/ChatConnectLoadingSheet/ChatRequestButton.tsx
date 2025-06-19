@@ -42,11 +42,10 @@ function ChatRequestButton({ type }: { type: 'sending' | 'receiving' }) {
   //sse로 받은 상대 정보로 '보내는 사람' 바꾸기
   const createChat = async () => {
     try {
-      const { code, data, message } = await createChatroom(
+      const { code, data } = await createChatroom(
         requesterInfo.emotionRecordId as number,
         requesterInfo.nickname,
       );
-      // console.log(code, message, data);
 
       if (code === 200) {
         const chatRoomId = data.chatRoomId;

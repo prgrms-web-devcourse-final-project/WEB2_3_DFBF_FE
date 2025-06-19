@@ -158,7 +158,7 @@ export default function ChatRoom({}: ChatRoomProps) {
     const socket = new SockJS(import.meta.env.VITE_CHAT_API_URL + `/ws-chat?token=${token}`);
     const client = new Client({
       webSocketFactory: () => socket,
-      debug: (str) => // console.log(str),
+      debug: (str) => console.log(str),
       onConnect: () => {
         // console.log('웹소켓 연결 성공!');
         fetchChatHistory();
@@ -249,9 +249,9 @@ export default function ChatRoom({}: ChatRoomProps) {
     });
 
     //disconnect 구독
-    const disconnection: StompSubscription = client.subscribe('/topic/disconnect', (message) => {
+    const disconnection: StompSubscription = client.subscribe('/topic/disconnect', () => {
       if (!chatRoomId) return;
-      const disconnectData = JSON.parse(message.body);
+      // const disconnectData = JSON.parse(message.body);
       // console.log('연결 종료 알림:', disconnectData);
       setChatDisabled(true);
       setEndTime(0);

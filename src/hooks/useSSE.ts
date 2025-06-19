@@ -70,12 +70,12 @@ export const useSSE = () => {
         openSheet('isRequestReceivingSheetOpen');
       });
 
-      eventSource.addEventListener('cancel', (event: any) => {
+      eventSource.addEventListener('cancel', () => {
         // console.log('🚨 SSE: 채팅 취소 수신!', JSON.parse(event.data));
         closeSheet('isRequestReceivingSheetOpen');
       });
 
-      eventSource.addEventListener('fail', (event: any) => {
+      eventSource.addEventListener('fail', () => {
         // console.log('⛔ SSE: 채팅 거절 수신!', JSON.parse(event.data));
         setChatConnectFail(true);
       });

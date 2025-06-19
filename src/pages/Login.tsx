@@ -62,7 +62,7 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      const { code, data } = await login(trimmedId, trimmedPassword);
+      await login(trimmedId, trimmedPassword);
       navigate('/home');
       // console.log('로그인 됨', code, data.accessToken);
     } catch (error) {

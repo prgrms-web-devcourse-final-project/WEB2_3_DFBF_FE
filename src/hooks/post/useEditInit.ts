@@ -9,7 +9,7 @@ interface useEditInitProps {
 }
 
 const useEditInit = ({ postId, setEmotion, setComment }: useEditInitProps) => {
-  const { selectPostMusic, selectedPostMusic } = useMusicSelection();
+  const { selectPostMusic } = useMusicSelection();
 
   useEffect(() => {
     // console.log('수정모드입니다 postId:', postId);

@@ -56,10 +56,10 @@ const MusicCard = ({
         const currentMusicId = spotifyId;
         const res = await getSpotifyVideoId(currentMusicId);
         const savedVideoId = res.data;
-        console.log(savedVideoId);
+        // console.log(savedVideoId);
         setCurrentVideoId(savedVideoId);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
     getVideoId();

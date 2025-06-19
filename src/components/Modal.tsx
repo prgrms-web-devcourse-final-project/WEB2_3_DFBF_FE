@@ -89,11 +89,11 @@ export default function Modal() {
     confirmText:'확인', // default: '확인'
     cancelText:'취소', // default: '취소'
     onConfirm() {
-      console.log('확인');
+      // console.log('확인');
       closeModal();
     },
     onCancel() {
-      console.log('취소');
+      // console.log('취소');
       closeModal();
     },
   })

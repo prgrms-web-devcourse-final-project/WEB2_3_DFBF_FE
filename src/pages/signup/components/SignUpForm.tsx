@@ -46,7 +46,7 @@ function SignUpForm() {
     },
 
     onError: () => {
-      console.log('회원가입 실패');
+      // // console.log('회원가입 실패');
       openModal({
         title: '오류 발생',
         message: '잠시 후 다시 시도해주세요.',

@@ -55,17 +55,17 @@
 //   //채팅 요청 취소(요청 보낸 사람)
 //   const cancel = async () => {
 //     if (!currentRecord?.recordId) {
-//       console.log('record가 존재하지 않습니다');
+//       // console.log('record가 존재하지 않습니다');
 //       return;
 //     }
 //     try {
-//       console.log(currentRecord);
+//       // console.log(currentRecord);
 //       await cancelChatRequest(currentRecord.recordId);
-//       console.log('채팅 취소');
+//       // console.log('채팅 취소');
 
 //       closeSheet('isChatLoadingSheetOpen');
 //     } catch (error) {
-//       console.log(error);
+//       // console.log(error);
 //     }
 //   };
 
@@ -77,7 +77,7 @@
 //     try {
 //       //1 = recordId
 //       const data = await createChatroom(1, '루루');
-//       console.log(data);
+//       // console.log(data);
 //       const chatRoomId = data.data.chatRoomId;
 
 //       //200
@@ -85,7 +85,7 @@
 //       navigate(`/chatroom/${chatRoomId}`);
 //       closeAllSheets();
 //     } catch (error) {
-//       console.log(error);
+//       // console.log(error);
 //     }
 //   };
 

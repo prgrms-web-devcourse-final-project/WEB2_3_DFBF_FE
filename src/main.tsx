@@ -15,7 +15,7 @@ const updateSW = registerSW({
     }
   },
   onOfflineReady() {
-    console.log('PWA가 오프라인에서도 사용할 준비가 되었습니다!');
+    // // console.log('PWA가 오프라인에서도 사용할 준비가 되었습니다!');
   },
 });
 

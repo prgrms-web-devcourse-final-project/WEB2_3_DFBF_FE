@@ -55,7 +55,7 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
       });
     },
   });
-  console.log('새로운 mutate', mutate);
+  // console.log('새로운 mutate', mutate);
   return (
     <InputField
       id="id"

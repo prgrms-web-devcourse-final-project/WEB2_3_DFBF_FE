@@ -6,7 +6,7 @@ interface ErrorFallbackProps {
 }
 
 export default function ErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
-  console.log(error);
+  // console.log(error);
 
   return (
     <ErrorPage

@@ -12,7 +12,7 @@ const useEditInit = ({ postId, setEmotion, setComment }: useEditInitProps) => {
   const { selectPostMusic, selectedPostMusic } = useMusicSelection();
 
   useEffect(() => {
-    console.log('수정모드입니다 postId:', postId);
+    // console.log('수정모드입니다 postId:', postId);
     if (!postId) return;
 
     // 수정 데이터 가져오기
@@ -31,8 +31,8 @@ const useEditInit = ({ postId, setEmotion, setComment }: useEditInitProps) => {
       setEmotion(emotion);
       setComment(comment);
       selectPostMusic(editMusic);
-      console.log('음악 선택됨:', selectedPostMusic);
-      console.log('수정 데이터:', data);
+      // console.log('음악 선택됨:', selectedPostMusic);
+      // console.log('수정 데이터:', data);
     };
 
     getEmotionRecord();

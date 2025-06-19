@@ -27,7 +27,7 @@ function Home() {
   // 감정 필터링
   const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-    // console.log(selectedEmotion);
+    // // console.log(selectedEmotion);
   };
 
   // 유저 상세 페이지 모달 열기
@@ -46,7 +46,7 @@ function Home() {
   } = useInfiniteQuery({
     queryKey: ['emotionRecords', selectedPostMusic?.spotifyId, selectedEmotion],
     queryFn: async ({ pageParam }) => {
-      // console.log('pageParam:', pageParam);
+      // // console.log('pageParam:', pageParam);
 
       const { data } = await getEmotionRecords(
         pageParam,
@@ -55,7 +55,7 @@ function Home() {
         selectedEmotion,
       );
 
-      // console.log('감정 기록 불러오기', data);
+      // // console.log('감정 기록 불러오기', data);
       return data;
     },
 
@@ -72,7 +72,7 @@ function Home() {
 
   useEffect(() => {
     // 첫 페이지 로드
-    // console.log('페이지 로드', isLoading);
+    // // console.log('페이지 로드', isLoading);
   }, [isLoading]);
 
   // 무한 스크롤 감지 요소 추가
@@ -100,14 +100,14 @@ function Home() {
   useEffect(() => {
     if (!searchText && selectedPostMusic) {
       clearPostMusic();
-      // console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
+      // // console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
     }
   }, [searchText]);
 
   //홈 이동 시 스크롤 제일 위로
   useEffect(() => {
     if (scrollContainerRefCurrent) {
-      // console.log(scrollContainerRefCurrent);
+      // // console.log(scrollContainerRefCurrent);
       scrollContainerRefCurrent.scrollTop = 0; // 제일 위로 스크롤
     }
   }, [scrollContainerRefCurrent]);

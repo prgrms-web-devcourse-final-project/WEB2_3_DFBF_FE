@@ -44,15 +44,15 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
         <button
           onClick={(e) => {
             e.stopPropagation();
-            console.log('cr', currentRecord);
-            console.log('pr', pastRecord);
+            // console.log('cr', currentRecord);
+            // console.log('pr', pastRecord);
             if (!pastRecord) {
               openModal({
                 title: '이 대화를 마무리할까요?',
                 message: '채팅을 종료하면 다시 복구할 수 없습니다',
                 onConfirm: async () => {
                   if (!chatRoomId) {
-                    console.log('chatroomid가 없습니다.');
+                    // console.log('chatroomid가 없습니다.');
                     return;
                   }
                   wsDisconnect();
@@ -63,7 +63,7 @@ function HeaderChat({ showLogo = false, showNickname = false }: HeaderChatProps)
                   closeModal();
                 },
                 onCancel: () => {
-                  console.log('취소');
+                  // console.log('취소');
                   closeModal();
                 },
               });

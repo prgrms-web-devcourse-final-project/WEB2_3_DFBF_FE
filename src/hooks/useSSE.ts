@@ -20,7 +20,7 @@ export const useSSE = () => {
     let timeoutId: NodeJS.Timeout;
     // 로그인 상태가 아니거나 토큰이 없으면 SSE 연결을 하지 않음
     if (!isAuthenticated || !accessToken) {
-      console.log('로그아웃상태이거나 토큰이 없어서 SSE 연결을 해제합니다.');
+      // console.log('로그아웃상태이거나 토큰이 없어서 SSE 연결을 해제합니다.');
       eventSourceRef.current?.close(); // 혹시 연결이 살아있으면 종료
       return;
     }
@@ -33,18 +33,18 @@ export const useSSE = () => {
           message: '새로고침으로 복구할 수 있어요.',
           onConfirm: () => window.location.reload(),
         });
-        console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
+        // console.warn('🚫 SSE: 최대 재연결 횟수(3번) 초과, 더 이상 재연결하지 않습니다.');
         return;
       }
 
-      console.log(`🔌 SSE: 연결 시도 중... (재연결 횟수: ${reconnectAttemptsRef.current})`);
+      // console.log(`🔌 SSE: 연결 시도 중... (재연결 횟수: ${reconnectAttemptsRef.current})`);
 
       // 기존 연결이 있다면 종료
       eventSourceRef.current?.close();
 
       // 로그인 상태와 토큰을 한 번 더 검증
       if (!isAuthenticated || !accessToken) {
-        console.log('⛔ SSE 연결 시도 중단: 로그아웃 상태거나 토큰 없음');
+        // console.log('⛔ SSE 연결 시도 중단: 로그아웃 상태거나 토큰 없음');
         return;
       }
 
@@ -59,29 +59,29 @@ export const useSSE = () => {
       const eventSource = eventSourceRef.current;
 
       eventSource.addEventListener('open', () => {
-        console.log('✅ SSE: 연결 성공!');
+        // console.log('✅ SSE: 연결 성공!');
         reconnectAttemptsRef.current = 0; // 연결 성공하면 재연결 횟수 초기화
       });
 
       eventSource.addEventListener('alarm', (event: any) => {
-        console.log('📩 SSE: 채팅 요청 수신!', JSON.parse(event.data));
+        // console.log('📩 SSE: 채팅 요청 수신!', JSON.parse(event.data));
         const { emotionRecordId, nickname } = JSON.parse(event.data);
         setRequesterInfo(emotionRecordId, nickname);
         openSheet('isRequestReceivingSheetOpen');
       });
 
       eventSource.addEventListener('cancel', (event: any) => {
-        console.log('🚨 SSE: 채팅 취소 수신!', JSON.parse(event.data));
+        // console.log('🚨 SSE: 채팅 취소 수신!', JSON.parse(event.data));
         closeSheet('isRequestReceivingSheetOpen');
       });
 
       eventSource.addEventListener('fail', (event: any) => {
-        console.log('⛔ SSE: 채팅 거절 수신!', JSON.parse(event.data));
+        // console.log('⛔ SSE: 채팅 거절 수신!', JSON.parse(event.data));
         setChatConnectFail(true);
       });
 
       eventSource.addEventListener('accept', (event: any) => {
-        console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
+        // console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
         const { chatRoomId } = JSON.parse(event.data);
 
         setCurrentChatRoomId(chatRoomId);
@@ -96,9 +96,9 @@ export const useSSE = () => {
 
         if (reconnectAttemptsRef.current < 3) {
           reconnectAttemptsRef.current += 1;
-          console.warn(
-            `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
-          );
+          // console.warn(
+          //   `⚠️ SSE: 재연결 시도 중... (남은 재연결 횟수: ${3 - reconnectAttemptsRef.current})`,
+          // );
           timeoutId = setTimeout(connectSSE, 1000);
         } else {
           console.error('🚫 SSE: 최대 재연결 횟수 초과. 더 이상 재연결하지 않습니다.');
@@ -109,7 +109,7 @@ export const useSSE = () => {
     connectSSE();
 
     return () => {
-      console.log('🔴 SSE: 연결 해제');
+      // console.log('🔴 SSE: 연결 해제');
       clearTimeout(timeoutId);
       eventSourceRef.current?.close();
     };

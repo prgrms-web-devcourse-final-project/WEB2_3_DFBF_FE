@@ -12,7 +12,7 @@ const usePostForm = () => {
   });
 
   const setEmotion = useCallback((emotion: string | null) => {
-    console.log('emotion:', emotion);
+    // console.log('emotion:', emotion);
     setFormData((prev) =>
       prev.emotion === emotion ? { ...prev, emotion: null } : { ...prev, emotion },
     );

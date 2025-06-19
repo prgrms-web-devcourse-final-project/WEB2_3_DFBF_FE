@@ -13,12 +13,12 @@ export default function TestLoginModal() {
 
   // 로그인
   const handleLogin = async () => {
-    console.log('로그인 시작');
+    // console.log('로그인 시작');
     try {
       const { code, data } = await login(id, password);
-      console.log('로그인 됨', code, data.accessToken);
+      // console.log('로그인 됨', code, data.accessToken);
     } catch (error) {
-      console.log('로그인 에러', error);
+      // console.log('로그인 에러', error);
     }
   };
 
@@ -49,9 +49,9 @@ export default function TestLoginModal() {
   //test
   const test = async () => {
     try {
-      console.log('테스트 시작');
+      // console.log('테스트 시작');
       const data = await axiosInstance.get('/user');
-      console.log('테스트:', data);
+      // console.log('테스트:', data);
     } catch (error) {
       console.error(error);
     }

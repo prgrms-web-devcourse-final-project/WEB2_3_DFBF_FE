@@ -44,16 +44,16 @@ function ChatActionButtons({
   //채팅 요청 취소(요청 보낸 사람)
   // const cancel = async () => {
   //   if (!currentRecord?.recordId && !pastRecord?.recordId) {
-  //     console.log('record가 존재하지 않습니다');
+  //     // console.log('record가 존재하지 않습니다');
   //     return;
   //   }
   //   try {
-  //     console.log(currentRecord);
+  //     // console.log(currentRecord);
   //     const { code } = await cancelChatRequest(
   //       currentRecord?.recordId || Number(pastRecord?.recordId),
   //     );
   //     if (code === 200) {
-  //       console.log('취소 요청 성공');
+  //       // console.log('취소 요청 성공');
   //       closeSheet('isRequestSendingSheetOpen');
   //     } else {
   //       throw new Error('취소 요청 실패');
@@ -68,7 +68,7 @@ function ChatActionButtons({
   //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
   const request = async () => {
     // if (!recordId) {
-    //   console.log('recordId가 존재하지 않습니다.');
+    //   // console.log('recordId가 존재하지 않습니다.');
     //   return;
     // }
     try {
@@ -87,7 +87,7 @@ function ChatActionButtons({
         throw new Error('잠시 후 다시 시도해 주세요');
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       openModal({
         title: '잠시 후 다시 시도해 주세요',
         onConfirm: () => {

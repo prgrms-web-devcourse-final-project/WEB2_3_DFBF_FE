@@ -12,7 +12,7 @@ const UserPageHeader = () => {
 
   const handleBlockUser = async () => {
     if (!param.userId) {
-      console.log('차단 실패');
+      // console.log('차단 실패');
       return;
     }
 
@@ -26,7 +26,7 @@ const UserPageHeader = () => {
         if (param.userId) {
           try {
             const data = await addBlockList(param.userId);
-            console.log(data);
+            // console.log(data);
             //이미 차단 한 유저일 경우
             if (data.code === 400) {
               closeModal();
@@ -42,7 +42,7 @@ const UserPageHeader = () => {
               closeModal();
             }
           } catch (error) {
-            console.log(error);
+            // console.log(error);
           }
         }
       },

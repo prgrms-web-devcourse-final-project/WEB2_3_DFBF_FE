@@ -62,12 +62,12 @@ export default function Login() {
 
     try {
       setIsLoading(true);
-      const { code, data } = await login(trimmedId, trimmedPassword);
+      await login(trimmedId, trimmedPassword);
       navigate('/home');
-      console.log('로그인 됨', code, data.accessToken);
+      // console.log('로그인 됨', code, data.accessToken);
     } catch (error) {
       handleLoginFailModal('아이디와 비밀번호를 다시 확인해 주세요.'); // 로그인 실패 모달
-      console.log('로그인 에러', error);
+      // console.log('로그인 에러', error);
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +124,9 @@ export default function Login() {
             />
           </div>
         </div>
-        <Button className="focus:outline-primary-active mt-[14px]">{renderButtonContent()}</Button>
+        <Button className="focus:outline-primary-active mt-[14px]" type="submit">
+          {renderButtonContent()}
+        </Button>
       </form>
 
       <div className="flex flex-col gap-3 items-center w-full mt-2.5 ">

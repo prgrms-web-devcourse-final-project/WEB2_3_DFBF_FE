@@ -59,7 +59,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   // 최신 메시지로 스크롤
   useEffect(() => {
     if (scrollContainerRefCurrent) {
-      console.log(scrollContainerRefCurrent);
+      // console.log(scrollContainerRefCurrent);
       scrollContainerRefCurrent.scrollTop = scrollContainerRefCurrent.scrollHeight;
     }
   }, [messages, scrollContainerRefCurrent]);
@@ -113,7 +113,7 @@ export default function ChatRoom({}: ChatRoomProps) {
         event.preventDefault();
         // 제출하는 로직을 여기에 작성
         sendMessage();
-        console.log('폼 제출!');
+        // console.log('폼 제출!');
       }
     } else {
       if (event.nativeEvent.isComposing === false && event.key === 'Enter' && !event.shiftKey) {
@@ -148,7 +148,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   const loadChatRoomInfo = async () => {
     if (!chatRoomId) return;
     const data = await loadChatRoomDetail(chatRoomId);
-    console.log(data);
+    // console.log(data);
     setChatRoomDetail(data.data);
   };
 
@@ -160,7 +160,7 @@ export default function ChatRoom({}: ChatRoomProps) {
       webSocketFactory: () => socket,
       debug: (str) => console.log(str),
       onConnect: () => {
-        console.log('웹소켓 연결 성공!');
+        // console.log('웹소켓 연결 성공!');
         fetchChatHistory();
         subscribeToMessages(client);
       },
@@ -179,12 +179,12 @@ export default function ChatRoom({}: ChatRoomProps) {
   const fetchChatHistory = async () => {
     try {
       if (!chatRoomId) {
-        console.log('chatRoomId가 없습니다');
+        // console.log('chatRoomId가 없습니다');
         return;
       }
       //배포 시 변경
       const response = await loadChatHistoryDev(chatRoomId);
-      console.log('history', response);
+      // console.log('history', response);
       if (response.status === 204) {
         console.warn('No chat history found (204 No Content)');
         return;
@@ -210,7 +210,7 @@ export default function ChatRoom({}: ChatRoomProps) {
     // 내 메세지 구독
     const myChat: StompSubscription = client.subscribe('/user/queue/mychat', (message) => {
       const chat: ChatMessage = JSON.parse(message.body);
-      console.log('my', chat);
+      // console.log('my', chat);
 
       setMessages((prev) => (Array.isArray(prev) ? [...prev, chat] : [chat]));
     });
@@ -219,7 +219,7 @@ export default function ChatRoom({}: ChatRoomProps) {
       `/queue/chat-${chatRoomId}`,
       (message) => {
         const chat: ChatMessage = JSON.parse(message.body);
-        console.log('other', chat);
+        // console.log('other', chat);
 
         // 중복 여부를 확인: createdAt과 message 텍스트가 동일하면 중복으로 판단
         setMessages((prev) => {
@@ -249,10 +249,10 @@ export default function ChatRoom({}: ChatRoomProps) {
     });
 
     //disconnect 구독
-    const disconnection: StompSubscription = client.subscribe('/topic/disconnect', (message) => {
+    const disconnection: StompSubscription = client.subscribe('/topic/disconnect', () => {
       if (!chatRoomId) return;
-      const disconnectData = JSON.parse(message.body);
-      console.log('연결 종료 알림:', disconnectData);
+      // const disconnectData = JSON.parse(message.body);
+      // console.log('연결 종료 알림:', disconnectData);
       setChatDisabled(true);
       setEndTime(0);
 
@@ -269,7 +269,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   // 웹소켓 연결 해제
   const disconnect = () => {
     if (stompClient) {
-      console.log('웹소켓 연결 해제');
+      // console.log('웹소켓 연결 해제');
       stompClient.deactivate();
       setStompClient(null);
       setMessages([]);
@@ -283,12 +283,12 @@ export default function ChatRoom({}: ChatRoomProps) {
   // 메시지 전송
   const sendMessage = () => {
     if (messageInput.trim() === '') {
-      console.warn('메시지가 비어있습니다.');
+      // console.warn('메시지가 비어있습니다.');
       return;
     }
 
     if (stompClient && stompClient.connected) {
-      console.log('메시지 전송:', messageInput); // 메시지 전송 전에 로그 확인
+      // // console.log('메시지 전송:', messageInput); // 메시지 전송 전에 로그 확인
       const AccessToken = useAuthStore.getState().accessToken;
 
       stompClient.publish({

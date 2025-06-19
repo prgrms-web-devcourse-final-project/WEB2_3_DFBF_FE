@@ -15,27 +15,24 @@ function PasswordInput({
   changeFormPassword,
   setValidity,
 }: PasswordInputProps) {
-  const [text, setText] = useState('');
-  const [validationMessage, setValidationMessage] = useState({
-    success: false,
+  const [validationStatus, setValidationStatus] = useState({
+    isValid: false, // 유효성 통과여부
     message: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setText(value);
+
     changeFormPassword(value); // form password 업데이트
     setValidity(false); // form validity 초기화
 
     // 유효성 검사
-    const isValid = PASSWORD_REGEX.test(value);
-
-    if (isValid) {
-      setValidationMessage({ success: true, message: '사용 가능한 비밀번호입니다' });
+    if (PASSWORD_REGEX.test(value)) {
+      setValidationStatus({ isValid: true, message: '사용 가능한 비밀번호입니다' });
       setValidity(true); // form validity true로 변경
     } else {
-      setValidationMessage({
-        success: false,
+      setValidationStatus({
+        isValid: false,
         message: '비밀번호는 8~16자의 영문, 숫자, 특수문자를 포함해야 합니다.',
       });
     }
@@ -47,10 +44,9 @@ function PasswordInput({
       id="password"
       label={label}
       placeholder={placeholder}
-      value={text}
       onChange={handleChange}
-      isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
-      validationMessage={validationMessage.message} // ✅ 메시지 전달
+      isValid={validationStatus.isValid}
+      message={validationStatus.message}
     />
   );
 }

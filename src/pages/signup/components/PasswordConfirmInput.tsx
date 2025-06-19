@@ -14,23 +14,21 @@ function PasswordConfirmInput({
   setValidity,
   password,
 }: PasswordConfirmInputProps) {
-  const [text, setText] = useState('');
-  const [validationMessage, setValidationMessage] = useState({
-    success: false,
+  const [validationStatus, setValidationStatus] = useState({
+    isValid: false, // 유효성 통과여부
     message: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setText(value);
     setValidity(false); // form validity 초기화
 
     // 유효성 검사
     if (value === password && value !== '') {
-      setValidationMessage({ success: true, message: '비밀번호가 일치합니다' });
+      setValidationStatus({ isValid: true, message: '비밀번호가 일치합니다' });
       setValidity(true);
     } else {
-      setValidationMessage({ success: false, message: '비밀번호가 일치하지 않습니다' });
+      setValidationStatus({ isValid: false, message: '비밀번호가 일치하지 않습니다' });
     }
   };
 
@@ -40,10 +38,9 @@ function PasswordConfirmInput({
       id="passwordConfirm"
       label={label}
       placeholder={placeholder}
-      value={text}
       onChange={handleChange}
-      isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
-      validationMessage={validationMessage.message} // ✅ 메시지 전달
+      isValid={validationStatus.isValid} // ✅ 유효성 검사 여부 전달
+      message={validationStatus.message} // ✅ 메시지 전달
     />
   );
 }

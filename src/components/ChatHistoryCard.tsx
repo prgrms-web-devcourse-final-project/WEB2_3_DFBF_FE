@@ -29,12 +29,12 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
   //요청 보내면 sse로 recordId, 보낸 사람 정보 보내줘야 함
   const request = async () => {
     if (!item.recordId) {
-      console.log('recordId가 존재하지 않습니다.');
+      //// console.log('recordId가 존재하지 않습니다.');
       return;
     }
     try {
       const { code, message } = await requestChat(Number(item.recordId));
-      console.log(code, message);
+      // console.log(code, message);
 
       //200
       if (code === 200) {
@@ -51,7 +51,7 @@ export default function ChatHistoryCard({ item }: ChatHistoryCardProps) {
       }
       //자신의 게시글에 요청했을 경우
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       openModal({
         title: '잠시 후 다시 시도해 주세요',
         onConfirm: () => {

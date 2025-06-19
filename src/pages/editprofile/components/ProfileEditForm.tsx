@@ -51,7 +51,7 @@ function ProfileEditForm() {
     staleTime: 5 * 60 * 1000,
   });
 
-  console.log(userData);
+  // // console.log(userData);
 
   const { mutate, isPending, isSuccess, isError } = useMutation({
     mutationFn: patchEditProfile,
@@ -100,7 +100,7 @@ function ProfileEditForm() {
           selectedProfileMusic?.artist,
           selectedProfileMusic?.title,
         );
-        console.log('videoId:', videoId);
+        // // console.log('videoId:', videoId);
 
         updatedData.spotifyId = selectedProfileMusic.spotifyId;
         updatedData.title = selectedProfileMusic.title;
@@ -114,7 +114,7 @@ function ProfileEditForm() {
       }
     }
 
-    console.log('전송 데이터:', updatedData);
+    // // console.log('전송 데이터:', updatedData);
 
     mutate(updatedData);
   };
@@ -136,7 +136,7 @@ function ProfileEditForm() {
     if (selectedProfileMusic?.spotifyId) {
       setIsMusicSelect(true);
       closeAllSheets();
-      console.log('음악 선택됨:', selectedProfileMusic);
+      // // console.log('음악 선택됨:', selectedProfileMusic);
     } else {
       setIsMusicSelect(false);
     }

@@ -34,7 +34,7 @@ export default function ChatMusicPlayer({ chatRoomDetail }: ChatMusicPlayerProps
   //저장되어있는 videoId 가져오기
   // useEffect(() => {
   //   const getVideoId = async () => {
-  //     console.log(data);
+  //     // console.log(data);
   //     if (!data?.data?.spotifyMusic) return;
 
   //     try {
@@ -45,7 +45,7 @@ export default function ChatMusicPlayer({ chatRoomDetail }: ChatMusicPlayerProps
   //       setCurrentVideoId(savedVideoId);
   //     } catch (error) {
   //       setIsError(true);
-  //       console.log(error);
+  //       // console.log(error);
   //     } finally {
   //       setIsLoading(false);
   //     }

@@ -48,11 +48,11 @@ export default MoreOptionsSelect;
 
 // 함수 선언하기
 //   const handleEditProfile = () => {
-//     console.log('프로필 수정 클릭!');
+//     // console.log('프로필 수정 클릭!');
 //   };
 
 //   const handleLogout = () => {
-//     console.log('로그아웃 클릭!');
+//     // console.log('로그아웃 클릭!');
 //   };
 
 {

@@ -12,7 +12,7 @@ const useMusicSelection = () => {
     if (selectedPostMusic) {
       setIsMusicSelect(true);
       closeAllSheets();
-      console.log('음악 선택됨:', selectedPostMusic);
+      // console.log('음악 선택됨:', selectedPostMusic);
     } else {
       setIsMusicSelect(false);
     }

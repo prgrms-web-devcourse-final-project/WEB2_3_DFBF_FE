@@ -1,4 +1,5 @@
 import { getIdAvailability } from '@/apis/user';
+import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
 import InputField from '@/components/InputField';
 import { ID_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
@@ -8,20 +9,13 @@ import { useState } from 'react';
 interface IdInputProps {
   changeFormID: (val: string) => void;
   setValidity: (val: boolean) => void;
-  initialText?: string;
-  initialMessage?: string;
 }
-const IdInput = ({
-  changeFormID,
-  setValidity,
-  initialText = '',
-  initialMessage = '',
-}: IdInputProps) => {
+const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
   const { openModal, closeModal } = useModalStore(); // 모달
-  const [text, setText] = useState(initialText);
-  const [validationMessage, setValidationMessage] = useState({
-    success: false,
-    message: initialMessage,
+  const [text, setText] = useState('');
+  const [validationStatus, setValidationStatus] = useState({
+    isValid: false, // 유효성 통과여부
+    message: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,14 +24,11 @@ const IdInput = ({
     changeFormID(value); // form id 업데이트
     setValidity(false); // form validity 초기화
 
-    // 유효성 검사
-    const isValid = ID_REGEX.test(value);
-
-    if (isValid) {
-      setValidationMessage({ success: true, message: '' });
+    if (ID_REGEX.test(value)) {
+      setValidationStatus({ isValid: true, message: '' });
     } else {
-      setValidationMessage({
-        success: false,
+      setValidationStatus({
+        isValid: false,
         message: '아이디는 5~20자의 영문과 숫자로만 구성해야 합니다',
       });
     }
@@ -48,10 +39,10 @@ const IdInput = ({
     mutationFn: () => getIdAvailability(text),
     onSuccess: (data) => {
       if (data.code === 200) {
-        setValidationMessage({ success: true, message: '사용 가능한 아이디입니다' });
+        setValidationStatus({ isValid: true, message: '사용 가능한 아이디입니다' });
         setValidity(true);
       } else if (data.code === 409) {
-        setValidationMessage({ success: false, message: '이미 사용 중인 아이디입니다' });
+        setValidationStatus({ isValid: false, message: '이미 사용 중인 아이디입니다' });
       }
     },
     onError: () => {
@@ -64,25 +55,24 @@ const IdInput = ({
       });
     },
   });
-
-  // 버튼 props
-  const buttonHandler = {
-    buttonEnabled: validationMessage.success,
-    buttonText: '중복확인',
-    isPending: isPending,
-    onClick: mutate,
-  };
-
+  // console.log('새로운 mutate', mutate);
   return (
     <InputField
       id="id"
       label="아이디"
       placeholder="아이디를 입력해 주세요"
-      value={text}
       onChange={handleChange}
-      isValid={validationMessage.success} // ✅ 유효성 검사 여부 전달
-      validationMessage={validationMessage.message} // ✅ 메시지 전달
-      buttonHandler={buttonHandler}
+      message={validationStatus.message}
+      isValid={validationStatus.isValid}
+      actionButton={
+        <LoadingSpinnerButton
+          isPending={isPending}
+          className="w-[65px]"
+          buttonText="중복확인"
+          buttonEnabled={validationStatus.isValid}
+          onClick={() => mutate()}
+        />
+      }
     />
   );
 };

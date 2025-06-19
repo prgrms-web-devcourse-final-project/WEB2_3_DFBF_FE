@@ -33,10 +33,9 @@ function CardDetailModal({ recordId, handleDelete, handleEdit }: CardDetailModal
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(recordId)
+    // console.log(recordId)
     if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
     setCurrentRecord(data.data);
-    
 
     const getVideoId = async () => {
       if (!data?.data?.spotifyMusic) return; // 데이터가 없으면 실행하지 않음
@@ -47,7 +46,7 @@ function CardDetailModal({ recordId, handleDelete, handleEdit }: CardDetailModal
         const savedVideoId = res.data;
         setCurrentVideoId(savedVideoId);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     };
 

@@ -26,12 +26,12 @@ axiosChatInstance.interceptors.request.use(
     // 토큰이 있으면 요청 헤더에 추가
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
+      // // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
     }
     return config;
   },
   (error) => {
-    console.log('요청 인터셉터 에러', error);
+    // console.log('요청 인터셉터 에러', error);
     Promise.reject(error);
   },
 );
@@ -44,12 +44,12 @@ axiosInstance.interceptors.request.use(
     // 토큰이 있으면 요청 헤더에 추가
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
+      // // console.log('요청 헤더에 Authorization 추가됨:', config.headers);
     }
     return config;
   },
   (error) => {
-    console.log('요청 인터셉터 에러', error);
+    // console.log('요청 인터셉터 에러', error);
     Promise.reject(error);
   },
 );

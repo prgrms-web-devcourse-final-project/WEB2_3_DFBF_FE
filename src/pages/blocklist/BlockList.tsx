@@ -35,11 +35,11 @@ export default function BlockList() {
         try {
           // 서버 요청
           const data = await deleteBlockList(id);
-          console.log(data);
+          // console.log(data);
 
           // 만약 요청이 실패했다면, 기존 상태를 복원
           if (data.code !== 200) {
-            console.log(data);
+            // console.log(data);
             throw new Error('삭제 실패');
           }
         } catch (error) {
@@ -51,7 +51,7 @@ export default function BlockList() {
         closeModal();
       },
       onCancel: () => {
-        console.log('취소');
+        // console.log('취소');
         closeModal();
       },
     });
@@ -60,7 +60,7 @@ export default function BlockList() {
   useEffect(() => {
     const getBlockList = async () => {
       const data = await fetchBlockList();
-      console.log(data);
+      // console.log(data);
       setBlockList(data.data);
     };
     getBlockList();

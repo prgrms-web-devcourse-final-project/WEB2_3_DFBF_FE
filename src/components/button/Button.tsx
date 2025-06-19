@@ -5,17 +5,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'disabled';
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, variant = 'primary', className, ...props }, ref) => {
-    const buttonStyle = {
-      primary: 'bg-primary-normal hover:bg-primary-hover',
-      secondary: 'bg-white border border-primary-active text-primary-active hover:bg-gray-5',
-      disabled: 'bg-gray-30 cursor-not-allowed',
-    };
+const buttonStyle = {
+  primary: 'bg-primary-normal hover:bg-primary-hover',
+  secondary: 'bg-white border border-primary-active text-primary-active hover:bg-gray-5',
+  disabled: 'bg-gray-30 cursor-not-allowed',
+};
 
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, variant = 'primary', type = 'button', className, disabled, ...props }, ref) => {
     return (
       <button
         ref={ref}
+        type={type}
         className={twMerge(
           'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
           buttonStyle[variant],

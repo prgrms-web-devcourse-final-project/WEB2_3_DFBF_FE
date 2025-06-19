@@ -11,7 +11,7 @@ function KaKaoRedirection() {
 
   const handleKaKaoLogin = async () => {
     try {
-      console.log('kakaoCode', kakaoCode);
+      // console.log('kakaoCode', kakaoCode);
       const { code, data } = await getKakaoLogin(kakaoCode as string);
       if (code === 200) {
         setAccessToken(data.accessToken);
@@ -26,7 +26,7 @@ function KaKaoRedirection() {
 
   useEffect(() => {
     if (kakaoCode) {
-      console.log('🔴 kakaoCode', kakaoCode);
+      // console.log('🔴 kakaoCode', kakaoCode);
       handleKaKaoLogin();
     }
   }, []);

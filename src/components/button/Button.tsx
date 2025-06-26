@@ -22,7 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           buttonStyle[variant],
           className,
         )}
-        disabled={variant === 'disabled'}
+        disabled={disabled || variant === 'disabled'}
         {...props}
       >
         {children}

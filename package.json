@@ -18,6 +18,8 @@
     "@types/node": "^22.13.4",
     "@types/youtube": "^0.1.0",
     "axios": "^1.7.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "event-source-polyfill": "^1.0.31",
     "framer-motion": "^12.4.7",

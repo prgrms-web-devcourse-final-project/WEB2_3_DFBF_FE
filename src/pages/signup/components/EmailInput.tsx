@@ -1,6 +1,6 @@
 import { getEmailAvailability, postEmailVerificationRequest } from '@/apis/email';
 import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/InputField';
+import InputField from '@/components/input/InputField';
 import { EMAIL_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
 import { useMutation } from '@tanstack/react-query';

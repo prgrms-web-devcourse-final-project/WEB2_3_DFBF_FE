@@ -1,6 +1,6 @@
 import { getNicknameAvailability } from '@/apis/user';
 import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/InputField';
+import InputField from '@/components/input/InputField';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';

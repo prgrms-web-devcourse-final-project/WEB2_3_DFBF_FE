@@ -1,4 +1,4 @@
-import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
+import { LoadingSpinnerButton } from '@/components/button';
 import CountdownTimer from '@/components/CountdownTimer';
 import React from 'react';
 import { twMerge } from 'tailwind-merge';

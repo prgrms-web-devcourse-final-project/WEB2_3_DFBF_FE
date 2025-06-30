@@ -1,6 +1,6 @@
 import { getIdAvailability } from '@/apis/user';
 import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/InputField';
+import InputField from '@/components/input/InputField';
 import { ID_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
 import { useMutation } from '@tanstack/react-query';

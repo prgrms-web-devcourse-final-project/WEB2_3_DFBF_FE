@@ -1,21 +1,23 @@
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  id?: string;
   className?: string;
 }
 
-function Input({ id, className, ...props }: InputProps) {
+const Input = forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
   return (
     <input
-      id={id}
+      ref={ref}
       className={twMerge(
         'w-full h-[38px] rounded-lg input-shadow outline-0 px-3 caption-m placeholder:text-gray-50 focus:ring-1 focus:ring-primary-active bg-white',
-        className, //사용자 정의 스타일
+        className,
       )}
-      {...props} //추가 속성
+      {...props}
     />
   );
-}
+});
+
+Input.displayName = 'Input';
 
 export default Input;

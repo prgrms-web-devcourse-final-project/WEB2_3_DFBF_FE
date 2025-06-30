@@ -3,7 +3,7 @@ import { login } from '@/apis/auth';
 import Button from '@/components/button/Button';
 import logo from '@assets/icons/logo.svg';
 import kakao from '@assets/icons/kakao-icon.svg';
-import Input from '@/components/Input';
+import Input from '@/components/input/Input';
 import { useState } from 'react';
 import { useModalStore } from '@/store/modalStore';
 import SpinLoading from '@/components/loading/SpinLoading';

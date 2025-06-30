@@ -1,4 +1,4 @@
-import InputField from '@/components/InputField';
+import InputField from '@/components/input/InputField';
 import { PASSWORD_REGEX } from '@/constants';
 import { useState } from 'react';
 

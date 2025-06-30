@@ -1,4 +1,4 @@
-import Input from '@/components/Input';
+import Input from '@/components/input/Input';
 import { twMerge } from 'tailwind-merge';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -31,18 +31,15 @@ export default function InputField({
       </div>
 
       {/* 유효성 검사 메시지 */}
-      <div className="flex items-center h-[18px]">
-        {message && (
-          <p
-            className={twMerge(
-              'text-[9px]/[18px] pl-[5px]',
-              isValid ? 'text-functional-success' : 'text-functional-danger',
-            )}
-          >
-            {message}
-          </p>
+      <p
+        className={twMerge(
+          'text-[9px]/[18px] pl-[5px]',
+          isValid ? 'text-functional-success' : 'text-functional-danger',
+          message === '' && 'invisible',
         )}
-      </div>
+      >
+        {message || '‎'}
+      </p>
     </div>
   );
 }

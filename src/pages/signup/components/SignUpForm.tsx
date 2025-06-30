@@ -125,9 +125,9 @@ function SignUpForm() {
       </div>
       <LoadingSpinnerButton
         type="submit"
-        isPending={isPending}
-        buttonEnabled={buttonEnabled}
-        buttonText="지금 시작하기"
+        isLoading={isPending}
+        disabled={buttonEnabled}
+        text="지금 시작하기"
       />
     </form>
   );

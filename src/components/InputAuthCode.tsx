@@ -4,9 +4,9 @@ import React from 'react';
 import { twMerge } from 'tailwind-merge';
 
 type ButtonHandler = {
-  buttonEnabled: boolean;
-  buttonText: string;
-  isPending: boolean;
+  disable: boolean;
+  text: string;
+  isLoading: boolean;
   onClick: () => void;
 };
 

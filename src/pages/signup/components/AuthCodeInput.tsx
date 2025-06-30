@@ -96,9 +96,9 @@ function AuthCodeInput({ email, authcodeValidity, setValidity }: AuthCodeInputPr
   };
 
   const buttonHandler = {
-    buttonEnabled: validationMessage.success && !authcodeValidity,
-    buttonText: '인증확인',
-    isPending: isPending,
+    disable: validationMessage.success && !authcodeValidity,
+    text: '인증확인',
+    isLoading: isPending,
     onClick: verifyEmail,
   };
 

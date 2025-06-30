@@ -1,28 +1,35 @@
-import { twMerge } from 'tailwind-merge';
 import { forwardRef } from 'react';
+import { cva } from 'class-variance-authority';
+import { cn } from '@/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'disabled';
 }
 
-const buttonStyle = {
-  primary: 'bg-primary-normal hover:bg-primary-hover',
-  secondary: 'bg-white border border-primary-active text-primary-active hover:bg-gray-5',
-  disabled: 'bg-gray-30 cursor-not-allowed',
-};
+export const buttonVariants = cva(
+  'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary-normal hover:bg-primary-hover',
+        secondary: 'bg-white border border-primary-active text-primary-active hover:bg-gray-5',
+        disabled: 'bg-gray-30 cursor-not-allowed',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+    },
+  },
+);
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, variant = 'primary', type = 'button', className, disabled, ...props }, ref) => {
+  ({ children, variant = 'primary', type = 'button', disabled, className, ...props }, ref) => {
     return (
       <button
         ref={ref}
         type={type}
-        className={twMerge(
-          'flex justify-center items-center w-full rounded-lg h-[38px] text-white transition body-m cursor-pointer',
-          buttonStyle[variant],
-          className,
-        )}
-        disabled={variant === 'disabled'}
+        disabled={variant === 'disabled' || disabled}
+        className={cn(buttonVariants({ variant }), className)}
         {...props}
       >
         {children}
@@ -31,9 +38,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-export default Button;
+Button.displayName = 'Button';
 
-// 사용 예시
-// <Button variant="secondary" className="w-40 py-3 text-lg">
-//   Secondary 버튼
-// </Button>
+export default Button;

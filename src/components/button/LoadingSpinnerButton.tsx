@@ -1,31 +1,28 @@
 import Button from '@/components/button/Button';
 import SpinLoading from '@/components/loading/SpinLoading';
-import useDelayedLoading from '@/hooks/useDelayedLoading';
+import useDelayedLoading from '@/hooks/button/useDelayedLoading';
 
 interface LoadingSpinnerButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  isPending: boolean; // pending 되었는지 유무
-  buttonText: string; // 버튼 text
-  buttonEnabled: boolean; // 버튼 활성화 유무
+  isLoading: boolean;
+  text: string;
+  disabled?: boolean;
 }
 
 // 로딩 스피너 있는 버튼
 const LoadingSpinnerButton = ({
-  isPending,
-  buttonText,
-  buttonEnabled,
-  onClick,
+  isLoading,
+  text,
+  disabled,
+  className,
   ...props
 }: LoadingSpinnerButtonProps) => {
-  const showLoading = useDelayedLoading({ isPending });
+  const showLoading = useDelayedLoading({ isLoading });
+
+  const variant = disabled ? 'disabled' : 'primary';
 
   return (
-    <Button
-      variant={buttonEnabled ? 'primary' : 'disabled'}
-      disabled={isPending}
-      onClick={onClick}
-      {...props}
-    >
-      {showLoading ? <SpinLoading /> : buttonText}
+    <Button variant={variant} disabled={isLoading || disabled} className={className} {...props}>
+      {showLoading ? <SpinLoading /> : text}
     </Button>
   );
 };

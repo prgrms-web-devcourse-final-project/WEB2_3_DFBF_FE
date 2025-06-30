@@ -66,10 +66,10 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
       isValid={validationStatus.isValid}
       actionButton={
         <LoadingSpinnerButton
-          isPending={isPending}
+          isLoading={isPending}
           className="w-[65px]"
-          buttonText="중복확인"
-          buttonEnabled={validationStatus.isValid}
+          text="중복확인"
+          disabled={!validationStatus.isValid}
           onClick={() => mutate()}
         />
       }

@@ -107,10 +107,10 @@ function EmailInput({
       disabled={authcodeValidity} // input disabled
       actionButton={
         <LoadingSpinnerButton
-          isPending={isCheckingEmail && isRequestingEmailVerification}
+          isLoading={isCheckingEmail && isRequestingEmailVerification}
           className="w-[65px]"
-          buttonText="인증요청"
-          buttonEnabled={validationStatus.isValid && !emailValidity}
+          text="인증요청"
+          disabled={!validationStatus.isValid || emailValidity}
           onClick={() => checkEmailAvailability()}
         />
       }

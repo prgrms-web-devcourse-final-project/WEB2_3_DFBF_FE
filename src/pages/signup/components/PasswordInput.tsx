@@ -3,18 +3,13 @@ import { PASSWORD_REGEX } from '@/constants';
 import { useState } from 'react';
 
 interface PasswordInputProps {
-  label?: string;
-  placeholder?: string;
+  label: string;
+  placeholder: string;
   setValidity: (val: boolean) => void;
   passwordRef: React.RefObject<string>;
 }
 
-function PasswordInput({
-  label = '비밀번호',
-  placeholder = '비밀번호를 입력해 주세요',
-  passwordRef,
-  setValidity,
-}: PasswordInputProps) {
+function PasswordInput({ label, placeholder, passwordRef, setValidity }: PasswordInputProps) {
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
     message: '',

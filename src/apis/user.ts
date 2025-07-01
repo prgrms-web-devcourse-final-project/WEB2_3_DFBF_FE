@@ -35,24 +35,6 @@ export const checkPassword = async (currentPassword: string) => {
   return data;
 };
 
-// 회원가입
-export const postSignUp = async (
-  nickName: string,
-  loginId: string,
-  password: string,
-  email: string,
-) => {
-  const { data } = await axiosInstance.post('/user/signup', {
-    nickName,
-    socialId: null,
-    socialType: 'NONE',
-    loginId,
-    password,
-    email,
-  });
-  return data;
-};
-
 // 마이페이지 정보 불러오기
 export const getMyProfile = async () => {
   const { data } = await axiosInstance.get('/user/mypage');

@@ -1,26 +1,21 @@
 import { getEmailAvailability, postEmailVerificationRequest } from '@/apis/email';
-import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/input/InputField';
+import { LoadingSpinnerButton } from '@/components/button';
+import { InputField } from '@/components/input';
 import { EMAIL_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 interface EmailInputProps {
-  changeFormEmail: (val: string) => void;
   setValidity: (val: boolean) => void;
-  authcodeValidity: boolean; // 인증 코드 유효성
   emailValidity: boolean; // 이메일 유효성
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function EmailInput({
-  changeFormEmail,
-  setValidity,
-  authcodeValidity,
-  emailValidity,
-}: EmailInputProps) {
+function EmailInput({ setValidity, emailValidity, setEmail }: EmailInputProps) {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [text, setText] = useState('');
+  const [hasRequested, setHasRequested] = useState(false); // 이미 인증 요청을 했는지
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
     message: '',
@@ -29,7 +24,6 @@ function EmailInput({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    changeFormEmail(value); // form id 업데이트
     setValidity(false); // form validity 초기화
 
     // 유효성 검사
@@ -80,8 +74,8 @@ function EmailInput({
             message:
               '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
           });
-
-          setValidity(true); // 폼 유효성 확인 업데이트
+          setHasRequested(true);
+          setEmail(text);
         }
       },
       onError: () => {
@@ -101,16 +95,17 @@ function EmailInput({
       label="이메일 인증"
       placeholder="이메일을 입력해 주세요"
       value={text}
+      name="email"
       onChange={handleChange}
-      isValid={validationStatus.isValid} // ✅ 유효성 검사 여부 전달
-      message={validationStatus.message} // ✅ 메시지 전달
-      disabled={authcodeValidity} // input disabled
+      isValid={validationStatus.isValid}
+      message={validationStatus.message}
+      disabled={emailValidity}
       actionButton={
         <LoadingSpinnerButton
-          isLoading={isCheckingEmail && isRequestingEmailVerification}
+          isLoading={isCheckingEmail || isRequestingEmailVerification}
           className="w-[65px]"
-          text="인증요청"
-          disabled={!validationStatus.isValid || emailValidity}
+          text={emailValidity ? '인증완료' : '인증요청'}
+          disabled={!validationStatus.isValid || emailValidity || hasRequested}
           onClick={() => checkEmailAvailability()}
         />
       }

@@ -1,17 +1,16 @@
 import { getNicknameAvailability } from '@/apis/user';
-import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/input/InputField';
+import { LoadingSpinnerButton } from '@/components/button';
+import { InputField } from '@/components/input';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 interface NicknameInputProps {
   initialText?: string; // 초기값
-  changeFormNickname: (val: string) => void;
   setValidity: (val: boolean) => void;
 }
 
-function NicknameInput({ initialText = '', changeFormNickname, setValidity }: NicknameInputProps) {
+function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
   const [text, setText] = useState('');
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
@@ -21,7 +20,6 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    changeFormNickname(value); // form id 업데이트
     setValidity(false); // form validity 초기화
 
     // 유효성 검사
@@ -71,6 +69,8 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
       id="nickname"
       label="닉네임"
       placeholder="닉네임을 입력해 주세요"
+      value={text}
+      name="nickname"
       onChange={handleChange}
       message={validationStatus.message}
       isValid={validationStatus.isValid}

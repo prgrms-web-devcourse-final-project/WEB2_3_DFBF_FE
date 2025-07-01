@@ -1,16 +1,17 @@
 import { getIdAvailability } from '@/apis/user';
-import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/input/InputField';
+import { LoadingSpinnerButton } from '@/components/button';
+import { InputField } from '@/components/input';
+
 import { ID_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 interface IdInputProps {
-  changeFormID: (val: string) => void;
   setValidity: (val: boolean) => void;
 }
-const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
+
+const IdInput = ({ setValidity }: IdInputProps) => {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [text, setText] = useState('');
   const [validationStatus, setValidationStatus] = useState({
@@ -21,7 +22,6 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    changeFormID(value); // form id 업데이트
     setValidity(false); // form validity 초기화
 
     if (ID_REGEX.test(value)) {
@@ -36,7 +36,7 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
 
   // 아이디 중복 확인 API 호출
   const { isPending, mutate } = useMutation({
-    mutationFn: () => getIdAvailability(text),
+    mutationFn: (value: string) => getIdAvailability(value),
     onSuccess: (data) => {
       if (data.code === 200) {
         setValidationStatus({ isValid: true, message: '사용 가능한 아이디입니다' });
@@ -55,13 +55,15 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
       });
     },
   });
-  // console.log('새로운 mutate', mutate);
+
   return (
     <InputField
       id="id"
+      name="id"
       label="아이디"
       placeholder="아이디를 입력해 주세요"
       onChange={handleChange}
+      value={text}
       message={validationStatus.message}
       isValid={validationStatus.isValid}
       actionButton={
@@ -70,7 +72,7 @@ const IdInput = ({ changeFormID, setValidity }: IdInputProps) => {
           className="w-[65px]"
           text="중복확인"
           disabled={!validationStatus.isValid}
-          onClick={() => mutate()}
+          onClick={() => mutate(text)}
         />
       }
     />

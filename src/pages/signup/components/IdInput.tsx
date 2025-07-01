@@ -5,7 +5,8 @@ import { InputField } from '@/components/input';
 import { ID_REGEX } from '@/constants';
 import { useModalStore } from '@/store/modalStore';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { throttle } from 'lodash';
+import { useMemo, useState } from 'react';
 
 interface IdInputProps {
   setValidity: (val: boolean) => void;
@@ -56,6 +57,8 @@ const IdInput = ({ setValidity }: IdInputProps) => {
     },
   });
 
+  const throttledMutate = useMemo(() => throttle((value: string) => mutate(value), 1000), [mutate]);
+
   return (
     <InputField
       id="id"
@@ -72,7 +75,7 @@ const IdInput = ({ setValidity }: IdInputProps) => {
           className="w-[65px]"
           text="중복확인"
           disabled={!validationStatus.isValid}
-          onClick={() => mutate(text)}
+          onClick={() => throttledMutate(text)}
         />
       }
     />

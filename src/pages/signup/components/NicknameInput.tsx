@@ -3,7 +3,8 @@ import { LoadingSpinnerButton } from '@/components/button';
 import { InputField } from '@/components/input';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { throttle } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 
 interface NicknameInputProps {
   initialText?: string; // 초기값
@@ -42,7 +43,7 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
   };
   // 닉네임 중복을 확인하는 함수
   const { mutate, isPending } = useMutation({
-    mutationFn: () => getNicknameAvailability(text),
+    mutationFn: (value: string) => getNicknameAvailability(value),
     onSuccess: (data) => {
       if (data.code === 200) {
         setValidationStatus({ isValid: true, message: '사용 가능한 닉네임입니다' });
@@ -64,6 +65,8 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
     setText(initialText);
   }, [initialText]);
 
+  const throttledMutate = useMemo(() => throttle((value: string) => mutate(value), 1000), [mutate]);
+
   return (
     <InputField
       id="nickname"
@@ -80,7 +83,7 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
           className="w-[65px]"
           text="중복확인"
           disabled={!validationStatus.isValid}
-          onClick={() => mutate()}
+          onClick={() => throttledMutate(text)}
         />
       }
     />

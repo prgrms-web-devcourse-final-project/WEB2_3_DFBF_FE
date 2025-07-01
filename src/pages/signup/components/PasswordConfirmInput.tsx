@@ -2,15 +2,15 @@ import { InputField } from '@/components/input';
 import { useState } from 'react';
 
 interface PasswordConfirmInputProps {
-  label?: string;
-  placeholder?: string;
+  label: string;
+  placeholder: string;
   setValidity: (val: boolean) => void;
   passwordRef: React.RefObject<string>;
 }
 
 function PasswordConfirmInput({
-  label = '비밀번호 확인',
-  placeholder = '비밀번호를 다시 입력해 주세요',
+  label,
+  placeholder,
   setValidity,
   passwordRef,
 }: PasswordConfirmInputProps) {

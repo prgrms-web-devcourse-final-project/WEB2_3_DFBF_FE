@@ -94,7 +94,10 @@ function SignUpForm() {
         <IdInput setValidity={(value) => updateValidity('id', value)} />
         <PasswordGroupSection setValidity={(value) => updateValidity('password', value)} />
         <NicknameInput setValidity={(value) => updateValidity('nickname', value)} />
-        <EmailGroupSection updateValidity={updateValidity} validity={validity} />
+        <EmailGroupSection
+          setValidity={(value) => updateValidity('password', value)}
+          emailValidity={validity.email}
+        />
       </div>
       <LoadingSpinnerButton
         type="submit"

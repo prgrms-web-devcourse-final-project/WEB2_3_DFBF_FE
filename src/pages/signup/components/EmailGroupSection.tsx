@@ -2,25 +2,17 @@ import { AuthCodeInput, EmailInput } from '@/pages/signup/components';
 import { useState } from 'react';
 
 interface EmailGroupSectionProps {
-  updateValidity: (key: 'email', value: boolean) => void;
-  validity: { email: boolean };
+  setValidity: (val: boolean) => void;
+  emailValidity: boolean;
 }
 
-const EmailGroupSection = ({ updateValidity, validity }: EmailGroupSectionProps) => {
+const EmailGroupSection = ({ setValidity, emailValidity }: EmailGroupSectionProps) => {
   const [email, setEmail] = useState('');
   return (
     <>
-      <EmailInput
-        setValidity={(value) => updateValidity('email', value)}
-        emailValidity={validity.email}
-        setEmail={setEmail}
-      />
+      <EmailInput setValidity={setValidity} emailValidity={emailValidity} setEmail={setEmail} />
       {email !== '' && (
-        <AuthCodeInput
-          email={email}
-          emailValidity={validity.email}
-          setValidity={(value) => updateValidity('email', value)}
-        />
+        <AuthCodeInput email={email} emailValidity={emailValidity} setValidity={setValidity} />
       )}
     </>
   );

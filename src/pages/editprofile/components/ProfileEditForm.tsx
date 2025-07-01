@@ -182,13 +182,10 @@ function ProfileEditForm() {
             rightElement="button" // 오른쪽 요소 타입
           />
         </div>
-        <NicknameInput
-          initialText={nickname}
-          changeFormNickname={(nickname) => setNickname(nickname)}
-          setValidity={(val) => setIsNicknameValid(val)}
-        />
+        <NicknameInput initialText={nickname} setValidity={(val) => setIsNicknameValid(val)} />
       </div>
       <Button
+        type="submit"
         variant={isProfileEditable ? 'primary' : 'disabled'}
         className={twMerge('py-3 body-m mt-5', isError ? 'bg-functional-danger' : '')}
       >

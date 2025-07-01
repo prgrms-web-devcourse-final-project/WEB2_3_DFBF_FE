@@ -28,9 +28,9 @@ export const getIdAvailability = async (loginId: string) => {
 };
 
 //현재 비밀번호 확인
-export const checkPassword = async (currentPassword: string) => {
+export const checkPassword = async (password: string) => {
   const { data } = await axiosInstance.post(`/user/checkPassword`, {
-    password: currentPassword,
+    password,
   });
   return data;
 };

@@ -1,26 +1,21 @@
-import InputField from '@/components/input/InputField';
-import { useState } from 'react';
+import { InputField } from '@/components/input';
 
 interface CurrentPasswordInputPros {
-  setCurrentPassword: (val: string) => void;
+  setValidity: (val: boolean) => void;
 }
 
-function CurrentPasswordInput({ setCurrentPassword }: CurrentPasswordInputPros) {
-  const [text, setText] = useState('');
-
-  const handleonBlur = () => {
-    setCurrentPassword(text);
+function CurrentPasswordInput({ setValidity }: CurrentPasswordInputPros) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValidity(e.target.value.length > 0);
   };
-
   return (
     <InputField
       type="password"
       id="current-password"
+      name="current-password"
+      onChange={handleChange}
       label="현재 비밀번호"
-      placeholder="현재 비밀번호"
-      value={text}
-      onChange={(e) => setText(e.target.value)}
-      onBlur={handleonBlur}
+      placeholder="현재 비밀번호을 입력해 주세요"
     />
   );
 }

@@ -1,4 +1,5 @@
-import Input from '@/components/input/Input';
+import { Input } from '@/components/input/';
+import { forwardRef } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -9,37 +10,35 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   actionButton?: React.ReactNode;
 }
 
-export default function InputField({
-  id,
-  label,
-  isValid,
-  message,
-  actionButton,
-  ...props
-}: InputFieldProps) {
-  return (
-    <div className="flex flex-col w-full gap-0.5">
-      {/* 라벨 */}
-      <label htmlFor={id} className="body-r text-gray-80 pl-[5px]">
-        {label}
-      </label>
+const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
+  ({ id, label, isValid, message, actionButton, ...props }, ref) => {
+    return (
+      <div className="flex flex-col w-full gap-0.5">
+        {/* 라벨 */}
+        <label htmlFor={id} className="body-r text-gray-80 pl-[5px]">
+          {label}
+        </label>
 
-      {/* 입력 필드 + 버튼 */}
-      <div className="flex gap-2">
-        <Input id={id} {...props} />
-        {actionButton && <div className="shrink-0">{actionButton}</div>}
+        {/* 입력 필드 + 버튼 */}
+        <div className="flex gap-2">
+          <Input id={id} ref={ref} {...props} />
+          {actionButton && <div className="shrink-0">{actionButton}</div>}
+        </div>
+
+        {/* 유효성 검사 메시지 */}
+        <p
+          className={twMerge(
+            'text-[9px]/[18px] pl-[5px]',
+            isValid ? 'text-functional-success' : 'text-functional-danger',
+            message === '' && 'invisible',
+          )}
+        >
+          {message || '‎'}
+        </p>
       </div>
+    );
+  },
+);
 
-      {/* 유효성 검사 메시지 */}
-      <p
-        className={twMerge(
-          'text-[9px]/[18px] pl-[5px]',
-          isValid ? 'text-functional-success' : 'text-functional-danger',
-          message === '' && 'invisible',
-        )}
-      >
-        {message || '‎'}
-      </p>
-    </div>
-  );
-}
+InputField.displayName = 'InputField';
+export default InputField;

@@ -1,17 +1,17 @@
 import { getNicknameAvailability } from '@/apis/user';
-import LoadingSpinnerButton from '@/components/button/LoadingSpinnerButton';
-import InputField from '@/components/input/InputField';
+import { LoadingSpinnerButton } from '@/components/button';
+import { InputField } from '@/components/input';
 import { MAX_NICKNAME_LENGTH, MIN_NICKNAME_LENGTH, NICKNAME_REGEX } from '@/constants';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { throttle } from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 
 interface NicknameInputProps {
   initialText?: string; // 초기값
-  changeFormNickname: (val: string) => void;
   setValidity: (val: boolean) => void;
 }
 
-function NicknameInput({ initialText = '', changeFormNickname, setValidity }: NicknameInputProps) {
+function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
   const [text, setText] = useState('');
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
@@ -21,7 +21,6 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    changeFormNickname(value); // form id 업데이트
     setValidity(false); // form validity 초기화
 
     // 유효성 검사
@@ -44,7 +43,7 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
   };
   // 닉네임 중복을 확인하는 함수
   const { mutate, isPending } = useMutation({
-    mutationFn: () => getNicknameAvailability(text),
+    mutationFn: (value: string) => getNicknameAvailability(value),
     onSuccess: (data) => {
       if (data.code === 200) {
         setValidationStatus({ isValid: true, message: '사용 가능한 닉네임입니다' });
@@ -66,11 +65,15 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
     setText(initialText);
   }, [initialText]);
 
+  const throttledMutate = useMemo(() => throttle((value: string) => mutate(value), 1000), [mutate]);
+
   return (
     <InputField
       id="nickname"
       label="닉네임"
       placeholder="닉네임을 입력해 주세요"
+      value={text}
+      name="nickname"
       onChange={handleChange}
       message={validationStatus.message}
       isValid={validationStatus.isValid}
@@ -80,7 +83,7 @@ function NicknameInput({ initialText = '', changeFormNickname, setValidity }: Ni
           className="w-[65px]"
           text="중복확인"
           disabled={!validationStatus.isValid}
-          onClick={() => mutate()}
+          onClick={() => throttledMutate(text)}
         />
       }
     />

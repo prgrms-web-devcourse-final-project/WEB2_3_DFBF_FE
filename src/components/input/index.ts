@@ -1,4 +1,2 @@
-import Input from '@/components/input/Input';
-import InputField from '@/components/input/InputField';
-
-export { Input, InputField };
+export { default as Input } from './Input';
+export { default as InputField } from './InputField';

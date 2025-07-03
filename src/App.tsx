@@ -19,7 +19,7 @@ import { useSheetStore } from './store/sheetStore';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
-import { useSpotifyAuth } from '@/hooks/useSpotifyAuth';
+import { useSpotifyAuth } from '@/hooks/spotify/useSpotifyAuth';
 import UserProfile from '@/pages/user/UserProfile';
 import PublicRoute from '@/routes/PublicRoute';
 

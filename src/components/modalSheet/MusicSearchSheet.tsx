@@ -7,12 +7,13 @@ import defaultImage from '@assets/images/default.png';
 import axios from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import LoadingMini from '../loading/LoadingMini';
+import { useSpotifyStore } from '@/store/spotifyStore';
 
 function MusicSearchSheet() {
   const [searchText, setSearchText] = useState('');
   const [query, setQuery] = useState('');
   //로컬 스토리지에서 토큰 가져오기
-  const spotifyAccessToken = localStorage.getItem('spotify_access_token');
+  const { token } = useSpotifyStore();
 
   // 무한 스크롤 감지용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +24,7 @@ function MusicSearchSheet() {
       `https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&offset=${pageParam}`,
       {
         headers: {
-          Authorization: `Bearer ${spotifyAccessToken}`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -82,7 +83,7 @@ function MusicSearchSheet() {
 
   //음악 리스트 렌더링
   const musicListRender = () => {
-    if (!spotifyAccessToken) {
+    if (!token) {
       return (
         <div className="h-[calc(100vh-154px)]">
           <InfoMessage text="Spotify 로그인이 필요합니다." />

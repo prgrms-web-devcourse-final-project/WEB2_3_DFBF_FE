@@ -53,7 +53,6 @@
       stroke-dashoffset: 0;
     }
   }
-  
 }
 @layer utilities {
   .bg-background {
@@ -70,8 +69,8 @@
   }
   .bottom-padding-nav {
     padding-bottom: calc(
-      env(safe-area-inset-bottom, 16px) + 16px
-    ); /* 기본 16px, 홈 인디케이터 대응 */
+      env(safe-area-inset-bottom, 20px) + 20px
+    ); /* 기본 20px, 홈 인디케이터 대응 */
   }
   .bottom-padding-chat {
     padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 92px);

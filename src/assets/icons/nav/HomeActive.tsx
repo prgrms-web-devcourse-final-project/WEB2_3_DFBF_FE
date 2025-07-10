@@ -1,7 +1,6 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
-const HomeActive: React.FC = () => {
+const HomeActive = () => {
   return (
     <motion.svg
       width="24"

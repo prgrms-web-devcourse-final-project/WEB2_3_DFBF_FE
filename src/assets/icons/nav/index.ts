@@ -1,8 +1,8 @@
+import ChatActive from './ChatActive';
 import chatDefault from './chat-default.svg';
-import chatActive from './chat-active.svg';
 import homeDefault from './home-default.svg';
-import homeActive from './home-active.svg';
 import mypageDefault from './mypage-default.svg';
-import mypageActive from './mypage-active.svg';
+import MyPageActive from './MyPageActive';
+import HomeActive from './HomeActive';
 
-export { chatDefault, chatActive, homeDefault, homeActive, mypageDefault, mypageActive };
+export { chatDefault, homeDefault, mypageDefault, ChatActive, MyPageActive, HomeActive };

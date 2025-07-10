@@ -78,7 +78,7 @@ export default function BottomNav() {
       </nav>
 
       {/* Spacer: 콘텐츠가 하단바에 가려지지 않도록 */}
-      <div className="h-[62px]" />
+      <div className="h-[69px]" />
     </>
   );
 }

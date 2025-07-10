@@ -8,12 +8,12 @@ function Landing() {
     navigate('/login');
   };
   return (
-    <div className="flex flex-col w-full justify-center relative">
+    <div className="relative flex flex-col justify-center w-full h-full">
       <div className="flex flex-col gap-3 mt-[44px] mb-[180px]">
-        <p className="h3-b text-gray-80 text-center">
+        <p className="text-center h3-b text-gray-80">
           음악으로 감정을 기록하고 <br /> 누군가와 이어지는 순간
         </p>
-        <p className="caption-r text-gray-60 text-center">
+        <p className="text-center caption-r text-gray-60">
           당신의 감정을 음악으로 표현하고 <br /> 같은 감정을 나누는 이들과 연결되세요
         </p>
         <MusicAnimation />

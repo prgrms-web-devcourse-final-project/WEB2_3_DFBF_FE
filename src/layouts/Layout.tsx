@@ -8,7 +8,7 @@ import BottomNav from '@/layouts/bottomNav/BottomNav';
 
 function Layout() {
   return (
-    <div className="max-w-[600px] min-w-[320px] w-full bg-background flex min-h-screen mx-auto">
+    <div className="max-w-[600px] min-w-[320px] w-full bg-background flex flex-col min-h-screen mx-auto">
       {/* 헤더 */}
       <HeaderWrapper />
 
@@ -21,7 +21,7 @@ function Layout() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="flex justify-center w-full h-full"
+              className="flex justify-center w-full"
             >
               <Outlet />
             </motion.div>

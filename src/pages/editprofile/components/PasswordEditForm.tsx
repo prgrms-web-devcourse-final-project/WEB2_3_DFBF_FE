@@ -11,21 +11,9 @@ function PasswordEditForm() {
   const navigate = useNavigate();
   const { openModal, closeModal } = useModalStore(); // 모달 관리
 
-  const [validity, setValidity] = useState({
-    currentPassword: false,
-    password: false,
-  });
-
-  const buttonEnabled = Object.values(validity).every(Boolean);
-
-  // validity 업데이트 함수
-  const updateValidity = (key: 'currentPassword' | 'password', value: boolean) => {
-    setValidity((prev) => {
-      if (prev[key] === value) return prev; // 값이 동일하면 변경 X
-      return { ...prev, [key]: value };
-    });
-  };
-
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [password, setPassword] = useState('');
+  const isButtonEnabled = currentPassword !== '' && password !== '';
   // 현재 비밀번호 확인 useMutation
   const {
     mutateAsync: checkCurrentPassword,
@@ -60,9 +48,6 @@ function PasswordEditForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const currentPassword = formData.get('current-password') as string;
-    const password = formData.get('password') as string;
     // 현재 비밀번호 확인
     try {
       await checkCurrentPassword(currentPassword);
@@ -103,9 +88,9 @@ function PasswordEditForm() {
   return (
     <form className="flex flex-col justify-between h-full p-5" onSubmit={handleSubmit}>
       <div className="flex flex-col">
-        <CurrentPasswordInput setValidity={(value) => updateValidity('currentPassword', value)} />
+        <CurrentPasswordInput onChange={setCurrentPassword} />
         <PasswordGroupSection
-          setValidity={(value) => updateValidity('password', value)}
+          onChange={setPassword}
           passwordLabel="새 비밀번호"
           confirmLabel="새 비밀번호 확인"
           passwordPlaceholder="새 비밀번호를 입력해 주세요"
@@ -116,7 +101,7 @@ function PasswordEditForm() {
         isLoading={isCheckingPassword || isChangingPassword}
         isSuccess={isSuccess}
         isError={isCheckPasswordError || isChangePasswordError}
-        disabled={!buttonEnabled}
+        disabled={!isButtonEnabled}
         type="submit"
         text="저장하기"
       />

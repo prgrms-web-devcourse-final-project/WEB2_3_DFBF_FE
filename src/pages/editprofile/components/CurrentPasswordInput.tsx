@@ -1,18 +1,17 @@
 import { InputField } from '@/components/input';
 
 interface CurrentPasswordInputPros {
-  setValidity: (val: boolean) => void;
+  onChange: (val: string) => void;
 }
 
-function CurrentPasswordInput({ setValidity }: CurrentPasswordInputPros) {
+function CurrentPasswordInput({ onChange }: CurrentPasswordInputPros) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValidity(e.target.value.length > 0);
+    onChange(e.target.value);
   };
   return (
     <InputField
       type="password"
       id="current-password"
-      name="current-password"
       onChange={handleChange}
       label="현재 비밀번호"
       placeholder="현재 비밀번호을 입력해 주세요"

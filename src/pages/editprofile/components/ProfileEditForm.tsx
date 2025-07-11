@@ -36,7 +36,7 @@ function ProfileEditForm() {
 
   const [isMusicSelect, setIsMusicSelect] = useState(false);
   const [nickname, setNickname] = useState(''); // 닉네임
-  const [isNicknameValid, setIsNicknameValid] = useState(false); // 닉네임 유효성
+  const [isNicknameValid] = useState(false); // 닉네임 유효성
 
   const prevProfileMusic = useRef<ProfileMusic | null>(null);
   const prevNickname = useRef<string>('');
@@ -50,8 +50,6 @@ function ProfileEditForm() {
     queryFn: () => getMyProfile(),
     staleTime: 5 * 60 * 1000,
   });
-
-  // // console.log(userData);
 
   const { mutate, isPending, isSuccess, isError } = useMutation({
     mutationFn: patchEditProfile,
@@ -182,7 +180,7 @@ function ProfileEditForm() {
             rightElement="button" // 오른쪽 요소 타입
           />
         </div>
-        <NicknameInput initialText={nickname} setValidity={(val) => setIsNicknameValid(val)} />
+        <NicknameInput initialText={nickname} onChange={setNickname} />
       </div>
       <Button
         type="submit"

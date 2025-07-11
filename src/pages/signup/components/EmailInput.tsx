@@ -7,12 +7,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 interface EmailInputProps {
-  setValidity: (val: boolean) => void;
-  emailValidity: boolean; // 이메일 유효성
-  setEmail: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (val: string) => void;
+  email: string;
 }
 
-function EmailInput({ setValidity, emailValidity, setEmail }: EmailInputProps) {
+function EmailInput({ onChange, email }: EmailInputProps) {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [text, setText] = useState('');
   const [hasRequested, setHasRequested] = useState(false); // 이미 인증 요청을 했는지
@@ -24,12 +23,9 @@ function EmailInput({ setValidity, emailValidity, setEmail }: EmailInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    setValidity(false); // form validity 초기화
 
     // 유효성 검사
-    const isValid = EMAIL_REGEX.test(value);
-
-    if (isValid) {
+    if (EMAIL_REGEX.test(value)) {
       setValidationStatus({ isValid: true, message: '' });
     } else {
       setValidationStatus({
@@ -75,7 +71,7 @@ function EmailInput({ setValidity, emailValidity, setEmail }: EmailInputProps) {
               '이메일 인증 메일이 발송되었습니다. 메일함에서 인증번호를 확인 후 입력해주세요',
           });
           setHasRequested(true);
-          setEmail(text);
+          onChange(text);
         }
       },
       onError: () => {
@@ -99,13 +95,13 @@ function EmailInput({ setValidity, emailValidity, setEmail }: EmailInputProps) {
       onChange={handleChange}
       isValid={validationStatus.isValid}
       message={validationStatus.message}
-      disabled={emailValidity}
+      disabled={!!email}
       actionButton={
         <LoadingSpinnerButton
           isLoading={isCheckingEmail || isRequestingEmailVerification}
           className="w-[65px]"
-          text={emailValidity ? '인증완료' : '인증요청'}
-          disabled={!validationStatus.isValid || emailValidity || hasRequested}
+          text={!!email ? '인증완료' : '인증요청'}
+          disabled={!validationStatus.isValid || !!email || hasRequested}
           onClick={() => checkEmailAvailability()}
         />
       }

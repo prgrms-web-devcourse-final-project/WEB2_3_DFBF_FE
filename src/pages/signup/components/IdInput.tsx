@@ -9,10 +9,10 @@ import { throttle } from 'lodash';
 import { useMemo, useState } from 'react';
 
 interface IdInputProps {
-  setValidity: (val: boolean) => void;
+  onChange: (val: string) => void;
 }
 
-const IdInput = ({ setValidity }: IdInputProps) => {
+const IdInput = ({ onChange }: IdInputProps) => {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [text, setText] = useState('');
   const [validationStatus, setValidationStatus] = useState({
@@ -23,7 +23,7 @@ const IdInput = ({ setValidity }: IdInputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    setValidity(false); // form validity 초기화
+    onChange(''); // 데이터 초기화
 
     if (ID_REGEX.test(value)) {
       setValidationStatus({ isValid: true, message: '' });
@@ -41,7 +41,7 @@ const IdInput = ({ setValidity }: IdInputProps) => {
     onSuccess: (data) => {
       if (data.code === 200) {
         setValidationStatus({ isValid: true, message: '사용 가능한 아이디입니다' });
-        setValidity(true);
+        onChange(text);
       } else if (data.code === 409) {
         setValidationStatus({ isValid: false, message: '이미 사용 중인 아이디입니다' });
       }
@@ -62,7 +62,6 @@ const IdInput = ({ setValidity }: IdInputProps) => {
   return (
     <InputField
       id="id"
-      name="id"
       label="아이디"
       placeholder="아이디를 입력해 주세요"
       onChange={handleChange}

@@ -2,17 +2,19 @@ import { AuthCodeInput, EmailInput } from '@/pages/signup/components';
 import { useState } from 'react';
 
 interface EmailGroupSectionProps {
-  setValidity: (val: boolean) => void;
-  emailValidity: boolean;
+  onChange: (val: string) => void;
+  email: string;
 }
 
-const EmailGroupSection = ({ setValidity, emailValidity }: EmailGroupSectionProps) => {
-  const [email, setEmail] = useState('');
+const EmailGroupSection = ({ onChange, email }: EmailGroupSectionProps) => {
+  // 인증번호 요청 전 입력된 임시 이메일 값
+  const [tempEmail, setTempEmail] = useState('');
+
   return (
     <>
-      <EmailInput setValidity={setValidity} emailValidity={emailValidity} setEmail={setEmail} />
-      {email !== '' && (
-        <AuthCodeInput email={email} emailValidity={emailValidity} setValidity={setValidity} />
+      <EmailInput onChange={setTempEmail} email={email} />
+      {tempEmail !== '' && (
+        <AuthCodeInput tempEmail={tempEmail} onChange={onChange} email={email} />
       )}
     </>
   );

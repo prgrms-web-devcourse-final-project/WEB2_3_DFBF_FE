@@ -5,11 +5,10 @@ import { useState } from 'react';
 interface PasswordInputProps {
   label: string;
   placeholder: string;
-  setValidity: (val: boolean) => void;
-  passwordRef: React.RefObject<string>;
+  onChange: (val: string) => void;
 }
 
-function PasswordInput({ label, placeholder, passwordRef, setValidity }: PasswordInputProps) {
+function PasswordInput({ label, placeholder, onChange }: PasswordInputProps) {
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
     message: '',
@@ -17,12 +16,10 @@ function PasswordInput({ label, placeholder, passwordRef, setValidity }: Passwor
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setValidity(false); // form validity 초기화
-
+    onChange(value); //  password 업데이트
     // 유효성 검사
     if (PASSWORD_REGEX.test(value)) {
       setValidationStatus({ isValid: true, message: '사용 가능한 비밀번호입니다' });
-      passwordRef.current = value; //  password 업데이트
     } else {
       setValidationStatus({
         isValid: false,
@@ -36,7 +33,6 @@ function PasswordInput({ label, placeholder, passwordRef, setValidity }: Passwor
       type="password"
       id="password"
       label={label}
-      name="password"
       placeholder={placeholder}
       onChange={handleChange}
       isValid={validationStatus.isValid}

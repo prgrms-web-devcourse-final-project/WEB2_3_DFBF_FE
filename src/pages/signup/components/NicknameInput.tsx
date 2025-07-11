@@ -8,10 +8,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 interface NicknameInputProps {
   initialText?: string; // 초기값
-  setValidity: (val: boolean) => void;
+  onChange: (val: string) => void;
 }
 
-function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
+function NicknameInput({ initialText = '', onChange }: NicknameInputProps) {
   const [text, setText] = useState('');
   const [validationStatus, setValidationStatus] = useState({
     isValid: false, // 유효성 통과여부
@@ -21,7 +21,7 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setText(value);
-    setValidity(false); // form validity 초기화
+    onChange(''); // form validity 초기화
 
     // 유효성 검사
 
@@ -47,7 +47,7 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
     onSuccess: (data) => {
       if (data.code === 200) {
         setValidationStatus({ isValid: true, message: '사용 가능한 닉네임입니다' });
-        setValidity(true);
+        onChange(text);
       } else if (data.code === 409) {
         setValidationStatus({ isValid: false, message: '이미 사용 중인 닉네임입니다' });
       }
@@ -73,7 +73,6 @@ function NicknameInput({ initialText = '', setValidity }: NicknameInputProps) {
       label="닉네임"
       placeholder="닉네임을 입력해 주세요"
       value={text}
-      name="nickname"
       onChange={handleChange}
       message={validationStatus.message}
       isValid={validationStatus.isValid}

@@ -7,11 +7,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 
 interface AuthCodeInputProps {
+  tempEmail: string;
   email: string;
-  emailValidity: boolean;
-  setValidity: (val: boolean) => void; // 인증코드 유효성 바꾸는 함수
+  onChange: (val: string) => void;
 }
-function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps) {
+function AuthCodeInput({ email, tempEmail, onChange }: AuthCodeInputProps) {
   const { openModal, closeModal } = useModalStore(); // 모달
   const [resendCount, setResendCount] = useState(0); // 재전송 횟수
   const [text, setText] = useState('');
@@ -25,9 +25,7 @@ function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps
     setText(value);
 
     // 유효성 검사
-    const isValid = AUTHCODE_REGEX.test(value);
-
-    if (isValid) {
+    if (AUTHCODE_REGEX.test(value)) {
       setValidationStatus({ isValid: true, message: '' });
     } else {
       setValidationStatus({ isValid: false, message: '올바른 인증번호를 입력해주세요' });
@@ -36,7 +34,7 @@ function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps
 
   // 이메일 재전송
   const { mutate: resendEmailVerification } = useMutation({
-    mutationFn: () => postEmailVerificationRequest(email),
+    mutationFn: () => postEmailVerificationRequest(tempEmail),
     onSuccess: ({ code }) => {
       if (code === 200) {
         setResendCount((count) => count + 1);
@@ -54,11 +52,11 @@ function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps
   });
   // 인증번호 확인
   const { mutate: verifyEmail, isPending } = useMutation({
-    mutationFn: () => postEmailVerificationCheck(email, text),
+    mutationFn: () => postEmailVerificationCheck(tempEmail, text),
     onSuccess: ({ code }) => {
       if (code === 200) {
         setValidationStatus({ isValid: true, message: '이메일 인증이 완료되었습니다' });
-        setValidity(true); // 완료 처리
+        onChange(tempEmail); // 완료 처리
       } else {
         setValidationStatus({ isValid: false, message: '인증 코드가 올바르지 않습니다' });
       }
@@ -107,13 +105,13 @@ function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps
       onTimeout={onTimeout} // 시간이 만료되었을 때 실행할 함수
       onResendEmail={handleResendEmail} // 재전송 요청
       resendCount={resendCount} // 재전송 횟수
-      isEmailVerified={emailValidity}
+      isEmailVerified={!!email}
       actionButton={
         <LoadingSpinnerButton
           isLoading={isPending}
           className="w-[65px] flex-shrink-0"
-          text={emailValidity ? '인증완료' : '인증확인'}
-          disabled={!validationStatus.isValid || emailValidity}
+          text={!!email ? '인증완료' : '인증확인'}
+          disabled={!validationStatus.isValid || !!email}
           onClick={() => verifyEmail()}
         />
       }
@@ -122,11 +120,3 @@ function AuthCodeInput({ email, emailValidity, setValidity }: AuthCodeInputProps
 }
 
 export default AuthCodeInput;
-
-// setValidationMessage({
-//   success: false,
-//   message:
-//     error.message === '최대 재전송 횟수를 초과'
-//       ? '최대 재전송 횟수를 초과했습니다.'
-//       : '이메일 재전송 중 오류가 발생했습니다. 다시 시도해주세요.',
-// });

@@ -1,8 +1,8 @@
 import { PasswordConfirmInput, PasswordInput } from '@/pages/signup/components';
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 interface PasswordGroupSectionProps {
-  setValidity: (val: boolean) => void;
+  onChange: (val: string) => void;
   passwordLabel?: string;
   confirmLabel?: string;
   passwordPlaceholder?: string;
@@ -10,24 +10,33 @@ interface PasswordGroupSectionProps {
 }
 
 const PasswordGroupSection = ({
-  setValidity,
+  onChange,
   passwordLabel = '비밀번호',
   confirmLabel = '비밀번호 확인',
   passwordPlaceholder = '비밀번호를 입력해 주세요',
   confirmPlaceholder = '비밀번호를 다시 입력해 주세요',
 }: PasswordGroupSectionProps) => {
-  const passwordRef = useRef('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  useEffect(() => {
+    if (password === confirmPassword) {
+      onChange(password);
+    } else {
+      onChange('');
+    }
+  }, [password, confirmPassword, onChange]);
+
   return (
     <>
       <PasswordInput
-        setValidity={setValidity}
-        passwordRef={passwordRef}
+        onChange={setPassword}
         label={passwordLabel}
         placeholder={passwordPlaceholder}
       />
       <PasswordConfirmInput
-        setValidity={setValidity}
-        passwordRef={passwordRef}
+        onChange={setConfirmPassword}
+        password={password}
         label={confirmLabel}
         placeholder={confirmPlaceholder}
       />

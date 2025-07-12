@@ -1,6 +1,5 @@
 import EmotionRecordCard from '@/pages/user/components/UserEmotionRecordList/EmotionRecordCard';
 import InfoMessage from '@/components/InfoMessage';
-import { formatDate } from '@/utils/formatDate';
 import { useInView } from 'react-intersection-observer';
 import { useEffect } from 'react';
 import LoadingMini from '@/components/loading/LoadingMini';
@@ -49,11 +48,7 @@ function EmotionRecordCardList({
           page.data.records.map((record: EmotionRecord) => (
             <EmotionRecordCard
               key={record.recordId}
-              emotion={record.emotion}
-              albumImage={record.spotifyMusic.albumImage}
-              songTitle={record.spotifyMusic.title}
-              artistName={record.spotifyMusic.artist}
-              date={formatDate(record.createdAt)}
+              record={record}
               onClick={() => handleOpenSheet(record.recordId)}
             />
           )),

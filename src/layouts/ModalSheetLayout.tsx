@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 import closeIcon from '@assets/icons/close-icon.svg';
 import MoreOptionsSelect from '@/components/MoreOptionsSelect';
 import { useSheetStore } from '@/store/sheetStore';
@@ -18,10 +17,8 @@ function ModalSheetLayout({
   handleDelete,
   handleEdit,
 }: ModalSheetLayoutProps) {
-  const wasPlayingRef = useRef(false); // 이전 상태 저장
-
   const { closeAllSheets } = useSheetStore();
-  const { players, setIsPlaying, setVideoId } = useYouTubeStore();
+  const { setIsPlaying, setVideoId } = useYouTubeStore();
 
   const handleCloseButton = () => {
     closeAllSheets();
@@ -35,21 +32,6 @@ function ModalSheetLayout({
     visible: { opacity: 1, y: 0 }, // 화면 안으로 날아오는 효과
     exit: { opacity: 0, y: -200 },
   };
-
-  useEffect(() => {
-    // 1번 플레이어의 현재 재생 상태 저장
-    wasPlayingRef.current = players['1']?.isPlaying || false;
-
-    // 1번 플레이어 정지
-    setIsPlaying('1', false);
-
-    return () => {
-      // 이전에 재생 중이었다면 다시 재생
-      if (wasPlayingRef.current) {
-        setIsPlaying('1', true);
-      }
-    };
-  }, []);
 
   return (
     <motion.div
@@ -90,3 +72,22 @@ export default ModalSheetLayout;
 //   <ModalSheetLayout showMoreOptions> // 더보기 셀렉트 유무
 //     <div className="w-full h-full border-2 border-green-500">hi</div>
 //   </ModalSheetLayout>;
+
+// useEffect(() => {
+//   // 🎵 [1] 현재 '1번 플레이어'가 재생 중인지 기록 (복원용)
+//   wasPlayingRef.current = players['1']?.isPlaying || false;
+
+//   // ⏸️ [2] 다른 사운드를 재생하기 위해 '1번 플레이어'를 일시정지
+//   setIsPlaying('1', false);
+
+//   return () => {
+//     // 🛑 [3-1] '3번 플레이어' 정리 (종료 시 사운드 및 상태 초기화)
+//     setIsPlaying('3', false);
+//     setVideoId('3', null);
+
+//     // ▶️ [3-2] 원래 '1번 플레이어'가 재생 중이었다면 다시 재생
+//     if (wasPlayingRef.current) {
+//       setIsPlaying('1', true);
+//     }
+//   };
+// }, []);

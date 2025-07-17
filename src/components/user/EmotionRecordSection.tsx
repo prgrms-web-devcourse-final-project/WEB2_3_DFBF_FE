@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 
 interface EmotionRecordSectionProps {
   records: EmotionRecord[];
+  basePath: string;
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
@@ -12,6 +13,7 @@ interface EmotionRecordSectionProps {
 
 const EmotionRecordSection = ({
   records,
+  basePath,
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
@@ -28,7 +30,7 @@ const EmotionRecordSection = ({
 
   return (
     <div className="flex flex-col items-center">
-      <EmotionRecordCardList records={records} />
+      <EmotionRecordCardList basePath={basePath} records={records} />
       {hasNextPage && !isFetchingNextPage && (
         <div ref={ref}>
           <LoadingMini />

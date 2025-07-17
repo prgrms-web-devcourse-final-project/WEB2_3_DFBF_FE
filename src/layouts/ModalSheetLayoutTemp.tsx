@@ -1,7 +1,6 @@
+import BackLink from '@/components/modalSheet/BackLink';
 import CardDetailMoreMenu from '@/components/modalSheet/CardDetailMoreMenu';
-import closeIcon from '@assets/icons/close-icon.svg';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router';
 
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
@@ -28,9 +27,7 @@ function ModalSheetLayoutTemp({ children, isOwnPost }: ModalSheetLayoutProps) {
       <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-lg card-shadow border border-gray-5 overflow-y-auto scroll">
         {/* 헤더 */}
         <div className="sticky top-0 flex h-[60px] items-center px-4 justify-between bg-white">
-          <Link to={'/mypage'} className="flex items-center justify-center w-6 h-6 cursor-pointer">
-            <img src={closeIcon} alt="닫기" />
-          </Link>
+          <BackLink />
           {isOwnPost && <CardDetailMoreMenu />}
         </div>
         {children}

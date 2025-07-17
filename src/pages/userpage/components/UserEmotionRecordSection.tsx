@@ -17,6 +17,7 @@ const UserEmotionRecordSection = ({ userId }: UserEmotionRecordSectionProps) => 
 
   return (
     <EmotionRecordSection
+      basePath={`/user/${userId}`}
       records={records}
       fetchNextPage={fetchNextPage}
       hasNextPage={hasNextPage}

@@ -2,9 +2,10 @@ import { InfoMessage, EmotionRecordCard } from '@/components';
 import { useNavigate } from 'react-router';
 interface EmotionRecordCardListProps {
   records: EmotionRecord[];
+  basePath: string;
 }
 
-function EmotionRecordCardList({ records }: EmotionRecordCardListProps) {
+function EmotionRecordCardList({ records, basePath }: EmotionRecordCardListProps) {
   const navigate = useNavigate();
   if (records.length === 0) {
     return (
@@ -20,7 +21,7 @@ function EmotionRecordCardList({ records }: EmotionRecordCardListProps) {
         <EmotionRecordCard
           key={record.recordId}
           record={record}
-          onClick={() => navigate(`/mypage/${record.recordId}`)}
+          onClick={() => navigate(`${basePath}/${record.recordId}`)}
         />
       ))}
     </div>

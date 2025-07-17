@@ -14,6 +14,7 @@ const MyEmotionRecordSection = () => {
   return (
     <EmotionRecordSection
       records={records}
+      basePath="/mypage"
       fetchNextPage={fetchNextPage}
       hasNextPage={hasNextPage}
       isFetchingNextPage={isFetchingNextPage}

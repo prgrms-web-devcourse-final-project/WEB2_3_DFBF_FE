@@ -6,12 +6,12 @@ interface CardDetailButtonsProps {
 
 function CardDetailButtons({ icon, label, onClick }: CardDetailButtonsProps) {
   return (
-    <div className="flex flex-col items-center gap-1 cursor-pointer" onClick={onClick}>
-      <div className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10">
+    <button className="flex flex-col items-center gap-1 cursor-pointer" onClick={onClick}>
+      <span className="w-[38px] h-[38px] rounded-full bg-gray-5 flex justify-center items-center hover:bg-gray-10">
         <img src={icon} alt="아이콘" />
-      </div>
+      </span>
       <span className="text-[9px] text-gray-50 font-normal">{label}</span>
-    </div>
+    </button>
   );
 }
 

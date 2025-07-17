@@ -19,7 +19,7 @@ function HeaderWithBack({ text, moreOptionsItems }: HeaderWithBackProps) {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate(-1);
+              navigate('/home');
             }}
             className="px-2 py-3 cursor-pointer"
           >

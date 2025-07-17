@@ -1,5 +1,4 @@
 import { Outlet } from 'react-router';
-import { twMerge } from 'tailwind-merge';
 import PostButton from '@/components/PostButton';
 import MyErrorBoundary from '@/components/ErrorBoundary';
 import HeaderWrapper from '@/layouts/header/HeaderWrapper';
@@ -13,7 +12,7 @@ function Layout() {
       <HeaderWrapper />
 
       {/* 메인 컨텐츠 영역 */}
-      <div className={twMerge('pt-[44px] flex-1 flex justify-center w-full px-3')}>
+      <div className="pt-[44px] flex-1 flex justify-center w-full px-3">
         <MyErrorBoundary>
           <AnimatePresence mode="wait">
             <motion.div

@@ -1,26 +1,16 @@
 import { addBlockList } from '@/apis/blockList';
 import HeaderWithBack from '@/layouts/header/HeaderWithBack';
 import { useModalStore } from '@/store/modalStore';
-import { useUserStore } from '@/store/userStore';
 import { useNavigate, useParams } from 'react-router';
 
 const UserPageHeader = () => {
   const navigate = useNavigate();
   const param = useParams();
-  const { userData } = useUserStore(); // 차단할 유저 정보
   const { openModal, closeModal } = useModalStore();
 
   const handleBlockUser = async () => {
-    if (!param.userId) {
-      // console.log('차단 실패');
-      return;
-    }
-
     openModal({
-      title: [
-        { text: `${userData?.nickname}`, className: 'text-primary-normal' },
-        { text: ' 님을 차단할까요?' },
-      ],
+      title: [{ text: `임시`, className: 'text-primary-normal' }, { text: ' 님을 차단할까요?' }],
       message: '차단된 사용자는 더이상 피드에 나타나지 않습니다',
       onConfirm: async () => {
         if (param.userId) {

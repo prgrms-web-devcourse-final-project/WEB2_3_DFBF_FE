@@ -1,10 +1,10 @@
-import EmotionBadge from '@/components/EmotionBadge';
+import { EmotionBadge } from '@/components';
 import { formatDate } from '@/utils/formatDate';
 import defaultImage from '@assets/images/default.png';
 
 interface EmotionRecordCardProps {
   record: EmotionRecord;
-  onClick?: () => void; // 카드 눌렀을 때 실행될 함수
+  onClick: () => void; // 카드 눌렀을 때 실행될 함수
 }
 
 function EmotionRecordCard({ record, onClick }: EmotionRecordCardProps) {
@@ -20,7 +20,7 @@ function EmotionRecordCard({ record, onClick }: EmotionRecordCardProps) {
       onClick={onClick}
     >
       {/* 감정 뱃지 */}
-      <div className="flex flex-col gap-1.5 border border-blue-500">
+      <div className="flex flex-col gap-1.5">
         <EmotionBadge size="small" emotion={emotion} />
         <img
           src={albumImage}

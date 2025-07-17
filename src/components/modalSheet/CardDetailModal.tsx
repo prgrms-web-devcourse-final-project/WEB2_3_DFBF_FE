@@ -19,8 +19,7 @@ interface CardDetailModalProps {
 
 function CardDetailModal({ recordId, handleDelete, handleEdit }: CardDetailModalProps) {
   const { isCardSheetOpen, setCurrentRecord } = useSheetStore();
-  const { setVideoId, players, setIsPlaying } = useYouTubeStore();
-  const isPlaying = players['3']?.isPlaying || false;
+  const { setVideoId } = useYouTubeStore();
 
   const { data } = useQuery({
     queryKey: ['emotionRecord', recordId],
@@ -118,11 +117,9 @@ function CardDetailModal({ recordId, handleDelete, handleEdit }: CardDetailModal
               <div className="flex gap-10">
                 <ChatActionButtons
                   recordId={recordId}
-                  isChatting={isChatting}
-                  isPlaying={isPlaying}
                   isOwnPost={!data?.data?.disable}
                   authorId={data?.data?.loginId}
-                  onPlayPauseToggle={() => setIsPlaying('3', !isPlaying)}
+                  videoId={data?.data?.spotifyMusic.videoId}
                 />
               </div>
             </div>

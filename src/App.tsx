@@ -20,14 +20,15 @@ import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import { useSpotifyAuth } from '@/hooks/spotify/useSpotifyAuth';
-import UserProfile from '@/pages/user/UserProfile';
 import PublicRoute from '@/routes/PublicRoute';
+import CardDetailModalTemp from '@/components/modalSheet/CardDetailModalTemp';
+import MyPage from '@/pages/mypage/MyPage';
+import UserPage from '@/pages/userpage/UserPage';
 
 function App() {
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
 
   useSpotifyAuth();
-
   useSSE(); // SSE연결
   useYotube();
 
@@ -48,10 +49,14 @@ function App() {
             <Route path="/post" element={<Post />} />
             <Route path="/post/:postId/edit" element={<Post />} />
             <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
-            <Route path="/mypage" element={<UserProfile isMyPage={true} />} />
+            <Route path="/mypage" element={<MyPage />}>
+              <Route path=":id" element={<CardDetailModalTemp />} />
+            </Route>
             <Route path="/mypage/edit" element={<EditProfile />} />
             <Route path="/mypage/blocklist" element={<BlockList />} />
-            <Route path="/user/:userId" element={<UserProfile />} />
+            <Route path="/user/:userId" element={<UserPage />}>
+              <Route path=":id" element={<CardDetailModalTemp />} />
+            </Route>
           </Route>
 
           <Route path="/auth/login/kakao/callback" element={<KaKaoRedirection />} />

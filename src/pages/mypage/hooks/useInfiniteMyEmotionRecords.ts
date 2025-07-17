@@ -4,7 +4,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 export const useInfiniteMyEmotionRecords = () => {
   return useInfiniteQuery({
     queryKey: ['userPosts', 'me'],
-    queryFn: ({ pageParam }) => getMyEmotionRecords(pageParam),
+    queryFn: ({ pageParam = 1 }) => getMyEmotionRecords(pageParam),
     getNextPageParam: (last) => {
       if (last.data.currentPage < last.data.totalPages) {
         return last.data.currentPage + 1;
@@ -13,6 +13,5 @@ export const useInfiniteMyEmotionRecords = () => {
     },
     initialPageParam: 1,
     staleTime: 5 * 60 * 1000,
-    select: (data) => data.pages,
   });
 };

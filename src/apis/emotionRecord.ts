@@ -17,8 +17,15 @@ interface EmotionRecordsParams {
 }
 
 // 감정 기록 포스팅
-export const postEmotionRecord = async (emotionRecord: EmotionRecordRequest) => {
-  const { data } = await axiosInstance.post(`/emotion`, emotionRecord);
+export const postEmotionRecord = async (
+  emotionRecord: EmotionRecordRequest,
+  idempotencyKey: string,
+) => {
+  const { data } = await axiosInstance.post(`/emotion`, emotionRecord, {
+    headers: {
+      'Idempotency-Key': idempotencyKey,
+    },
+  });
   return data;
 };
 

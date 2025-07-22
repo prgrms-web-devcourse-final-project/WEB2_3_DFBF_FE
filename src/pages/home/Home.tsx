@@ -13,10 +13,8 @@ import { useMusicCardStore } from '@/store/MusicCardStore';
 import InfoMessage from '@/components/InfoMessage';
 import LoadingMini from '@/components/loading/LoadingMini';
 import Loading from '@/components/loading/Loading';
-import { useScrollStore } from '@/store/scrollStore';
 
 function Home() {
-  const { scrollContainerRefCurrent } = useScrollStore();
   const { isMusicSheetOpen, openSheet, closeAllSheets } = useSheetStore(); // 모달 시트
   const { selectedPostMusic, clearPostMusic } = useMusicCardStore(); // 선택된 음악
 
@@ -103,14 +101,6 @@ function Home() {
       // // console.log('텍스트 지웠으니 음악도 날림', selectedPostMusic);
     }
   }, [searchText]);
-
-  //홈 이동 시 스크롤 제일 위로
-  useEffect(() => {
-    if (scrollContainerRefCurrent) {
-      // // console.log(scrollContainerRefCurrent);
-      scrollContainerRefCurrent.scrollTop = 0; // 제일 위로 스크롤
-    }
-  }, [scrollContainerRefCurrent]);
 
   return (
     <div className="flex flex-col w-full gap-5 mt-5">

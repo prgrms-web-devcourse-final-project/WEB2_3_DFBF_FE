@@ -43,7 +43,7 @@ export default function BottomNav() {
     //메인 페이지
     location.pathname === '/home' ||
     //마이 페이지
-    location.pathname === '/mypage' ||
+    location.pathname.startsWith('/mypage') ||
     //유저 페이지
     location.pathname.startsWith('/user') ||
     //지난 대화 기록 페이지

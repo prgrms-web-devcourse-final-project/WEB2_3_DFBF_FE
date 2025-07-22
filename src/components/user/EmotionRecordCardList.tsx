@@ -21,7 +21,11 @@ function EmotionRecordCardList({ records, basePath }: EmotionRecordCardListProps
         <EmotionRecordCard
           key={record.recordId}
           record={record}
-          onClick={() => navigate(`${basePath}/${record.recordId}`)}
+          onClick={() =>
+            navigate(`${basePath}/${record.recordId}`, {
+              state: { scrollLock: true },
+            })
+          }
         />
       ))}
     </div>

@@ -7,7 +7,11 @@ const BackLink = () => {
   pathSegments.pop(); // 마지막 세그먼트 제거
   const newPath = '/' + pathSegments.join('/');
   return (
-    <Link to={newPath} className="flex items-center justify-center w-6 h-6 cursor-pointer">
+    <Link
+      to={newPath}
+      state={{ scrollLock: true }}
+      className="flex items-center justify-center w-6 h-6 cursor-pointer"
+    >
       <img src={closeIcon} alt="닫기" />
     </Link>
   );

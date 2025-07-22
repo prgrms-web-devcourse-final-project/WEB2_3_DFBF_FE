@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from 'react';
 import { MAX_CHAT_MESSAGE_LENGTH } from '@/constants';
 import { loadChatHistoryDev, loadChatRoomDetail } from '@/apis/chat';
 import { useAuthStore } from '@/store/authStore';
-import { useScrollStore } from '@/store/scrollStore';
 import { useChatStore } from '@/store/chatStore';
 import { useSheetStore } from '@/store/sheetStore';
 
@@ -52,17 +51,7 @@ export default function ChatRoom({}: ChatRoomProps) {
   const [isMobile, setIsMobile] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  const { scrollContainerRefCurrent } = useScrollStore();
-
   const [chatDisabled, setChatDisabled] = useState(false);
-
-  // 최신 메시지로 스크롤
-  useEffect(() => {
-    if (scrollContainerRefCurrent) {
-      // console.log(scrollContainerRefCurrent);
-      scrollContainerRefCurrent.scrollTop = scrollContainerRefCurrent.scrollHeight;
-    }
-  }, [messages, scrollContainerRefCurrent]);
 
   const MAX_LINES = 8;
 

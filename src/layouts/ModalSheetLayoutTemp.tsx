@@ -1,6 +1,7 @@
 import BackLink from '@/components/modalSheet/BackLink';
 import CardDetailMoreMenu from '@/components/modalSheet/CardDetailMoreMenu';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 interface ModalSheetLayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,16 @@ function ModalSheetLayoutTemp({ children, isOwnPost }: ModalSheetLayoutProps) {
     exit: { opacity: 0, y: -200 },
   };
 
+  useEffect(() => {
+    // 모달이 열릴 때
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      // 모달이 닫힐 때
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
+
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center"
@@ -24,7 +35,7 @@ function ModalSheetLayoutTemp({ children, isOwnPost }: ModalSheetLayoutProps) {
       variants={modalVariants}
       transition={{ duration: 0.3 }}
     >
-      <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-lg card-shadow border border-gray-5 overflow-y-auto scroll">
+      <div className="max-w-[600px] w-full h-screen flex flex-col bg-white rounded-lg card-shadow border border-gray-5">
         {/* 헤더 */}
         <div className="sticky top-0 flex h-[60px] items-center px-4 justify-between bg-white">
           <BackLink />

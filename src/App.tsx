@@ -44,7 +44,9 @@ function App() {
 
           {/* PrivateRoute 적용 */}
           <Route element={<PrivateRoute />}>
-            <Route path="/home" element={<Home />} />
+            <Route path="/home" element={<Home />}>
+              <Route path=":id" element={<CardDetailModalTemp />} />
+            </Route>
             <Route path="/chat" element={<Chat />} />
             <Route path="/post" element={<Post />} />
             <Route path="/post/:postId/edit" element={<Post />} />

@@ -41,7 +41,7 @@ export default function BottomNav() {
   //바텀 nav 바 필요한 페이지
   const showNav =
     //메인 페이지
-    location.pathname === '/home' ||
+    location.pathname.startsWith('/home') ||
     //마이 페이지
     location.pathname.startsWith('/mypage') ||
     //유저 페이지

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 
 interface SheetStore {
   isMusicSheetOpen: boolean;
-  isCardSheetOpen: boolean;
   isRequestSendingSheetOpen: boolean; // 요청 보낼때 시트
   isRequestReceivingSheetOpen: boolean; // 요청 받을 때 시트
 
@@ -26,7 +25,6 @@ interface SheetStore {
 
 export const useSheetStore = create<SheetStore>((set) => ({
   isMusicSheetOpen: false,
-  isCardSheetOpen: false,
   isRequestSendingSheetOpen: false,
   isRequestReceivingSheetOpen: false,
 
@@ -44,7 +42,6 @@ export const useSheetStore = create<SheetStore>((set) => ({
       isRequestSendingSheetOpen: false,
       isRequestReceivingSheetOpen: false,
       isMusicSheetOpen: false,
-      isCardSheetOpen: false,
     })), // 한 번에 닫기
   currentRecord: null,
   setCurrentRecord: (record) => set((prevState) => ({ ...prevState, currentRecord: record })),

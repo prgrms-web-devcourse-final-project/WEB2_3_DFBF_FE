@@ -1,18 +1,18 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import SearchBar from '@/components/SearchBar';
-import MainCard from '@/pages/home/components/MainCard';
 import { useEffect, useState } from 'react';
 import EmotionFilter from '@/components/EmotionFilter';
 import { useSheetStore } from '@/store/sheetStore';
-import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 import { getEmotionRecords } from '@/apis/emotionRecord';
-import { formatDate } from '@/utils/formatDate';
+
 import MusicSearchSheet from '@/components/modalSheet/MusicSearchSheet';
 import { useMusicCardStore } from '@/store/MusicCardStore';
-import InfoMessage from '@/components/InfoMessage';
+
 import LoadingMini from '@/components/loading/LoadingMini';
 import Loading from '@/components/loading/Loading';
+import MainCardList from '@/pages/home/components/MainCardList';
+import { Outlet } from 'react-router';
 
 function Home() {
   const { isMusicSheetOpen, openSheet, closeAllSheets } = useSheetStore(); // 모달 시트
@@ -20,18 +20,10 @@ function Home() {
 
   const [searchText, setSearchText] = useState(''); // 검색어
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null); // 선택된 감정 필터
-  const [selectedRecordId, setSelectedRecordId] = useState<number | null>(null); // 선택한 타인 감정 게시글 id -> 게시글 상세 모달 열기
 
   // 감정 필터링
   const onEmotionClick = (emotion: string) => {
     setSelectedEmotion((prev) => (prev === emotion ? null : emotion));
-    // // console.log(selectedEmotion);
-  };
-
-  // 유저 상세 페이지 모달 열기
-  const handleOpenSheet = (recordId: number) => {
-    setSelectedRecordId(recordId);
-    openSheet('isCardSheetOpen'); // 모달 열기
   };
 
   // 감정 기록 불러오기
@@ -44,8 +36,6 @@ function Home() {
   } = useInfiniteQuery({
     queryKey: ['emotionRecords', selectedPostMusic?.spotifyId, selectedEmotion],
     queryFn: async ({ pageParam }) => {
-      // // console.log('pageParam:', pageParam);
-
       const { data } = await getEmotionRecords(
         pageParam,
         10,
@@ -68,10 +58,7 @@ function Home() {
     initialPageParam: 1, // 첫 페이지 번호 초기화!
   });
 
-  useEffect(() => {
-    // 첫 페이지 로드
-    // // console.log('페이지 로드', isLoading);
-  }, [isLoading]);
+  const allRecords = emotionRecords?.pages.flatMap((page) => page.records) ?? [];
 
   // 무한 스크롤 감지 요소 추가
   const { ref, inView } = useInView();
@@ -119,41 +106,15 @@ function Home() {
       </div>
 
       {/* 메인카드 리스트 */}
-      <div className="flex-1">
-        {emotionRecords?.pages[0].records.length > 0 ? (
-          <>
-            <div className="flex flex-col items-center gap-2.5 pb-5 ">
-              {emotionRecords?.pages.map((page) =>
-                page.records.map((record: EmotionRecord) => (
-                  <div className="w-full" key={record.recordId}>
-                    <div onClick={() => handleOpenSheet(record.recordId)}>
-                      <MainCard
-                        albumImage={record.spotifyMusic.albumImage} // 앨범 이미지
-                        nickname={record.nickName} // 닉네임
-                        emotion={record.emotion} // 감정
-                        title={record.spotifyMusic.title} // 노래 제목
-                        artist={record.spotifyMusic.artist} // 가수
-                        comment={record.comment} // 글 내용
-                        createdAt={formatDate(record.createdAt)} // 날짜
-                      />
-                    </div>
-                  </div>
-                )),
-              )}
-              {hasNextPage && !isFetchingNextPage && (
-                <div className="m-auto" ref={ref}>
-                  <LoadingMini />
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-center w-full h-full">
-            <InfoMessage text="아직 작성된 글이 없어요" />
+      <div className="pb-5">
+        <MainCardList records={allRecords} />
+        {hasNextPage && !isFetchingNextPage && (
+          <div className="m-auto" ref={ref}>
+            <LoadingMini />
           </div>
         )}
       </div>
-      {selectedRecordId !== null && <CardDetailModal recordId={selectedRecordId} />}
+      <Outlet />
       {isLoading && <Loading />}
       {isMusicSheetOpen && <MusicSearchSheet />}
     </div>

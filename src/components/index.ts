@@ -5,6 +5,7 @@ import EmotionRecordCard from './user/EmotionRecordCard';
 import UserProfileCard from './user/UserProfileCard';
 import EmotionRecordSection from './user/EmotionRecordSection';
 import EmotionRecordCardList from './user/EmotionRecordCardList';
+import ImageKitImg from './ImageKitImg';
 
 export {
   InfoMessage,
@@ -14,4 +15,5 @@ export {
   MusicCard,
   EmotionRecordSection,
   EmotionRecordCardList,
+  ImageKitImg,
 };

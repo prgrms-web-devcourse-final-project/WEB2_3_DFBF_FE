@@ -1,6 +1,5 @@
-import { EmotionBadge } from '@/components';
+import { EmotionBadge, ImageKitImg } from '@/components';
 import { formatDate } from '@/utils/formatDate';
-import defaultImage from '@assets/images/default.png';
 
 interface EmotionRecordCardProps {
   record: EmotionRecord;
@@ -22,14 +21,10 @@ function EmotionRecordCard({ record, onClick }: EmotionRecordCardProps) {
       {/* 감정 뱃지 */}
       <div className="flex flex-col gap-1.5">
         <EmotionBadge size="small" emotion={emotion} />
-        <img
+        <ImageKitImg
           src={albumImage}
-          alt="앨범 이미지"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null; // 무한 루프 방지
-            target.src = defaultImage; // 기본 이미지로 변경
-          }}
+          height={232}
+          width={232}
           className="object-cover w-full rounded-lg aspect-square"
         />
       </div>

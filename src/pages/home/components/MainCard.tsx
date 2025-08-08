@@ -1,6 +1,6 @@
+import { ImageKitImg } from '@/components';
 import EmotionBadge from '@/components/EmotionBadge';
 import { formatDate } from '@/utils/formatDate';
-import defaultImage from '@assets/images/default.png';
 import { Link } from 'react-router';
 
 interface MainCardProps {
@@ -25,15 +25,11 @@ export default function MainCard({ record }: MainCardProps) {
       <div className="flex gap-2">
         {/* 앨범커버 */}
         <div className="flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg">
-          <img
+          <ImageKitImg
+            src={record.spotifyMusic.albumImage}
+            width={160}
+            height={160}
             className="object-cover w-full h-full"
-            src={record.spotifyMusic.albumImage || defaultImage}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null; // 무한 루프 방지
-              target.src = defaultImage; // 기본 이미지로 변경
-            }}
-            alt="앨범이미지"
           />
         </div>
         {/* 정보 */}

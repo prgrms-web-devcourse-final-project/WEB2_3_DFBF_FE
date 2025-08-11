@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/authStore';
 import { reissueToken } from '@/apis/auth';
-import { QueryClient } from '@tanstack/react-query';
-
-const queryClient = new QueryClient();
+import { queryClient } from '@/utils';
 
 const API_BASE_URL =
   import.meta.env.MODE === 'development'
@@ -71,8 +69,7 @@ axiosInstance.interceptors.response.use(
       } catch (error) {
         useAuthStore.getState().logout();
         useAuthStore.persist.clearStorage();
-        queryClient.removeQueries({ queryKey: ['myProfile'] }); // 프로필 정보 캐시 초기화
-        queryClient.removeQueries({ queryKey: ['userPosts', 'me'] }); // 포스트 정보 캐시 초기화
+        queryClient.clear(); // 모든 쿼리, 변이 상태, 캐시 전부 제거
         console.error('AT 토큰 재발급 실패:', error);
 
         return Promise.reject(error);

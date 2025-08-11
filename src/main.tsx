@@ -1,11 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { registerSW } from 'virtual:pwa-register';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './styles/index.css';
 import App from './App.tsx';
 import ScrollToTop from '@/components/ScrollToTop.tsx';
+import { queryClient } from '@/utils';
 
 // PWA 서비스 워커 등록
 const updateSW = registerSW({
@@ -18,9 +19,6 @@ const updateSW = registerSW({
     // // console.log('PWA가 오프라인에서도 사용할 준비가 되었습니다!');
   },
 });
-
-// 🔹 QueryClient 생성
-const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>

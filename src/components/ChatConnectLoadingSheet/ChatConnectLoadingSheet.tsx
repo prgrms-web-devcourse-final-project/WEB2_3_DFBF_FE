@@ -6,10 +6,45 @@ import ChatRequestFailSheet from '@/components/ChatConnectLoadingSheet/ChatReque
 import ChatRequestMessage from '@/components/ChatConnectLoadingSheet/ChatRequestMessage';
 import ChatRequestButton from '@/components/ChatConnectLoadingSheet/ChatRequestButton';
 import { useSheetStore } from '@/store/sheetStore';
+import { getSSE } from '@/utils/sseClient';
+import { useAuthStore } from '@/store/authStore';
+import { useChatStore } from '@/store/chatStore';
+import { useNavigate } from 'react-router';
 
 export default function ChatConnectLoadingSheet({ type }: { type: 'sending' | 'receiving' }) {
-  const { isChatConnectFail, setChatConnectFail } = useSheetStore();
+  const { isChatConnectFail, setChatConnectFail, closeAllSheets } = useSheetStore();
   const [timeLeft, setTimeLeft] = useState(60); // 남은 시간
+  const { isAuthenticated, accessToken } = useAuthStore();
+
+  const { setCurrentChatRoomId } = useChatStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!accessToken || !isAuthenticated) return;
+    const es = getSSE(accessToken);
+
+    const onFail = () => {
+      // console.log('⛔ SSE: 채팅 거절 수신!', JSON.parse(event.data));
+      setChatConnectFail(true);
+    };
+
+    es.addEventListener('fail', onFail);
+
+    const onAccept = (event: any) => {
+      // console.log('✅ SSE: 채팅방으로 이동!', JSON.parse(event.data));
+      const { chatRoomId } = JSON.parse(event.data);
+
+      setCurrentChatRoomId(chatRoomId);
+      closeAllSheets();
+      navigate(`/chatroom/${chatRoomId}`);
+    };
+
+    es.addEventListener('accept', onAccept);
+    return () => {
+      es.removeEventListener('fail', onFail);
+    };
+  }, [accessToken, isAuthenticated, setChatConnectFail]);
+
   //타이머 60초
   useEffect(() => {
     const endTime = new Date().getTime() + 60 * 1000; // 현재 시간 + 60초

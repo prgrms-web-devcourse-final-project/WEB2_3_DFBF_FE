@@ -8,12 +8,15 @@ import axios from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import LoadingMini from '../loading/LoadingMini';
 import { useSpotifyStore } from '@/store/spotifyStore';
+import { useSpotifyAuth } from '@/hooks/spotify/useSpotifyAuth';
 
 function MusicSearchSheet() {
   const [searchText, setSearchText] = useState('');
   const [query, setQuery] = useState('');
   //로컬 스토리지에서 토큰 가져오기
   const { token } = useSpotifyStore();
+
+  useSpotifyAuth();
 
   // 무한 스크롤 감지용 ref
   const loadMoreRef = useRef<HTMLDivElement | null>(null);

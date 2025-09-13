@@ -19,7 +19,6 @@ import { useSheetStore } from './store/sheetStore';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
-import { useSpotifyAuth } from '@/hooks/spotify/useSpotifyAuth';
 import PublicRoute from '@/routes/PublicRoute';
 import CardDetailModalTemp from '@/components/modalSheet/CardDetailModalTemp';
 import MyPage from '@/pages/mypage/MyPage';
@@ -28,7 +27,6 @@ import UserPage from '@/pages/userpage/UserPage';
 function App() {
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
 
-  useSpotifyAuth();
   useSSE(); // SSE연결
   useYotube();
 

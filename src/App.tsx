@@ -6,7 +6,6 @@ import PrivateRoute from './routes/PrivateRoute';
 import YouTubeAudioPlayer from './components/YouTubeAudioPlayer';
 import { useSheetStore } from './store/sheetStore';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
-import { useSSE } from '@/hooks/useSSE';
 import { useYotube } from '@/hooks/useYoutube';
 import PublicRoute from '@/routes/PublicRoute';
 import CardDetailModalTemp from '@/components/modalSheet/CardDetailModalTemp';
@@ -28,7 +27,6 @@ import {
 function App() {
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
 
-  useSSE(); // SSE연결
   useYotube();
 
   return (

@@ -1,4 +1,5 @@
 import defaultImage from '@assets/images/default.png';
+
 interface ImageKitImgProps {
   src: string; // Spotify 이미지 URL
   width: number;
@@ -20,6 +21,8 @@ export default function ImageKitImg({
     <img
       className={className}
       src={`https://ik.imagekit.io/${import.meta.env.VITE_IMAGEKIT_ID}/${imagePath}?tr=w-${width},h-${height}`}
+      width={width}
+      height={height}
       onError={(e) => {
         const target = e.target as HTMLImageElement;
         target.onerror = null; // 무한 루프 방지

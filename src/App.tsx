@@ -8,7 +8,7 @@ import { useSheetStore } from './store/sheetStore';
 import KaKaoRedirection from '@/components/KaKaoRedirection';
 import { useYotube } from '@/hooks/useYoutube';
 import PublicRoute from '@/routes/PublicRoute';
-import CardDetailModalTemp from '@/components/modalSheet/CardDetailModalTemp';
+
 import {
   Home,
   Landing,
@@ -23,6 +23,7 @@ import {
   MyPage,
   UserPage,
 } from '@/pages';
+import CardDetailModal from '@/components/modalSheet/CardDetailModal';
 
 function App() {
   const { isRequestSendingSheetOpen, isRequestReceivingSheetOpen } = useSheetStore();
@@ -42,19 +43,19 @@ function App() {
           {/* PrivateRoute 적용 */}
           <Route element={<PrivateRoute />}>
             <Route path="/home" element={<Home />}>
-              <Route path=":id" element={<CardDetailModalTemp />} />
+              <Route path=":id" element={<CardDetailModal />} />
             </Route>
             <Route path="/chat" element={<Chat />} />
             <Route path="/post" element={<Post />} />
             <Route path="/post/:postId/edit" element={<Post />} />
             <Route path="/chatroom/:chatRoomId" element={<ChatRoom />} />
             <Route path="/mypage" element={<MyPage />}>
-              <Route path=":id" element={<CardDetailModalTemp />} />
+              <Route path=":id" element={<CardDetailModal />} />
             </Route>
             <Route path="/mypage/edit" element={<EditProfile />} />
             <Route path="/mypage/blocklist" element={<BlockList />} />
             <Route path="/user/:userId" element={<UserPage />}>
-              <Route path=":id" element={<CardDetailModalTemp />} />
+              <Route path=":id" element={<CardDetailModal />} />
             </Route>
           </Route>
 

@@ -1,16 +1,16 @@
 import EmotionBadge from '@/components/EmotionBadge';
 import ChatActionButtons from '@/components/modalSheet/ChatActionButtons';
-import defaultImage from '@assets/images/default.png';
 import { useQuery } from '@tanstack/react-query';
 import { getEmotionRecordById } from '@/apis/emotionRecord';
 import { formatDate } from '@/utils/formatDate';
 import ModalSheetLayoutTemp from '@/layouts/ModalSheetLayoutTemp';
 import { useParams } from 'react-router';
 import { Loading } from '@/components/loading';
+import ImageKitImg from '@/components/ImageKitImg';
 
 interface CardDetailModalProps {}
 
-function CardDetailModalTemp({}: CardDetailModalProps) {
+function CardDetailModal({}: CardDetailModalProps) {
   const id = useParams().id!;
 
   const { data: record, isLoading } = useQuery({
@@ -27,7 +27,6 @@ function CardDetailModalTemp({}: CardDetailModalProps) {
           <div className="flex flex-col items-center gap-1">
             <div className="flex items-center gap-1 caption-r text-gray-60">
               <span>{record?.nickName}</span>
-              {/* <img src={headsetIcon} alt="헤드셋 아이콘" /> */}
             </div>
             <div className="flex items-center gap-2">
               <span className=" font-light text-gray-60 text-[10px]">
@@ -39,15 +38,11 @@ function CardDetailModalTemp({}: CardDetailModalProps) {
 
           <div className="flex flex-col gap-2 max-w-[250px]">
             <div className="flex flex-col items-center gap-2">
-              <img
+              <ImageKitImg
                 src={record?.spotifyMusic.albumImage}
-                alt="앨범 이미지"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null; // 무한 루프 방지
-                  target.src = defaultImage; // 기본 이미지로 변경
-                }}
-                className="w-[80px] h-[80px] rounded-[8px]"
+                height={80}
+                width={80}
+                className="rounded-lg"
               />
               <div className="flex flex-col items-center min-w-0">
                 <span className="overflow-hidden body-large-b text-ellipsis whitespace-nowrap">
@@ -75,8 +70,4 @@ function CardDetailModalTemp({}: CardDetailModalProps) {
   );
 }
 
-export default CardDetailModalTemp;
-
-// 사용예시
-
-// <CardDetailModal recordId={selectedRecordId} isChatting={true} />;
+export default CardDetailModal;

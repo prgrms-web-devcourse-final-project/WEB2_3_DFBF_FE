@@ -23,8 +23,8 @@ function EmotionRecordCard({ record, onClick }: EmotionRecordCardProps) {
         <EmotionBadge size="small" emotion={emotion} />
         <ImageKitImg
           src={albumImage}
-          height={232}
-          width={232}
+          height={116}
+          width={116}
           className="object-cover w-full rounded-lg aspect-square"
         />
       </div>

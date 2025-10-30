@@ -27,8 +27,8 @@ export default function MainCard({ record }: MainCardProps) {
         <div className="flex-shrink-0 w-16 h-16 overflow-hidden rounded-lg">
           <ImageKitImg
             src={record.spotifyMusic.albumImage}
-            width={160}
-            height={160}
+            width={64}
+            height={64}
             className="object-cover w-full h-full"
           />
         </div>

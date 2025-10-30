@@ -20,7 +20,7 @@ export default function ImageKitImg({
   return (
     <img
       className={className}
-      src={`https://ik.imagekit.io/${import.meta.env.VITE_IMAGEKIT_ID}/${imagePath}?tr=w-${width},h-${height}`}
+      src={`https://ik.imagekit.io/${import.meta.env.VITE_IMAGEKIT_ID}/${imagePath}?tr=w-${width * 2},h-${height * 2}`}
       width={width}
       height={height}
       onError={(e) => {

@@ -43,9 +43,6 @@ const MusicCard = ({
 
   const { isMusicSheetOpen, openSheet } = useSheetStore();
 
-  //query
-  // const query = title && !isUserEditPage ? `${artist} - ${title} lyrics` : null;
-  // const { data: searchedVideoId } = useSearchYoutubeVideo(query);
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
   useEffect(() => {
